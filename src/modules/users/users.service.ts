@@ -10,7 +10,7 @@ import { KillAllSessionsByUserIdCommand } from "../security/security.service";
 import { UsersRepository } from "./users.repository";
 import { NotFoundException } from "@nestjs/common";
 import { User } from "./user.entity";
-//import { UserBdDto } from "./dto/user-bd.dto";
+
 
 //////////////////////////////////////////////////////////////
 export class ClearAllUsersCommand {

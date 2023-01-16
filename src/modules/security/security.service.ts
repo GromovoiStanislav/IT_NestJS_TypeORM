@@ -3,6 +3,7 @@ import { ForbiddenException, NotFoundException, UnauthorizedException } from "@n
 import { JWT_Service } from "../jwt/jwt.service";
 import { SecurityMapper } from "./dto/securityMapper";
 import { DevicesRepository } from "./devices.repository";
+import { CreateDeviceDto } from "./dto/create-device.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -120,7 +121,7 @@ export class AddOrUpdateDeviceSessionUseCase implements ICommandHandler<AddOrUpd
   }
 
   async execute(command: AddOrUpdateDeviceSessionCommand) {
-    const dataRefreshToken = {
+    const dataRefreshToken: CreateDeviceDto = {
       tokenId: command.tokenId,
       userId: command.userId,
       deviceId: command.deviceId,
@@ -181,7 +182,6 @@ export class KillSessionByTokenIdUseCase implements ICommandHandler<KillSessionB
     await this.securityRepository.deleteByTokenId(command.tokenId);
   }
 }
-
 
 
 //////////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Device } from "../security/devices.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -38,5 +39,9 @@ export class User {
 
   @Column({ default: null })
   banReason: string;
+
+
+  @OneToMany(() => Device, (device) => device.user)
+  devices: Device[];
 
 }

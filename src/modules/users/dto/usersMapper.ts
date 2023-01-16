@@ -5,7 +5,6 @@ import dateAt from "../../../utils/DateGenerator";
 import { ViewUserDto } from "./view-user.dto";
 import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { BanUsersInfo } from "./user-banInfo.dto";
-import { UserBdDto } from "./user-bd.dto";
 import { User } from "../user.entity";
 
 

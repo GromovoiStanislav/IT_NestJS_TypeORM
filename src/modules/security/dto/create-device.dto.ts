@@ -1,4 +1,4 @@
-export class DeviceBdDto {
+export class CreateDeviceDto {
   tokenId: string;
   deviceId: string;
   userId: string;

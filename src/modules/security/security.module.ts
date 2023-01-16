@@ -14,6 +14,8 @@ import {
 } from "./security.service";
 import { JWT_Module } from "../jwt/jwt.module";
 import { DevicesRepository } from "./devices.repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Device } from "./devices.entity";
 
 
 
@@ -31,7 +33,7 @@ const useCases = [
 
 @Module({
   imports: [
-    CqrsModule, JWT_Module,
+    TypeOrmModule.forFeature([Device]),CqrsModule, JWT_Module,
   ],
   controllers: [SecurityController],
   providers: [...useCases,DevicesRepository]

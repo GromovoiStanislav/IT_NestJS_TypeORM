@@ -1,8 +1,8 @@
 import { ViewSecurityDto } from "./view-security.dto";
-import { DeviceBdDto } from "./devices-bd.dto";
+import { CreateDeviceDto } from "./create-device.dto";
 
 export class SecurityMapper {
-  static fromModelToView(data: DeviceBdDto): ViewSecurityDto {
+  static fromModelToView(data: CreateDeviceDto): ViewSecurityDto {
     const viewSecurity = new ViewSecurityDto();
     viewSecurity.deviceId = data.deviceId;
     viewSecurity.lastActiveDate = data.issuedAt;

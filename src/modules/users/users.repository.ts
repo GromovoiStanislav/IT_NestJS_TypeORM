@@ -4,7 +4,6 @@ import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { BanUsersInfo } from "./dto/user-banInfo.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
-//import { UserBdDto } from "./dto/user-bd.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { User } from "./user.entity";
 
