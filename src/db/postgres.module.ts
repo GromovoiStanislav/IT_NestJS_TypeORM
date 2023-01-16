@@ -14,7 +14,8 @@ import { Module } from "@nestjs/common";
             type: "postgres",
             url: configService.get<string>("PG_URL"),
             autoLoadEntities: false,
-            synchronize: false,
+            synchronize: true,
+            entities:[],
             poolSize: 5,
             extra: {
               connectionLimit: 5,
@@ -32,12 +33,8 @@ import { Module } from "@nestjs/common";
           password: "123",
           database: "It_blog",
           autoLoadEntities: false,
-          synchronize: false,
-          poolSize: 5,
-          extra: {
-            connectionLimit: 5,
-            connectionTimeoutMillis: 1000
-          }
+          synchronize: true,
+          entities:[],
         };
 
       },
