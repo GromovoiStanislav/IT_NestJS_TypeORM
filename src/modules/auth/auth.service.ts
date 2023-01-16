@@ -144,7 +144,7 @@ export class LoginUserUseCase implements ICommandHandler<LoginUserCommand> {
         const accessToken = await this.jwtService.createAuthJWT(user.id);
         const refreshToken = await this.jwtService.createRefreshJWT(tokenId, user.id, deviceId, new Date(issuedAt).toISOString());
 
-        //await this.commandBus.execute(new AddOrUpdateDeviceSessionCommand(tokenId, user.id, deviceId, command.ip, command.title, issuedAt));
+        await this.commandBus.execute(new AddOrUpdateDeviceSessionCommand(tokenId, user.id, deviceId, command.ip, command.title, issuedAt));
         return { accessToken, refreshToken };
       }
     }

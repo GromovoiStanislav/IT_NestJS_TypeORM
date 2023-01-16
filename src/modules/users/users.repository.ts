@@ -108,8 +108,8 @@ export class UsersRepository {
 
   async findUserByLoginOrEmail(search): Promise<User | null> {
     return this.usersRepository
-      .createQueryBuilder("user")
-      .where("user.login = :id OR user.email = :email", { login: search, email: search })
+      .createQueryBuilder("users")
+      .where("users.login = :login OR users.email = :email", { login: search, email: search })
       .getOne();
   }
 
