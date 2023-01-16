@@ -7,7 +7,7 @@ import { InputBanUserDto } from "./dto/input-ban-user.dto";
 import { BanUsersInfo } from "./dto/user-banInfo.dto";
 import dateAt from "../../utils/DateGenerator";
 import { KillAllSessionsByUserIdCommand } from "../security/security.service";
-import { UsersPgRepository } from "./users-pg-repository";
+import { UsersRepository } from "./users.repository";
 import { NotFoundException } from "@nestjs/common";
 import { User } from "./user.entity";
 //import { UserBdDto } from "./dto/user-bd.dto";
@@ -20,7 +20,7 @@ export class ClearAllUsersCommand {
 
 @CommandHandler(ClearAllUsersCommand)
 export class ClearAllUsersUseCase implements ICommandHandler<ClearAllUsersCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: ClearAllUsersCommand) {
@@ -36,7 +36,7 @@ export class FindAllUsersCommand {
 
 @CommandHandler(FindAllUsersCommand)
 export class FindAllUsersUseCase implements ICommandHandler<FindAllUsersCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: FindAllUsersCommand) {
@@ -57,7 +57,7 @@ export class DeleteUserCommand {
 
 @CommandHandler(DeleteUserCommand)
 export class DeleteUserUseCase implements ICommandHandler<DeleteUserCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: DeleteUserCommand) {
@@ -76,7 +76,7 @@ export class CreateUserCommand {
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserUseCase implements ICommandHandler<CreateUserCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: CreateUserCommand) {
@@ -94,7 +94,7 @@ export class GetUserByLoginOrEmailCommand {
 
 @CommandHandler(GetUserByLoginOrEmailCommand)
 export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLoginOrEmailCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: GetUserByLoginOrEmailCommand) {
@@ -111,7 +111,7 @@ export class GetUserByIdCommand {
 
 @CommandHandler(GetUserByIdCommand)
 export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: GetUserByIdCommand): Promise<User | null>  {
@@ -128,7 +128,7 @@ export class UpdateConfirmCodeCommand {
 
 @CommandHandler(UpdateConfirmCodeCommand)
 export class UpdateConfirmCodeUseCase implements ICommandHandler<UpdateConfirmCodeCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: UpdateConfirmCodeCommand) {
@@ -144,7 +144,7 @@ export class GetUserByConfirmationCodeCommand {
 
 @CommandHandler(GetUserByConfirmationCodeCommand)
 export class GetUserByConfirmationCodeUseCase implements ICommandHandler<GetUserByConfirmationCodeCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: GetUserByConfirmationCodeCommand) {
@@ -161,7 +161,7 @@ export class ConfirmUserCommand {
 
 @CommandHandler(ConfirmUserCommand)
 export class ConfirmUserUseCase implements ICommandHandler<ConfirmUserCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: ConfirmUserCommand) {
@@ -180,7 +180,7 @@ export class BanUserCommand {
 export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
   constructor(
     private commandBus: CommandBus,
-    private usersRepository: UsersPgRepository) {
+    private usersRepository: UsersRepository) {
   }
 
   async execute(command: BanUserCommand) {
@@ -206,7 +206,7 @@ export class GetIdBannedUsersCommand {
 
 @CommandHandler(GetIdBannedUsersCommand)
 export class GetIdBannedUsersUseCase implements ICommandHandler<GetIdBannedUsersCommand> {
-  constructor(protected usersRepository: UsersPgRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async execute(command: GetIdBannedUsersCommand): Promise<string[]> {

@@ -10,7 +10,7 @@ import { User } from "./user.entity";
 
 
 @Injectable()
-export class UsersPgRepository {
+export class UsersRepository {
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,

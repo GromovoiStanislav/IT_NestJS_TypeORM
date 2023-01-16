@@ -14,7 +14,7 @@ import {
 } from "./users.service";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
-import { UsersPgRepository } from "./users-pg-repository";
+import { UsersRepository } from "./users.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 
@@ -35,7 +35,7 @@ const useCases = [
 @Module({
   imports: [TypeOrmModule.forFeature([User]),CqrsModule, JWT_Module],
   controllers: [SaUsersController, BloggerUsersController],
-  providers: [...useCases, UsersPgRepository]
+  providers: [...useCases, UsersRepository]
 })
 export class UsersModule {
 }

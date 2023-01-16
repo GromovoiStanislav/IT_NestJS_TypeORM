@@ -5,7 +5,7 @@ import { DeviceBdDto } from "./dto/devices-bd.dto";
 
 
 @Injectable()
-export class DevicesPgPawRepository {
+export class DevicesRepository {
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource
   ) {

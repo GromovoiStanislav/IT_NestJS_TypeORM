@@ -13,7 +13,7 @@ import {
   TerminateDeviceSessionUseCase
 } from "./security.service";
 import { JWT_Module } from "../jwt/jwt.module";
-import { DevicesPgPawRepository } from "./devices-pg-paw-repository";
+import { DevicesRepository } from "./devices.repository";
 
 
 
@@ -34,7 +34,7 @@ const useCases = [
     CqrsModule, JWT_Module,
   ],
   controllers: [SecurityController],
-  providers: [...useCases,DevicesPgPawRepository]
+  providers: [...useCases,DevicesRepository]
 })
 export class SecurityModule {
 }
