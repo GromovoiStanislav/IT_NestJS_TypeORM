@@ -1,6 +1,7 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
 import { Module } from "@nestjs/common";
+import { User } from "../modules/users/user.entity";
 
 
 @Module({
@@ -15,7 +16,7 @@ import { Module } from "@nestjs/common";
             url: configService.get<string>("PG_URL"),
             autoLoadEntities: false,
             synchronize: true,
-            entities:[],
+            entities:[User],
             poolSize: 5,
             extra: {
               connectionLimit: 5,
@@ -29,12 +30,12 @@ import { Module } from "@nestjs/common";
           type: "postgres",
           host: "localhost",
           port: 5432,
-          username: "myuser",
-          password: "123",
+          username: "postgres",
+          password: "root",
           database: "It_blog",
           autoLoadEntities: false,
           synchronize: true,
-          entities:[],
+          entities:[User],
         };
 
       },

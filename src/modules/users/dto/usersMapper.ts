@@ -6,6 +6,7 @@ import { ViewUserDto } from "./view-user.dto";
 import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { BanUsersInfo } from "./user-banInfo.dto";
 import { UserBdDto } from "./user-bd.dto";
+import { User } from "../user.entity";
 
 
 export default class UsersMapper {
@@ -31,7 +32,7 @@ export default class UsersMapper {
     return user;
   }
 
-  static fromModelToView(user: UserBdDto): ViewUserDto {
+  static fromModelToView(user: User): ViewUserDto {
 
     const banInfo = new BanUsersInfo();
     banInfo.isBanned = user.isBanned;
@@ -47,7 +48,7 @@ export default class UsersMapper {
     return viewUser;
   }
 
-  static fromModelsToPaginator(users: PaginatorDto<UserBdDto[]>): PaginatorDto<ViewUserDto[]> {
+  static fromModelsToPaginator(users: PaginatorDto<User[]>): PaginatorDto<ViewUserDto[]> {
     return {
       pagesCount: users.pagesCount,
       page: users.page,

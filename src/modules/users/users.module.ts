@@ -15,6 +15,8 @@ import {
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
 import { UsersPgPawRepository } from "./users-pg-paw-repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "./user.entity";
 
 const useCases = [
   ClearAllUsersUseCase,
@@ -31,7 +33,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [CqrsModule, JWT_Module],
+  imports: [TypeOrmModule.forFeature([User]),CqrsModule, JWT_Module],
   controllers: [SaUsersController, BloggerUsersController],
   providers: [...useCases, UsersPgPawRepository]
 })

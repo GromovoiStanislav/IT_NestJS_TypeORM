@@ -9,7 +9,8 @@ import dateAt from "../../utils/DateGenerator";
 import { KillAllSessionsByUserIdCommand } from "../security/security.service";
 import { UsersPgPawRepository } from "./users-pg-paw-repository";
 import { NotFoundException } from "@nestjs/common";
-import { UserBdDto } from "./dto/user-bd.dto";
+import { User } from "./user.entity";
+//import { UserBdDto } from "./dto/user-bd.dto";
 
 //////////////////////////////////////////////////////////////
 export class ClearAllUsersCommand {
@@ -113,7 +114,7 @@ export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
   constructor(protected usersRepository: UsersPgPawRepository) {
   }
 
-  async execute(command: GetUserByIdCommand): Promise<UserBdDto | null>  {
+  async execute(command: GetUserByIdCommand): Promise<User | null>  {
     return await this.usersRepository.findUserById(command.userId);
   }
 }
@@ -192,7 +193,7 @@ export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
     }
 
     await this.usersRepository.banUser(command.userId, banInfo);
-    await this.commandBus.execute(new KillAllSessionsByUserIdCommand(command.userId))
+    await this.commandBus.execute(new KillAllSessionsByUserIdCommand(String(command.userId)))
 
   }
 }
