@@ -11,6 +11,8 @@ import { BlogBannedUserBdDto } from "./dto/blog-banned-users-bd.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./blog.entity";
+import { BlogBannedUser } from "./blog-banned-users.entity";
+import { User } from "../users/user.entity";
 
 
 @Injectable()
@@ -18,21 +20,17 @@ export class BlogsRepository {
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
-    @InjectRepository(Blog) private usersRepository: Repository<Blog>,
+    @InjectRepository(Blog) private blogsRepository: Repository<Blog>,
+    @InjectRepository(BlogBannedUser) private blogBannedUsersRepository: Repository<BlogBannedUser>
   ) {
   }
 
 
   async clearAll(): Promise<void> {
-
-    await Promise.all([
-      await this.dataSource.query(`
-        DELETE FROM public."blogs";
-        `),
-      await this.dataSource.query(`
-        DELETE FROM public."blogBannedUsers";
-        `)
-    ]);
+    await this.blogsRepository.delete({});
+    // await Promise.all([
+    //await this.blogBannedUsersRepository.delete({});
+    // ]);
   }
 
 
@@ -87,82 +85,51 @@ export class BlogsRepository {
   }
 
 
-  async deleteBlog(blogId: string): Promise<number> {
-    const result = await this.dataSource.query(`
-    DELETE FROM public."blogs"
-    WHERE "id" = $1;
-    `, [blogId]);
-    return result[1];
+  async deleteBlog(id: string): Promise<number> {
+    const result = await this.blogsRepository.delete({ id });
+    return result.affected;
   }
 
 
-  async getOneBlog(blogId: string): Promise<BlogBdDto | null> {
-    const result = await this.dataSource.query(`
-    SELECT "id", "name", "websiteUrl", "description", "createdAt", "userId", "userLogin", "isBanned", "banDate"
-    FROM public."blogs"
-    WHERE "id"=$1 and "isBanned"=false;
-    `, [blogId]);
-
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
+  async getOneBlog(id: string): Promise<Blog | null> {
+    return await this.blogsRepository.findOneBy({ id, isBanned: false });
   }
 
 
-  async createBlog(createBlogDto: CreateBlogDto): Promise<BlogBdDto> {
-    const result = await this.dataSource.query(`
-    INSERT INTO public."blogs"(
-    "id", "name", "websiteUrl", "description", "createdAt", "userId", "userLogin", "isBanned", "banDate")
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
-    `, [
-      createBlogDto.id,
-      createBlogDto.name,
-      createBlogDto.websiteUrl,
-      createBlogDto.description,
-      createBlogDto.createdAt,
-      createBlogDto.userId,
-      createBlogDto.userLogin,
-      createBlogDto.isBanned,
-      createBlogDto.banDate
-    ]);
-    return createBlogDto;
+  async createBlog(createBlogDto: CreateBlogDto): Promise<Blog> {
+    return await this.blogsRepository.save(createBlogDto);
   }
 
 
   async updateBlog(blogId: string, updateBlogDto: UpdateBlogDto): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."blogs"
-    SET "name"=$2, "websiteUrl"=$3, "description"=$4
-    WHERE "id" = $1;
-    `, [blogId, updateBlogDto.name, updateBlogDto.websiteUrl, updateBlogDto.description]);
+    await this.blogsRepository.createQueryBuilder()
+      .update(Blog)
+      .set({ name: updateBlogDto.name, websiteUrl: updateBlogDto.websiteUrl, description: updateBlogDto.description })
+      .where("id = :blogId", { blogId })
+      .execute();
   }
 
 
   async bindBlogWithUser(blogId: string, blogOwner: BlogOwnerDto): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."blogs"
-    SET "userId"=$2, "userLogin"=$3
-    WHERE "id" = $1;
-    `, [blogId, blogOwner.userId, blogOwner.userLogin]);
+    await this.blogsRepository.createQueryBuilder()
+      .update(Blog)
+      .set({ userId: blogOwner.userId, userLogin: blogOwner.userLogin })
+      .where("id = :blogId", { blogId })
+      .execute();
   }
 
 
   async banBlog(blogId: string, banInfo: BanBlogInfo): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."blogs"
-    SET "isBanned"=$2, "banDate"=$3
-    WHERE "id" = $1;
-    `, [blogId, banInfo.isBanned, banInfo.banDate]);
+    await this.blogsRepository.createQueryBuilder()
+      .update(Blog)
+      .set({ isBanned: banInfo.isBanned, banDate: banInfo.banDate })
+      .where("id = :blogId", { blogId })
+      .execute();
   }
 
 
-  async getBanedBlogs(): Promise<BlogBdDto[]> {
-    return await this.dataSource.query(`
-    SELECT "id", "name", "websiteUrl", "description", "createdAt", "userId", "userLogin", "isBanned", "banDate"
-    FROM public."blogs"
-    WHERE "isBanned" = true;
-    `);
+  async getBanedBlogs(): Promise<Blog[]> {
+    return await this.blogsRepository.findBy({ isBanned: true });
   }
 
 

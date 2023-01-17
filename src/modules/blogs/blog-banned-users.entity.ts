@@ -4,10 +4,11 @@ import { Blog } from "./blog.entity";
 
 @Entity({ name: "blogBannedUsers" })
 export class BlogBannedUser {
+
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Blog,  { onDelete: "CASCADE" })
+  @ManyToOne(() => Blog, { onDelete: "CASCADE" })
   blog: Blog;
   @Column()
   blogId: string;
@@ -26,4 +27,5 @@ export class BlogBannedUser {
 
   @Column()
   banReason: string;
+
 }

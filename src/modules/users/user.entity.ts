@@ -47,9 +47,9 @@ export class User {
   devices: Device[];
 
   @OneToMany(() => Blog, (blog) => blog.user)
-  blogs: Blog[]
+  blogs: Blog[];
 
   @OneToMany(() => BlogBannedUser, (bannedForBlog) => bannedForBlog.user)
-  bannedForBlogs: BlogBannedUser[]
+  bannedForBlogs: BlogBannedUser[];
 
 }

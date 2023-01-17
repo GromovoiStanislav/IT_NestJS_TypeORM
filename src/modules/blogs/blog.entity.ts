@@ -4,6 +4,7 @@ import { BlogBannedUser } from "./blog-banned-users.entity";
 
 @Entity({ name: "blogs" })
 export class Blog {
+
   @PrimaryColumn()
   id: string;
 
@@ -19,7 +20,7 @@ export class Blog {
   @Column()
   createdAt: string;
 
-  @ManyToOne(() => User, (user) => user.blogs,{ onDelete: "SET NULL" })
+  @ManyToOne(() => User, (user) => user.blogs, { onDelete: "SET NULL" })
   user: User;
   @Column({ nullable: true })
   userId: string;
@@ -27,13 +28,14 @@ export class Blog {
   @Column()
   userLogin: string;
 
-  @Column()
+  @Column({ default: false })
   isBanned: boolean;
 
-  @Column()
+  @Column({ default: null })
   banDate: string;
 
 
   @OneToMany(() => BlogBannedUser, (bannedForBlog) => bannedForBlog.blog)
-  bannedForUsers: BlogBannedUser[]
+  bannedForUsers: BlogBannedUser[];
+
 }
