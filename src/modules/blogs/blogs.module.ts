@@ -17,7 +17,10 @@ import {
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
-import { BlogsPgPawRepository } from "./blogs-pg-raw.repository";
+import { BlogsRepository } from "./blogs.repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Blog } from "./blog.entity";
+import { BlogBannedUser } from "./blog-banned-users.entity";
 
 
 const useCases = [
@@ -38,15 +41,15 @@ const useCases = [
 ];
 
 @Module({
-  imports: [CqrsModule, JWT_Module],
+  imports: [CqrsModule, JWT_Module, TypeOrmModule.forFeature([Blog, BlogBannedUser])],
   controllers: [BlogsController, BloggerBlogsController, SaBlogsController],
-  providers: [...useCases, BlogsPgPawRepository],
+  providers: [...useCases, BlogsRepository],
   exports: []
 })
 export class BlogsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserIdMiddleware)
-      .forRoutes('blogger/blogs');
+      .forRoutes("blogger/blogs");
   }
 }

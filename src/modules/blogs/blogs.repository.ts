@@ -1,6 +1,6 @@
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { BlogBdDto } from "./dto/blog-bd.dto";
 import { CreateBlogDto } from "./dto/create-blog.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
@@ -10,13 +10,15 @@ import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
 import { BlogBannedUserBdDto } from "./dto/blog-banned-users-bd.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { Blog } from "./blog.entity";
 
 
 @Injectable()
-export class BlogsPgPawRepository {
+export class BlogsRepository {
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Blog) private usersRepository: Repository<Blog>,
   ) {
   }
 
