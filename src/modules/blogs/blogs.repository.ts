@@ -1,18 +1,16 @@
 import { DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
-import { BlogBdDto } from "./dto/blog-bd.dto";
 import { CreateBlogDto } from "./dto/create-blog.dto";
 import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
-import { BlogBannedUserBdDto } from "./dto/blog-banned-users-bd.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { Blog } from "./blog.entity";
 import { BlogBannedUser } from "./blog-banned-users.entity";
-import { User } from "../users/user.entity";
+
 
 
 @Injectable()
@@ -41,7 +39,7 @@ export class BlogsRepository {
                       sortDirection
                     }: PaginationParams,
                     includeBanned: boolean,
-                    userId?: string): Promise<PaginatorDto<BlogBdDto[]>> {
+                    userId?: string): Promise<PaginatorDto<Blog[]>> {
 
     if (!["name", "websiteUrl", "description", "createdAt", "userLogin"].includes(sortBy)) {
       sortBy = "createdAt";
@@ -136,41 +134,16 @@ export class BlogsRepository {
   //////////////////////////////////////////////////////
 
   async banUserForBlog(createBlogBanUserDto: CreateBlogBanUserDto): Promise<void> {
-    await this.dataSource.query(`
-    INSERT INTO public."blogBannedUsers"(
-    "blogId", "userId", "login", "createdAt", "banReason")
-    VALUES ($1, $2, $3, $4, $5);
-    `, [
-      createBlogBanUserDto.blogId,
-      createBlogBanUserDto.userId,
-      createBlogBanUserDto.login,
-      createBlogBanUserDto.createdAt,
-      createBlogBanUserDto.banReason
-    ]);
-
+     await this.blogBannedUsersRepository.save(createBlogBanUserDto);
   }
 
   async unbanUserForBlog(userId: string, blogId: string): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."blogBannedUsers"
-    WHERE "userId" = $1 and "blogId" = $2;
-    `, [userId, blogId]);
-
+    await this.blogBannedUsersRepository.delete({ userId, blogId });
   }
 
-  async findBannedUserForBlog(blogId: string, userId: string): Promise<BlogBannedUserBdDto | null> {
-    const result = await this.dataSource.query(`
-    SELECT "blogId", "userId", "login", "createdAt", "banReason"
-    FROM public."blogBannedUsers"
-    WHERE "blogId" = $1 and "userId" = $2;
-    `, [blogId, userId]);
-
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
+  async findBannedUserForBlog(blogId: string, userId: string): Promise<BlogBannedUser | null> {
+    return await this.blogBannedUsersRepository.findOneBy({ blogId, userId });
   }
-
 
   async getAllBannedUsersForBlog(
     blogId: string,
@@ -180,7 +153,7 @@ export class BlogsRepository {
       pageSize,
       sortBy,
       sortDirection
-    }: PaginationParams): Promise<PaginatorDto<BlogBannedUserBdDto[]>> {
+    }: PaginationParams): Promise<PaginatorDto<BlogBannedUser[]>> {
 
     if (!["login", "banReason", "createdAt"].includes(sortBy)) {
       sortBy = "createdAt";

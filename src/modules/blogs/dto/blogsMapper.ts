@@ -8,8 +8,8 @@ import dateAt from "../../../utils/DateGenerator";
 import { BlogOwnerDto } from "./blog-owner.dto";
 import { BanBlogInfo } from "./blog-banInfo.dto";
 import { ViewBanBlogUser } from "./view-blog-ban-user.dto";
-import { BlogBdDto } from "./blog-bd.dto";
-import { BlogBannedUserBdDto } from "./blog-banned-users-bd.dto";
+import { Blog } from "../blog.entity";
+import { BlogBannedUser } from "../blog-banned-users.entity";
 
 export default class BlogMapper {
 
@@ -35,7 +35,7 @@ export default class BlogMapper {
     return updatedBlog;
   }
 
-  static fromModelToView(blog: BlogBdDto, sa: boolean = false): ViewBlogDto {
+  static fromModelToView(blog: Blog, sa: boolean = false): ViewBlogDto {
 
     const banInfo = new BanBlogInfo()
     banInfo.isBanned = blog.isBanned
@@ -58,7 +58,7 @@ export default class BlogMapper {
     return viewBlog;
   }
 
-  static fromModelsToPaginator(blogs: PaginatorDto<BlogBdDto[]>, withBlogOwner: boolean): PaginatorDto<ViewBlogDto[]> {
+  static fromModelsToPaginator(blogs: PaginatorDto<Blog[]>, withBlogOwner: boolean): PaginatorDto<ViewBlogDto[]> {
     return {
       pagesCount: blogs.pagesCount,
       page: blogs.page,
@@ -69,7 +69,7 @@ export default class BlogMapper {
   }
 
 
-  static fromBannedUserModelsToPaginator(blogs: PaginatorDto<BlogBannedUserBdDto[]>): PaginatorDto<ViewBanBlogUser[]> {
+  static fromBannedUserModelsToPaginator(blogs: PaginatorDto<BlogBannedUser[]>): PaginatorDto<ViewBanBlogUser[]> {
     return {
       pagesCount: blogs.pagesCount,
       page: blogs.page,
