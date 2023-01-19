@@ -7,9 +7,9 @@ import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { GetUserByIdCommand } from "../users/users.service";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { PostsRepository } from "./posts.repository";
-import { PostDbDto } from "./dto/posts-db.dto";
 import { GetOneBlogCommand } from "../blogs/blogs.service";
 import { PostLikesPgPawRepository } from "./post-likes.repository";
+import { Post } from "./posts.entity";
 
 
 //////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ export class GetOnePostUseCase implements ICommandHandler<GetOnePostCommand> {
   constructor(protected postsRepository: PostsRepository) {
   }
 
-  async execute(command: GetOnePostCommand): Promise<PostDbDto | null> {
+  async execute(command: GetOnePostCommand): Promise<ViewPostDto | null> {
     const post = await this.postsRepository.getOnePost(command.postId);
     if (post) {
       return PostMapper._fromModelToView(post);
@@ -364,7 +364,7 @@ export class GetAllPostsByBlogOwnerIdUseCase implements ICommandHandler<GetAllPo
     protected postsRepository: PostsRepository) {
   }
 
-  async execute(command: GetAllPostsByBlogOwnerIdCommand): Promise<PostDbDto[]> {
+  async execute(command: GetAllPostsByBlogOwnerIdCommand): Promise<Post[]> {
     return await this.postsRepository.getAllPostsByBlogOwnerId(command.ownerId);
   }
 }
