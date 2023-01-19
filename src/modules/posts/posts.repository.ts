@@ -1,73 +1,56 @@
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
-import { PostDbDto } from "./dto/posts-db.dto";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
+import { DataSource, Repository } from "typeorm";
 import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { Post } from "./posts.entity";
+
 
 
 @Injectable()
-export class PostsPgPawRepository {
+export class PostsRepository {
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Post) private postsRepository: Repository<Post>
   ) {
   }
 
 
   async clearAll(): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."posts";
-    `);
+    await this.postsRepository.delete({});
   }
 
 
-  async deletePost(postId: string): Promise<number> {
-    const result = await this.dataSource.query(`
-    DELETE FROM public."posts"
-    WHERE "id" = $1;
-    `, [postId]);
-    return result[1];
+  async deletePost(id: string): Promise<number> {
+    const result = await this.postsRepository.delete({ id });
+    return result.affected;
   }
 
 
-  async createPost(createPostDto: CreatePostDto): Promise<PostDbDto> {
-    const result = await this.dataSource.query(`
-    INSERT INTO public."posts"(
-    "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt")
-    VALUES ($1, $2, $3, $4, $5, $6, $7);
-    `, [
-      createPostDto.id,
-      createPostDto.title,
-      createPostDto.content,
-      createPostDto.shortDescription,
-      createPostDto.blogId,
-      createPostDto.blogName,
-      createPostDto.createdAt
-    ]);
-    return createPostDto;
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+    return await this.postsRepository.save(createPostDto);
   }
 
 
   async updatePost(postId: string, updatePostDto: UpdatePostDto): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."posts"
-    SET "title"=$2, "content"=$3, "shortDescription"=$4, "blogId"=$5, "blogName"=$6
-    WHERE "id" = $1;
-    `, [
-      postId,
-      updatePostDto.title,
-      updatePostDto.content,
-      updatePostDto.shortDescription,
-      updatePostDto.blogId,
-      updatePostDto.blogName]);
+    await this.postsRepository.createQueryBuilder()
+      .update()
+      .set({
+        title: updatePostDto.title,
+        content: updatePostDto.content,
+        shortDescription: updatePostDto.shortDescription,
+        blogId: updatePostDto.blogId,
+        blogName: updatePostDto.blogName
+      })
+      .where("id = :postId", { postId })
+      .execute();
   }
 
 
-  ////Доделать передачу массива в запрос
-  async getOnePost(postId: string, notBan: boolean = false): Promise<PostDbDto | null> {
+  async getOnePost(postId: string, notBan: boolean = false): Promise<Post | null> {
     let result;
     if (notBan) {
       result = await this.dataSource.query(`
@@ -95,7 +78,7 @@ export class PostsPgPawRepository {
   }
 
 
-  async getAllPostsByBlogOwnerId(ownerId: string): Promise<PostDbDto[]> {
+  async getAllPostsByBlogOwnerId(ownerId: string): Promise<Post[]> {
     return this.dataSource.query(`
     SELECT "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt"
     FROM public."posts"
@@ -108,14 +91,12 @@ export class PostsPgPawRepository {
   }
 
 
-
-
   async getAllPosts({
                       pageNumber,
                       pageSize,
                       sortBy,
                       sortDirection
-                    }: PaginationParams, blogId: string): Promise<PaginatorDto<PostDbDto[]>> {
+                    }: PaginationParams, blogId: string): Promise<PaginatorDto<Post[]>> {
 
     if (!["title", "content", "shortDescription", "blogName", "createdAt"].includes(sortBy)) {
       sortBy = "createdAt";

@@ -19,8 +19,11 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { JWT_Module } from "../jwt/jwt.module";
 import { BlogIdValidator } from "./dto/blogId.validator";
-import { PostsPgPawRepository } from "./posts-pg-paw-repository";
-import { PostLikesPgPawRepository } from "./post-likess-pg-paw-repository";
+import { PostsRepository } from "./posts.repository";
+import { PostLikesPgPawRepository } from "./post-likes.repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Post } from "./posts.entity";
+import { PostLike } from "./post-likes.entity";
 
 
 const useCases = [
@@ -36,13 +39,13 @@ const useCases = [
   PostsUpdateLikeByIDUseCase,
   DeletePostByBlogIdAndPostIdUseCase,
   UpdatePostByBlogIdAndPostIdUseCase,
-  GetAllPostsByBlogOwnerIdUseCase,
+  GetAllPostsByBlogOwnerIdUseCase
 ];
 
 @Module({
-  imports: [CqrsModule, JWT_Module],
+  imports: [CqrsModule, JWT_Module, TypeOrmModule.forFeature([Post, PostLike])],
   controllers: [PostsController],
-  providers: [...useCases, PostsPgPawRepository, PostLikesPgPawRepository, BlogIdValidator],
+  providers: [...useCases, PostsRepository, PostLikesPgPawRepository, BlogIdValidator],
   exports: []
 })
 
