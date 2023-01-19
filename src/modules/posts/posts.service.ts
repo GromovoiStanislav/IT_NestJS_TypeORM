@@ -10,6 +10,7 @@ import { PostsRepository } from "./posts.repository";
 import { GetOneBlogCommand } from "../blogs/blogs.service";
 import { PostLikesPgPawRepository } from "./post-likes.repository";
 import { Post } from "./posts.entity";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -134,8 +135,8 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
   ) {
   }
 
-//: Promise<ViewPostDto>
-  async execute(command: GetOnePostWithLikesCommand) {
+
+  async execute(command: GetOnePostWithLikesCommand): Promise<ViewPostDto> {
 
     const post = await this.postsRepository.getOnePost(command.postId, true);
     if (!post) {
@@ -205,8 +206,8 @@ export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsBy
   ) {
   }
 
-  //: Promise<PaginatorDto<ViewPostDto[]>>
-  async execute(command: GetAllPostsByBlogIdCommand) {
+
+  async execute(command: GetAllPostsByBlogIdCommand): Promise<PaginatorDto<ViewPostDto[]>> {
     const result = await this.postsRepository.getAllPosts(command.paginationParams, command.blogId);
 
     const postIds = result.items.map(post => post.id);
