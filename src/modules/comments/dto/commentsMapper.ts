@@ -5,7 +5,8 @@ import { LikesInfoDto } from "../../../commonDto/likesInfoDto";
 import uid from "../../../utils/IdGenerator";
 import dateAt from "../../../utils/DateGenerator";
 import { CreateCommentDto } from "./create-comment.dto";
-import { CommentDbDto } from "./comments-db.dto";
+import { Comment } from "../comment.entity";
+
 
 export default class CommentsMapper {
 
@@ -27,7 +28,7 @@ export default class CommentsMapper {
   }
 
 
-  static fromModelToView(comment: CommentDbDto, likes: LikesInfoDto): ViewCommentDto {
+  static fromModelToView(comment: Comment, likes: LikesInfoDto): ViewCommentDto {
 
     delete likes.commentId
 
@@ -42,7 +43,7 @@ export default class CommentsMapper {
   }
 
 
-  static _fromModelToView(comment: CommentDbDto): ViewCommentDto {
+  static _fromModelToView(comment: Comment): ViewCommentDto {
     const viewComment = new ViewCommentDto();
     viewComment.id = comment.id;
     viewComment.content = comment.content;
@@ -54,7 +55,7 @@ export default class CommentsMapper {
   }
 
 
-  static fromModelToOwnerView(comment: CommentDbDto, likes: LikesInfoDto) {
+  static fromModelToOwnerView(comment: Comment, likes: LikesInfoDto) {
 
     delete likes.commentId
 

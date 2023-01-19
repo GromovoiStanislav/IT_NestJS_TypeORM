@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Post } from "./posts.entity";
+import { Post } from "./post.entity";
 import { User } from "../users/user.entity";
 
 @Entity({ name: "postLikes" })

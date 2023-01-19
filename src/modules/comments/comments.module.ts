@@ -10,8 +10,11 @@ import {
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { CommentsController } from "./comments.controller";
 import { JWT_Module } from "../jwt/jwt.module";
-import { CommentsPgPawRepository } from "./comments-pg-paw-repository";
-import { CommentLikesPgPawRepository } from "./comment-likes-pg-raw.repository";
+import { CommentsRepository } from "./comments.repository";
+import { CommentLikesRepository } from "./comment-likes.repository";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Comment } from "./comment.entity";
+import { CommentLike } from "./comment-like.entity";
 
 const useCases = [
   ClearAllCommentsUseCase,
@@ -26,11 +29,12 @@ const useCases = [
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Comment, CommentLike]),
     CqrsModule,
     JWT_Module
   ],
   controllers: [CommentsController],
-  providers: [...useCases, CommentsPgPawRepository, CommentLikesPgPawRepository]
+  providers: [...useCases, CommentsRepository, CommentLikesRepository]
 })
 
 export class CommentsModule implements NestModule {

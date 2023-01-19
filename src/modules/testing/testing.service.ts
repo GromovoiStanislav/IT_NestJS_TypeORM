@@ -22,6 +22,6 @@ export class DeleteAllDataUseCase implements ICommandHandler<DeleteAllDataComman
     await this.commandBus.execute(new ClearAllUsersCommand());
     await this.commandBus.execute(new ClearAllBlogsCommand());
     //await this.commandBus.execute(new ClearAllPostsCommand());
-    await this.commandBus.execute(new ClearAllCommentsCommand());
+    //await this.commandBus.execute(new ClearAllCommentsCommand());
   }
 }

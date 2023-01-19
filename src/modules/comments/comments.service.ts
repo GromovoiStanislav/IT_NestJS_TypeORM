@@ -6,8 +6,8 @@ import { GetOnePostCommand } from "../posts/posts.service";
 import { GetUserByIdCommand } from "../users/users.service";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { IsUserBannedForBlogCommand } from "../blogs/blogs.service";
-import { CommentsPgPawRepository } from "./comments-pg-paw-repository";
-import { CommentLikesPgPawRepository } from "./comment-likes-pg-raw.repository";
+import { CommentsRepository } from "./comments.repository";
+import { CommentLikesRepository } from "./comment-likes.repository";
 
 
 
@@ -18,8 +18,8 @@ export class ClearAllCommentsCommand {
 @CommandHandler(ClearAllCommentsCommand)
 export class ClearAllCommentsUseCase implements ICommandHandler<ClearAllCommentsCommand> {
   constructor(
-    protected commentsRepository: CommentsPgPawRepository,
-    protected commentLikesRepository: CommentLikesPgPawRepository
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
   ) {
   }
 
@@ -40,7 +40,7 @@ export class DeleteCommentCommand {
 
 @CommandHandler(DeleteCommentCommand)
 export class DeleteCommentUseCase implements ICommandHandler<DeleteCommentCommand> {
-  constructor(protected commentsRepository: CommentsPgPawRepository) {
+  constructor(protected commentsRepository: CommentsRepository) {
   }
 
   async execute(command: DeleteCommentCommand): Promise<void> {
@@ -64,7 +64,7 @@ export class UpdateCommentCommand {
 
 @CommandHandler(UpdateCommentCommand)
 export class UpdateCommentUseCase implements ICommandHandler<UpdateCommentCommand> {
-  constructor(protected commentsRepository: CommentsPgPawRepository) {
+  constructor(protected commentsRepository: CommentsRepository) {
   }
 
   async execute(command: UpdateCommentCommand): Promise<void> {
@@ -89,8 +89,8 @@ export class UpdateCommentLikeCommand {
 @CommandHandler(UpdateCommentLikeCommand)
 export class UpdateCommentLikeUseCase implements ICommandHandler<UpdateCommentLikeCommand> {
   constructor(
-    protected commentsRepository: CommentsPgPawRepository,
-    protected commentLikesRepository: CommentLikesPgPawRepository
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
   ) {
   }
 
@@ -122,7 +122,7 @@ export class GetCommentCommand {
 export class GetCommentUseCase implements ICommandHandler<GetCommentCommand> {
   constructor(
     private commandBus: CommandBus,
-    protected commentsRepository: CommentsPgPawRepository
+    protected commentsRepository: CommentsRepository
   ) {
   }
 
@@ -158,7 +158,7 @@ export class CreateCommentByPostIDCommand {
 export class CreateCommentByPostIDUseCase implements ICommandHandler<CreateCommentByPostIDCommand> {
   constructor(
     private commandBus: CommandBus,
-    protected commentsRepository: CommentsPgPawRepository
+    protected commentsRepository: CommentsRepository
   ) {
   }
 
@@ -192,8 +192,8 @@ export class GetAllCommentsByPostIDCommand {
 export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllCommentsByPostIDCommand> {
   constructor(
     private commandBus: CommandBus,
-    protected commentsRepository: CommentsPgPawRepository,
-    protected commentLikesRepository: CommentLikesPgPawRepository
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
   ) {
   }
 
@@ -233,8 +233,8 @@ export class GetAllCommentsByArrayOfPostIDCommand {
 @CommandHandler(GetAllCommentsByArrayOfPostIDCommand)
 export class GetAllCommentsByArrayOfPostIDUseCase implements ICommandHandler<GetAllCommentsByArrayOfPostIDCommand> {
   constructor(
-    protected commentsRepository: CommentsPgPawRepository,
-    protected commentLikesRepository: CommentLikesPgPawRepository
+    protected commentsRepository: CommentsRepository,
+    protected commentLikesRepository: CommentLikesRepository
   ) {
   }
 

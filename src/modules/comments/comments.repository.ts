@@ -1,51 +1,36 @@
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
-import { CommentDbDto } from "./dto/comments-db.dto";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
+import { DataSource, Repository } from "typeorm";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
-
+import { Comment } from "./comment.entity";
 
 
 @Injectable()
-export class CommentsPgPawRepository {
+export class CommentsRepository {
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Comment) private commentsRepository: Repository<Comment>
   ) {
   }
 
 
   async clearAll(): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."comments";
-    `);
+    await this.commentsRepository.delete({});
   }
 
 
-  async deleteComment(commentId: string): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."comments"
-    WHERE "id" = $1;
-    `, [commentId]);
+  async deleteComment(id: string): Promise<void> {
+    await this.commentsRepository.delete({ id });
   }
 
 
-  async findComment(commentId: string): Promise<CommentDbDto | null> {
-    const result = await this.dataSource.query(`
-    SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
-    FROM public."comments"
-    WHERE "id" = $1;
-    `, [commentId]);
-
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
+  async findComment(commentId: string): Promise<Comment | null> {
+    return await this.commentsRepository.findOneBy({ id: commentId });
   }
-
 
 
   async findCommentWithLikes(commentId: string, userId: string) {
@@ -80,34 +65,16 @@ export class CommentsPgPawRepository {
   }
 
 
-
-
-
   async updateComment(commentId: string, updateCommentDto: UpdateCommentDto): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."comments"
-    SET "content"=$2
-    WHERE "id" = $1;
-    `, [
-      commentId,
-      updateCommentDto.content
-    ]);
+    await this.commentsRepository.createQueryBuilder()
+      .update()
+      .set(updateCommentDto)
+      .where("id = :commentId", { commentId })
+      .execute();
   }
 
-  async createComment(createCommentDto: CreateCommentDto): Promise<CommentDbDto> {
-    const result = await this.dataSource.query(`
-    INSERT INTO public."comments"(
-    "id", "postId", "content", "userId", "userLogin", "createdAt")
-    VALUES ($1, $2, $3, $4, $5, $6);
-    `, [
-      createCommentDto.id,
-      createCommentDto.postId,
-      createCommentDto.content,
-      createCommentDto.userId,
-      createCommentDto.userLogin,
-      createCommentDto.createdAt
-    ]);
-    return createCommentDto;
+  async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
+    return await this.commentsRepository.save(createCommentDto);
   }
 
 
@@ -116,7 +83,7 @@ export class CommentsPgPawRepository {
                          pageSize,
                          sortBy,
                          sortDirection
-                       }: PaginationParams, postId: string): Promise<PaginatorDto<CommentDbDto[]>> {
+                       }: PaginationParams, postId: string): Promise<PaginatorDto<Comment[]>> {
 
 
     if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
@@ -151,13 +118,12 @@ export class CommentsPgPawRepository {
   }
 
 
-  ////Доделать передачу массива в запрос
   async getAllCommentsByArrayOfPosts({
                                        pageNumber,
                                        pageSize,
                                        sortBy,
                                        sortDirection
-                                     }: PaginationParams, postsIds: string[]): Promise<PaginatorDto<CommentDbDto[]>> {
+                                     }: PaginationParams, postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
 
     if (!["content", "userLogin", "createdAt"].includes(sortBy)) {

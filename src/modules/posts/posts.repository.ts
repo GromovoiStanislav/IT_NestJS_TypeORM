@@ -5,7 +5,7 @@ import { CreatePostDto } from "./dto/create-post.dto";
 import { UpdatePostDto } from "./dto/update-post.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
-import { Post } from "./posts.entity";
+import { Post } from "./post.entity";
 
 
 @Injectable()
@@ -50,32 +50,14 @@ export class PostsRepository {
 
 
   async getOnePost(postId: string, notBan: boolean = false): Promise<Post | null> {
-
     if (notBan) {
       return this.postsRepository.createQueryBuilder("post")
         .innerJoin("post.blog", "blog", "blog.isBanned = false")
         .where("post.id = :postId", { postId })
         .getOne()
-
-    //   const result = await this.dataSource.query(`
-    //     SELECT "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt"
-    //     FROM public."posts"
-    //     WHERE "id" = $1 and "blogId" in (
-    //     SELECT "id"
-    //     FROM public."blogs"
-    //     WHERE "isBanned" = false);
-    // `, [postId]);
-    //
-    //   if (result.length > 0) {
-    //     return result[0];
-    //   }
-    //   return null;
-
     } else {
       return await this.postsRepository.findOneBy({ id: postId });
     }
-
-
   }
 
 
@@ -84,16 +66,6 @@ export class PostsRepository {
       .innerJoin("post.blog", "blog")
       .where("blog.userId = :ownerId", { ownerId })
       .getMany()
-
-    // return this.dataSource.query(`
-    // SELECT "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt"
-    // FROM public."posts"
-    // WHERE "blogId" in (
-    //     SELECT "id"
-    //     FROM public."blogs"
-    //     WHERE "userId" = $1
-    // );
-    // `, [ownerId]);
   }
 
 

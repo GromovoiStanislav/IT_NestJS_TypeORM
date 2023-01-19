@@ -7,7 +7,7 @@ import { ViewPostDto } from "./view-post.dto";
 import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
 import { UpdatePostDto } from "./update-post.dto";
 import { InputBlogPostDto } from "./input-blog-post.dto";
-import { Post } from "../posts.entity";
+import { Post } from "../post.entity";
 
 
 

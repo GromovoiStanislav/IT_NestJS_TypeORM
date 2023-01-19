@@ -3,11 +3,11 @@ import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { ExtendedLikesInfoDto } from "../../commonDto/extendedLikesInfoDto";
 import { LikeDetailsViewDto } from "../../commonDto/likeDetailsViewDto";
-import { PostLike } from "./post-likes.entity";
+import { PostLike } from "./post-like.entity";
 
 
 @Injectable()
-export class PostLikesPgPawRepository {
+export class PostLikesRepository {
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
@@ -44,13 +44,12 @@ export class PostLikesPgPawRepository {
 
   async updateCommentLike(postId: string, userId: string, userLogin: string, likeStatus: string): Promise<void> {
     const addedAt = new Date().toISOString();
-
     await this.postLikesRepository.createQueryBuilder()
       .update()
       .set({
-        postId,
-        userId,
-        userLogin,
+        //postId,
+        //userId,
+        //userLogin,
         likeStatus,
         addedAt
       })

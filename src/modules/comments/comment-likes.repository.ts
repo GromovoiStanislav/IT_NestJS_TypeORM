@@ -1,69 +1,49 @@
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
-import { CommentLikeDbDto } from "./dto/comment-likes-db.dto";
+import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
+import { DataSource, Repository } from "typeorm";
 import { LikesInfoDto } from "../../commonDto/likesInfoDto";
+import { CommentLike } from "./comment-like.entity";
+
 
 
 @Injectable()
-export class CommentLikesPgPawRepository {
+export class CommentLikesRepository {
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(CommentLike) private commentLikesRepository: Repository<CommentLike>
   ) {
   }
 
   async clearAll(): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."commentLikes";
-    `);
+    await this.commentLikesRepository.delete({});
   }
 
   async deleteCommentLike(commentId: string, userId: string): Promise<void> {
-    await this.dataSource.query(`
-    DELETE FROM public."commentLikes"
-    WHERE "commentId"=$1 and "userId"=$2;
-    `, [commentId, userId]);
+    await this.commentLikesRepository.delete({ commentId, userId });
   }
 
 
-  async findCommentLike(commentId: string, userId: string): Promise<CommentLikeDbDto | null> {
-    const result = await this.dataSource.query(`
-    SELECT "commentId", "userId", "likeStatus"
-    FROM public."commentLikes"
-    WHERE "commentId"=$1 and "userId"=$2;
-    `, [commentId, userId]);
-
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
+  async findCommentLike(commentId: string, userId: string): Promise<CommentLike | null> {
+    return await this.commentLikesRepository.findOneBy({ commentId, userId });
   }
 
 
   async createCommentLike(commentId: string, userId: string, likeStatus: string): Promise<void> {
-    await this.dataSource.query(`
-    INSERT INTO public."commentLikes"(
-    "commentId", "userId", "likeStatus")
-    VALUES ($1, $2, $3);
-    `, [
+    await this.commentLikesRepository.save({
       commentId,
       userId,
-      likeStatus
-    ]);
+      likeStatus,
+    });
   }
 
 
   async updateCommentLike(commentId: string, userId: string, likeStatus: string): Promise<void> {
-    await this.dataSource.query(`
-    UPDATE public."commentLikes"
-    SET "likeStatus"=$3
-    WHERE "commentId"=$1 and "userId"=$2;
-    `, [
-      commentId,
-      userId,
-      likeStatus
-    ]);
+    await this.commentLikesRepository.createQueryBuilder()
+      .update()
+      .set({ likeStatus })
+      .where("commentId = :commentId AND userId = :", { commentId, userId })
+      .execute();
   }
 
 
@@ -102,8 +82,6 @@ export class CommentLikesPgPawRepository {
     } catch (e) {
       return [];
     }
-
-
   }
 
 

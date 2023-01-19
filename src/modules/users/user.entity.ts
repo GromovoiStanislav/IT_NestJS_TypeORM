@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { Device } from "../security/devices.entity";
 import { Blog } from "../blogs/blog.entity";
 import { BlogBannedUser } from "../blogs/blog-banned-users.entity";
+import { Comment } from "../comments/comment.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -51,5 +52,8 @@ export class User {
 
   @OneToMany(() => BlogBannedUser, (bannedForBlog) => bannedForBlog.user)
   bannedForBlogs: BlogBannedUser[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
 }

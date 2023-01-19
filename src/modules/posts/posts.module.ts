@@ -20,10 +20,10 @@ import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { JWT_Module } from "../jwt/jwt.module";
 import { BlogIdValidator } from "./dto/blogId.validator";
 import { PostsRepository } from "./posts.repository";
-import { PostLikesPgPawRepository } from "./post-likes.repository";
+import { PostLikesRepository } from "./post-likes.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Post } from "./posts.entity";
-import { PostLike } from "./post-likes.entity";
+import { Post } from "./post.entity";
+import { PostLike } from "./post-like.entity";
 
 
 const useCases = [
@@ -45,7 +45,7 @@ const useCases = [
 @Module({
   imports: [CqrsModule, JWT_Module, TypeOrmModule.forFeature([Post, PostLike])],
   controllers: [PostsController],
-  providers: [...useCases, PostsRepository, PostLikesPgPawRepository, BlogIdValidator],
+  providers: [...useCases, PostsRepository, PostLikesRepository, BlogIdValidator],
   exports: []
 })
 

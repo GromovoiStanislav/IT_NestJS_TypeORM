@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 import { User } from "../users/user.entity";
 import { BlogBannedUser } from "./blog-banned-users.entity";
-import { Post } from "../posts/posts.entity";
+import { Post } from "../posts/post.entity";
 
 @Entity({ name: "blogs" })
 export class Blog {

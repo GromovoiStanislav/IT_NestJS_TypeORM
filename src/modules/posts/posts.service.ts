@@ -8,8 +8,8 @@ import { GetUserByIdCommand } from "../users/users.service";
 import { ForbiddenException, NotFoundException } from "@nestjs/common";
 import { PostsRepository } from "./posts.repository";
 import { GetOneBlogCommand } from "../blogs/blogs.service";
-import { PostLikesPgPawRepository } from "./post-likes.repository";
-import { Post } from "./posts.entity";
+import { PostLikesRepository } from "./post-likes.repository";
+import { Post } from "./post.entity";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 
@@ -21,7 +21,7 @@ export class ClearAllPostsCommand {
 export class ClearAllPostsUseCase implements ICommandHandler<ClearAllPostsCommand> {
   constructor(
     protected postsRepository: PostsRepository,
-    protected postLikesRepository: PostLikesPgPawRepository
+    protected postLikesRepository: PostLikesRepository
   ) {
   }
 
@@ -131,7 +131,7 @@ export class GetOnePostWithLikesCommand {
 export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWithLikesCommand> {
   constructor(
     protected postsRepository: PostsRepository,
-    protected postLikesRepository: PostLikesPgPawRepository
+    protected postLikesRepository: PostLikesRepository
   ) {
   }
 
@@ -166,7 +166,7 @@ export class GetAllPostsCommand {
 export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
   constructor(
     protected postsRepository: PostsRepository,
-    protected postLikesRepository: PostLikesPgPawRepository
+    protected postLikesRepository: PostLikesRepository
   ) {
   }
 
@@ -202,7 +202,7 @@ export class GetAllPostsByBlogIdCommand {
 export class GetAllPostsByBlogIdUseCase implements ICommandHandler<GetAllPostsByBlogIdCommand> {
   constructor(
     protected postsRepository: PostsRepository,
-    protected postLikesRepository: PostLikesPgPawRepository
+    protected postLikesRepository: PostLikesRepository
   ) {
   }
 
@@ -268,7 +268,7 @@ export class PostsUpdateLikeByIDCommand {
 export class PostsUpdateLikeByIDUseCase implements ICommandHandler<PostsUpdateLikeByIDCommand> {
   constructor(
     private commandBus: CommandBus,
-    protected postLikesRepository: PostLikesPgPawRepository
+    protected postLikesRepository: PostLikesRepository
   ) {
   }
 
