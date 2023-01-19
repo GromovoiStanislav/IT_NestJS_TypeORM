@@ -54,7 +54,7 @@ export class PostsRepository {
     if (notBan) {
       return this.postsRepository.createQueryBuilder("post")
         .innerJoin("post.blog", "blog", "blog.isBanned = false")
-        .where("user.id = :postId", { postId })
+        .where("post.id = :postId", { postId })
         .getOne()
 
     //   const result = await this.dataSource.query(`
@@ -80,15 +80,20 @@ export class PostsRepository {
 
 
   async getAllPostsByBlogOwnerId(ownerId: string): Promise<Post[]> {
-    return this.dataSource.query(`
-    SELECT "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt"
-    FROM public."posts"
-    WHERE "blogId" in (
-        SELECT "id"
-        FROM public."blogs"
-        WHERE "userId" = $1
-    );
-    `, [ownerId]);
+    return this.postsRepository.createQueryBuilder("post")
+      .innerJoin("post.blog", "blog")
+      .where("blog.userId = :ownerId", { ownerId })
+      .getMany()
+
+    // return this.dataSource.query(`
+    // SELECT "id", "title", "content", "shortDescription", "blogId", "blogName", "createdAt"
+    // FROM public."posts"
+    // WHERE "blogId" in (
+    //     SELECT "id"
+    //     FROM public."blogs"
+    //     WHERE "userId" = $1
+    // );
+    // `, [ownerId]);
   }
 
 
