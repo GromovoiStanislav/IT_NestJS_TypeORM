@@ -125,29 +125,32 @@ export class UsersRepository {
 
 
   async banUser(userId: string, banInfo: BanUsersInfo): Promise<void> {
-    await this.usersRepository.createQueryBuilder()
-      .update(User)
-      .set({ isBanned: banInfo.isBanned, banDate: banInfo.banDate, banReason: banInfo.banReason })
-      .where("id = :userId", { userId })
-      .execute();
+    await this.usersRepository.update({ id: userId }, banInfo);
+    // await this.usersRepository.createQueryBuilder()
+    //   .update(User)
+    //   .set({ isBanned: banInfo.isBanned, banDate: banInfo.banDate, banReason: banInfo.banReason })
+    //   .where("id = :userId", { userId })
+    //   .execute();
   }
 
 
   async confirmUser(userId: string): Promise<void> {
-    await this.usersRepository.createQueryBuilder()
-      .update(User)
-      .set({ isEmailConfirmed: true })
-      .where("id = :userId", { userId })
-      .execute();
+    await this.usersRepository.update({ id: userId }, { isEmailConfirmed: true })
+    // await this.usersRepository.createQueryBuilder()
+    //   .update(User)
+    //   .set({ isEmailConfirmed: true })
+    //   .where("id = :userId", { userId })
+    //   .execute();
   }
 
 
   async updateConfirmCode(userId: string, confirmationCode: string): Promise<void> {
-    await this.usersRepository.createQueryBuilder()
-      .update(User)
-      .set({ confirmationCode })
-      .where("id = :userId", { userId })
-      .execute();
+    await this.usersRepository.update({ id: userId }, { confirmationCode })
+    // await this.usersRepository.createQueryBuilder()
+    //   .update(User)
+    //   .set({ confirmationCode })
+    //   .where("id = :userId", { userId })
+    //   .execute();
   }
 
 

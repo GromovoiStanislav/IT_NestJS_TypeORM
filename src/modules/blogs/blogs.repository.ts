@@ -12,7 +12,6 @@ import { Blog } from "./blog.entity";
 import { BlogBannedUser } from "./blog-banned-users.entity";
 
 
-
 @Injectable()
 export class BlogsRepository {
 
@@ -100,29 +99,32 @@ export class BlogsRepository {
 
 
   async updateBlog(blogId: string, updateBlogDto: UpdateBlogDto): Promise<void> {
-    await this.blogsRepository.createQueryBuilder()
-      .update(Blog)
-      .set({ name: updateBlogDto.name, websiteUrl: updateBlogDto.websiteUrl, description: updateBlogDto.description })
-      .where("id = :blogId", { blogId })
-      .execute();
+    await this.blogsRepository.update({ id: blogId }, updateBlogDto);
+    // await this.blogsRepository.createQueryBuilder()
+    //   .update(Blog)
+    //   .set({ name: updateBlogDto.name, websiteUrl: updateBlogDto.websiteUrl, description: updateBlogDto.description })
+    //   .where("id = :blogId", { blogId })
+    //   .execute();
   }
 
 
   async bindBlogWithUser(blogId: string, blogOwner: BlogOwnerDto): Promise<void> {
-    await this.blogsRepository.createQueryBuilder()
-      .update(Blog)
-      .set({ userId: blogOwner.userId, userLogin: blogOwner.userLogin })
-      .where("id = :blogId", { blogId })
-      .execute();
+    await this.blogsRepository.update({ id: blogId }, blogOwner);
+    // await this.blogsRepository.createQueryBuilder()
+    //   .update(Blog)
+    //   .set({ userId: blogOwner.userId, userLogin: blogOwner.userLogin })
+    //   .where("id = :blogId", { blogId })
+    //   .execute();
   }
 
 
   async banBlog(blogId: string, banInfo: BanBlogInfo): Promise<void> {
-    await this.blogsRepository.createQueryBuilder()
-      .update(Blog)
-      .set({ isBanned: banInfo.isBanned, banDate: banInfo.banDate })
-      .where("id = :blogId", { blogId })
-      .execute();
+    await this.blogsRepository.update({ id: blogId }, banInfo);
+    // await this.blogsRepository.createQueryBuilder()
+    //   .update(Blog)
+    //   .set({ isBanned: banInfo.isBanned, banDate: banInfo.banDate })
+    //   .where("id = :blogId", { blogId })
+    //   .execute();
   }
 
 
@@ -134,7 +136,7 @@ export class BlogsRepository {
   //////////////////////////////////////////////////////
 
   async banUserForBlog(createBlogBanUserDto: CreateBlogBanUserDto): Promise<void> {
-     await this.blogBannedUsersRepository.save(createBlogBanUserDto);
+    await this.blogBannedUsersRepository.save(createBlogBanUserDto);
   }
 
   async unbanUserForBlog(userId: string, blogId: string): Promise<void> {

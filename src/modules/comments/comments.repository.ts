@@ -66,11 +66,12 @@ export class CommentsRepository {
 
 
   async updateComment(commentId: string, updateCommentDto: UpdateCommentDto): Promise<void> {
-    await this.commentsRepository.createQueryBuilder()
-      .update()
-      .set(updateCommentDto)
-      .where("id = :commentId", { commentId })
-      .execute();
+    await this.commentsRepository.update({ id: commentId }, updateCommentDto);
+    // await this.commentsRepository.createQueryBuilder()
+    //   .update()
+    //   .set(updateCommentDto)
+    //   .where("id = :commentId", { commentId })
+    //   .execute();
   }
 
   async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {

@@ -35,17 +35,18 @@ export class PostsRepository {
 
 
   async updatePost(postId: string, updatePostDto: UpdatePostDto): Promise<void> {
-    await this.postsRepository.createQueryBuilder()
-      .update()
-      .set({
-        title: updatePostDto.title,
-        content: updatePostDto.content,
-        shortDescription: updatePostDto.shortDescription,
-        blogId: updatePostDto.blogId,
-        blogName: updatePostDto.blogName
-      })
-      .where("id = :postId", { postId })
-      .execute();
+    await this.postsRepository.update({id:postId},updatePostDto)
+    // await this.postsRepository.createQueryBuilder()
+    //   .update()
+    //   .set({
+    //     title: updatePostDto.title,
+    //     content: updatePostDto.content,
+    //     shortDescription: updatePostDto.shortDescription,
+    //     blogId: updatePostDto.blogId,
+    //     blogName: updatePostDto.blogName
+    //   })
+    //   .where("id = :postId", { postId })
+    //   .execute();
   }
 
 

@@ -39,11 +39,12 @@ export class CommentLikesRepository {
 
 
   async updateCommentLike(commentId: string, userId: string, likeStatus: string): Promise<void> {
-    await this.commentLikesRepository.createQueryBuilder()
-      .update()
-      .set({ likeStatus })
-      .where("commentId = :commentId AND userId = :", { commentId, userId })
-      .execute();
+    await this.commentLikesRepository.update({commentId,userId},{ likeStatus })
+    // await this.commentLikesRepository.createQueryBuilder()
+    //   .update()
+    //   .set({ likeStatus })
+    //   .where("commentId = :commentId AND userId = :", { commentId, userId })
+    //   .execute();
   }
 
 

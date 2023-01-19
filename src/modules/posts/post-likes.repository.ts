@@ -44,17 +44,18 @@ export class PostLikesRepository {
 
   async updateCommentLike(postId: string, userId: string, userLogin: string, likeStatus: string): Promise<void> {
     const addedAt = new Date().toISOString();
-    await this.postLikesRepository.createQueryBuilder()
-      .update()
-      .set({
-        //postId,
-        //userId,
-        //userLogin,
-        likeStatus,
-        addedAt
-      })
-      .where("postId = :postId AND userId = :", { postId, userId })
-      .execute();
+    this.postLikesRepository.update({ postId, userId }, { likeStatus, addedAt });
+    // await this.postLikesRepository.createQueryBuilder()
+    //   .update()
+    //   .set({
+    //     //postId,
+    //     //userId,
+    //     //userLogin,
+    //     likeStatus,
+    //     addedAt
+    //   })
+    //   .where("postId = :postId AND userId = :userId", { postId, userId })
+    //   .execute();
   }
 
 
