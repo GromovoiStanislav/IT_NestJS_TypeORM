@@ -93,24 +93,37 @@ export class CommentsRepository {
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
 
-    const items = await this.dataSource.query(`
-    SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
-    FROM public."comments"
-    WHERE "postId" = $1
-    ORDER BY "${sortBy}" COLLATE "C" ${order}
-    LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    `, [postId]);
+    // const items = await this.dataSource.query(`
+    // SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
+    // FROM public."comments"
+    // WHERE "postId" = $1
+    // ORDER BY "${sortBy}" COLLATE "C" ${order}
+    // LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
+    // `, [postId]);
 
+    const items = await this.commentsRepository.createQueryBuilder()
+      .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
+      .where("postId = :postId", { postId })
+      .orderBy(sortBy, order)
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
 
     let totalCount = 0;
-    const resultCount = await this.dataSource.query(`
-    SELECT COUNT(*)
-    FROM public."comments"
-    WHERE "postId" = $1;
-   `, [postId]);
-    if (resultCount.length > 0) {
-      totalCount = +resultCount[0].count;
-    }
+    //  const resultCount = await this.dataSource.query(`
+    //  SELECT COUNT(*)
+    //  FROM public."comments"
+    //  WHERE "postId" = $1;
+    // `, [postId]);
+    //  if (resultCount.length > 0) {
+    //    totalCount = +resultCount[0].count;
+    //  }
+    const resultCount = await this.commentsRepository.createQueryBuilder()
+      .select("COUNT(*)", "count")
+      .where("postId = :postId", { postId })
+      .getRawOne();
+    totalCount = resultCount?.count || 0;
+
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
