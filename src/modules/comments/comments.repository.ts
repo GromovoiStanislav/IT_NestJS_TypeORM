@@ -100,8 +100,10 @@ export class CommentsRepository {
     // ORDER BY "${sortBy}" COLLATE "C" ${order}
     // LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
     // `, [postId]);
+    const QB = this.commentsRepository.createQueryBuilder();
 
-    const items = await this.commentsRepository.createQueryBuilder()
+
+    const items = await QB
       .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
       .where("postId = :postId", { postId })
       .orderBy(sortBy, order)
@@ -118,11 +120,11 @@ export class CommentsRepository {
     //  if (resultCount.length > 0) {
     //    totalCount = +resultCount[0].count;
     //  }
-    const resultCount = await this.commentsRepository.createQueryBuilder()
+    const resultCount = await QB
       .select("COUNT(*)", "count")
       .where("postId = :postId", { postId })
       .getRawOne();
-    totalCount = resultCount?.count || 0;
+    totalCount = +resultCount?.count || 0;
 
 
     const pagesCount = Math.ceil(totalCount / pageSize);

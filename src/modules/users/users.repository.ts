@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -25,74 +25,6 @@ export class UsersRepository {
   async deleteUser(id: string): Promise<number> {
     const result = await this.usersRepository.delete({ id });
     return result.affected;
-  }
-
-
-  async getAllUsers(banStatus: string,
-                    searchLogin: string,
-                    searchEmail: string, {
-                      pageNumber,
-                      pageSize,
-                      sortBy,
-                      sortDirection
-                    }: PaginationParams): Promise<PaginatorDto<User[]>> {
-
-
-    if (!["login", "email", "createdAt"].includes(sortBy)) {
-      sortBy = "createdAt";
-    }
-    const order = sortDirection === "asc" ? "ASC" : "DESC";
-
-    let filter = "";
-    if (searchLogin && searchEmail) {
-      filter = `WHERE ("login" ~* '${searchLogin}' or "email" ~* '${searchEmail}')`;
-    } else if (searchLogin) {
-      filter = `WHERE "login" ~* '${searchLogin}'`;
-    } else if (searchEmail) {
-      filter = `WHERE "email" ~* '${searchEmail}'`;
-    }
-
-    if (["notBanned", "banned"].includes(banStatus)) {
-      if (filter !== "") {
-        if (banStatus === "banned") {
-          filter = filter + ` AND "isBanned" = true`;
-        } else if (banStatus === "notBanned") {
-          filter = filter + ` AND "isBanned" = false`;
-        }
-      } else {
-        if (banStatus === "banned") {
-          filter = `WHERE "isBanned" = true`;
-        } else if (banStatus === "notBanned") {
-          filter = `WHERE "isBanned" = false`;
-        }
-      }
-    }
-
-
-    const items = await this.dataSource.query(`
-    SELECT "login", "password", "email", "createdAt", "confirmationCode", "isEmailConfirmed", "recoveryCode", "isRecoveryCodeConfirmed", "isBanned", "banDate", "banReason", "id"
-    FROM public."users"
-    ${filter}
-    ORDER BY "${sortBy}" COLLATE "C" ${order}
-    LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    `);
-
-
-    let totalCount = 0;
-    const resultCount = await this.dataSource.query(`
-    SELECT COUNT(*)
-    FROM public."users"
-    ${filter};
-    `);
-    if (resultCount.length > 0) {
-      totalCount = +resultCount[0].count;
-    }
-
-
-    const pagesCount = Math.ceil(totalCount / pageSize);
-    const page = pageNumber;
-
-    return { pagesCount, page, pageSize, totalCount, items };
   }
 
 
@@ -135,7 +67,7 @@ export class UsersRepository {
 
 
   async confirmUser(userId: string): Promise<void> {
-    await this.usersRepository.update({ id: userId }, { isEmailConfirmed: true })
+    await this.usersRepository.update({ id: userId }, { isEmailConfirmed: true });
     // await this.usersRepository.createQueryBuilder()
     //   .update(User)
     //   .set({ isEmailConfirmed: true })
@@ -145,12 +77,87 @@ export class UsersRepository {
 
 
   async updateConfirmCode(userId: string, confirmationCode: string): Promise<void> {
-    await this.usersRepository.update({ id: userId }, { confirmationCode })
+    await this.usersRepository.update({ id: userId }, { confirmationCode });
     // await this.usersRepository.createQueryBuilder()
     //   .update(User)
     //   .set({ confirmationCode })
     //   .where("id = :userId", { userId })
     //   .execute();
+  }
+
+
+  async getAllUsers(banStatus: string,
+                    searchLogin: string,
+                    searchEmail: string, {
+                      pageNumber,
+                      pageSize,
+                      sortBy,
+                      sortDirection
+                    }: PaginationParams): Promise<PaginatorDto<User[]>> {
+
+    const QB1 = this.usersRepository.createQueryBuilder("u");
+    const QB2 = this.usersRepository.createQueryBuilder("u");
+
+    QB1.select(["u.id", "u.login", "u.email", "u.createdAt", "u.isBanned", "u.banDate", "u.banReason"]);
+    QB2.select("COUNT(*)", "count");
+
+    if (searchLogin && searchEmail) {
+      QB1.where(
+        new Brackets((qb) => {
+          qb.where("u.login ~* :searchLogin", { searchLogin })
+            .orWhere("u.email ~* :searchEmail", { searchEmail });
+        })
+      );
+      QB2.where(
+        new Brackets((qb) => {
+          qb.where("u.login ~* :searchLogin OR u.email ~* :searchEmail", { searchLogin, searchEmail });
+        })
+      );
+
+    } else if (searchLogin) {
+      QB1.where("u.login ~* :searchLogin", { searchLogin });
+      QB2.where("u.login ~* :searchLogin", { searchLogin });
+
+    } else if (searchEmail) {
+      QB1.where("u.email ~* :searchEmail", { searchEmail });
+      QB2.where("u.email ~* :searchEmail", { searchEmail });
+    }
+
+    if (banStatus === "notBanned") {
+      QB1.andWhere("u.isBanned = false");
+      QB2.andWhere("u.isBanned = false");
+    } else if (banStatus === "banned") {
+      QB1.andWhere("u.isBanned = true");
+      QB2.andWhere("u.isBanned = true");
+    }
+
+
+    if (sortBy === "login") {
+      sortBy = "u.login";
+    } else if (sortBy === "email") {
+      sortBy = "u.email";
+    } else {
+      sortBy = "u.createdAt";
+    }
+    const order = sortDirection === "asc" ? "ASC" : "DESC";
+
+    QB1
+      .orderBy(sortBy, order)
+      .skip(((pageNumber - 1) * pageSize))
+      .take(pageSize);
+
+    console.log(QB1.getQuery());
+    console.log(QB2.getSql());
+
+
+    const items = await QB1.getMany();
+    const resultCount = await QB2.getRawOne();
+    const totalCount = +resultCount?.count || 0;
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
   }
 
 
