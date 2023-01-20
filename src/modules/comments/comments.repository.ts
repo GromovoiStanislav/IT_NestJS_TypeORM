@@ -87,7 +87,7 @@ export class CommentsRepository {
                        }: PaginationParams,
                        postId: string): Promise<PaginatorDto<Comment[]>> {
 
-    return { pagesCount:99, page:99, pageSize:99, totalCount:99, items:[] };
+    //return { pagesCount:99, page:99, pageSize:99, totalCount:99, items:[] };
 
     if (sortBy === "content") {
       sortBy = "c.content";
@@ -100,7 +100,7 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
-      .where("c.postId IN :postId", { postId })
+      .where("c.postId = :postId", { postId })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
@@ -108,7 +108,7 @@ export class CommentsRepository {
 
     const resultCount = await this.commentsRepository.createQueryBuilder("c")
       .select("COUNT(*)", "count")
-      .where("c.postId IN :postId", { postId })
+      .where("c.postId = :postId", { postId })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
 
@@ -127,7 +127,7 @@ export class CommentsRepository {
                                      }: PaginationParams,
                                      postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
-    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
+
 
     if (sortBy === "content") {
       sortBy = "c.content";
@@ -140,7 +140,7 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
-      .where("c.postId IN :...postsIds", { postsIds })
+      .where("c.postId IN (:...postsIds)", { postsIds })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
@@ -148,7 +148,7 @@ export class CommentsRepository {
 
     const resultCount = await this.commentsRepository.createQueryBuilder("c")
       .select("COUNT(*)", "count")
-      .where("c.postId IN :...postsIds", { postsIds })
+      .where("c.postId IN (:...postsIds)", { postsIds })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
 
