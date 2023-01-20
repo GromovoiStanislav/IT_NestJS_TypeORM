@@ -87,29 +87,30 @@ export class CommentsRepository {
                        }: PaginationParams,
                        postId: string): Promise<PaginatorDto<Comment[]>> {
 
+    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
 
-    if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
-      sortBy = "createdAt";
+    if (sortBy === "content") {
+      sortBy = "c.content";
+    } else if (sortBy === "userLogin") {
+      sortBy = "c.userLogin";
+    } else {
+      sortBy = "c.createdAt";
     }
-
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
-
-    const items = await this.commentsRepository.createQueryBuilder()
-      .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
-      .where("postId = :postId", { postId })
+    const items = await this.commentsRepository.createQueryBuilder("c")
+      .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
+      .where("c.postId IN :postId", { postId })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
       .getMany();
 
-
-    const resultCount = await this.commentsRepository.createQueryBuilder()
+    const resultCount = await this.commentsRepository.createQueryBuilder("c")
       .select("COUNT(*)", "count")
-      .where("postId = :postId", { postId })
+      .where("c.postId IN :postId", { postId })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
-
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
@@ -126,6 +127,8 @@ export class CommentsRepository {
                                      }: PaginationParams,
                                      postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
+    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
+
     if (sortBy === "content") {
       sortBy = "c.content";
     } else if (sortBy === "userLogin") {
@@ -135,14 +138,6 @@ export class CommentsRepository {
     }
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
-    // const items = await this.dataSource.query(`
-    // SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
-    // FROM public."comments"
-    // WHERE "postId" = ANY ($1)
-    // ORDER BY "${sortBy}" COLLATE "C" ${order}
-    // LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    // `, [postsIds]);
-
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
       .where("c.postId IN :...postsIds", { postsIds })
@@ -151,23 +146,11 @@ export class CommentsRepository {
       .take(pageSize)
       .getMany();
 
-
-   //  let totalCount = 0;
-   //  const resultCount = await this.dataSource.query(`
-   //  SELECT COUNT(*)
-   //  FROM public."comments"
-   //  WHERE "postId" = ANY ($1);
-   // `, [postsIds]);
-   //  if (resultCount.length > 0) {
-   //    totalCount = +resultCount[0].count;
-   //  }
-
     const resultCount = await this.commentsRepository.createQueryBuilder("c")
       .select("COUNT(*)", "count")
       .where("c.postId IN :...postsIds", { postsIds })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
-
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
