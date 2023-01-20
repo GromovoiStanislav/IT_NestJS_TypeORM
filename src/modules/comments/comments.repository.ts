@@ -127,8 +127,6 @@ export class CommentsRepository {
                                      }: PaginationParams,
                                      postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
-
-
     if (sortBy === "content") {
       sortBy = "c.content";
     } else if (sortBy === "userLogin") {
