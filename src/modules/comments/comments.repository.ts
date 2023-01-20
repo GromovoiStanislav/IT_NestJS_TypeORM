@@ -84,7 +84,8 @@ export class CommentsRepository {
                          pageSize,
                          sortBy,
                          sortDirection
-                       }: PaginationParams, postId: string): Promise<PaginatorDto<Comment[]>> {
+                       }: PaginationParams,
+                       postId: string): Promise<PaginatorDto<Comment[]>> {
 
 
     if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
@@ -94,7 +95,7 @@ export class CommentsRepository {
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
 
-    const items = await this.commentsRepository.createQueryBuilder("c")
+    const items = await this.commentsRepository.createQueryBuilder()
       .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
       .where("postId = :postId", { postId })
       .orderBy(sortBy, order)
@@ -103,7 +104,7 @@ export class CommentsRepository {
       .getMany();
 
 
-    const resultCount = await this.commentsRepository.createQueryBuilder("c")
+    const resultCount = await this.commentsRepository.createQueryBuilder()
       .select("COUNT(*)", "count")
       .where("postId = :postId", { postId })
       .getRawOne();
@@ -113,7 +114,7 @@ export class CommentsRepository {
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
 
-    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
+    return { pagesCount, page, pageSize, totalCount, items };
   }
 
 
@@ -122,7 +123,8 @@ export class CommentsRepository {
                                        pageSize,
                                        sortBy,
                                        sortDirection
-                                     }: PaginationParams, postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
+                                     }: PaginationParams,
+                                     postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
 
     if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
@@ -131,30 +133,44 @@ export class CommentsRepository {
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
 
-    const items = await this.dataSource.query(`
-    SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
-    FROM public."comments"
-    WHERE "postId" = ANY ($1)
-    ORDER BY "${sortBy}" COLLATE "C" ${order}
-    LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    `, [postsIds]);
+    // const items = await this.dataSource.query(`
+    // SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
+    // FROM public."comments"
+    // WHERE "postId" = ANY ($1)
+    // ORDER BY "${sortBy}" COLLATE "C" ${order}
+    // LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
+    // `, [postsIds]);
+
+    const items = await this.commentsRepository.createQueryBuilder()
+      .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
+      .where("postId = :...postsIds", { postsIds })
+      .orderBy(sortBy, order)
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize)
+      .getMany();
 
 
-    let totalCount = 0;
-    const resultCount = await this.dataSource.query(`
-    SELECT COUNT(*)
-    FROM public."comments"
-    WHERE "postId" = ANY ($1);
-   `, [postsIds]);
-    if (resultCount.length > 0) {
-      totalCount = +resultCount[0].count;
-    }
+   //  let totalCount = 0;
+   //  const resultCount = await this.dataSource.query(`
+   //  SELECT COUNT(*)
+   //  FROM public."comments"
+   //  WHERE "postId" = ANY ($1);
+   // `, [postsIds]);
+   //  if (resultCount.length > 0) {
+   //    totalCount = +resultCount[0].count;
+   //  }
+
+    const resultCount = await this.commentsRepository.createQueryBuilder()
+      .select("COUNT(*)", "count")
+      .where("postId = :...postsIds", { postsIds })
+      .getRawOne();
+    const totalCount = +resultCount?.count || 0;
 
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
 
-    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
+    return { pagesCount, page, pageSize, totalCount, items };
   }
 
 
