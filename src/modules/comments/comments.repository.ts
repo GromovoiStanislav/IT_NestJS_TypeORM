@@ -33,38 +33,6 @@ export class CommentsRepository {
   }
 
 
-  async findCommentWithLikes(commentId: string, userId: string) {
-    const result = await this.dataSource.query(`
-    SELECT "id","postId","content","userId","userLogin","createdAt",
-    l."likesCount", l."dislikesCount", l."myStatus"
-
-    FROM public."comments"
-    join (
-    WITH not_banned_likes AS ( 
-        SELECT "commentId", "userId", "likeStatus" FROM public."commentLikes"
-        WHERE "commentId"=$1 and "userId" in (
-        SELECT "id"
-        FROM public."users"
-        WHERE "isBanned" = false
-    )
-    )
-    SELECT 
-    (SELECT count(*) FROM not_banned_likes WHERE "likeStatus"='Like') as "likesCount",
-    (SELECT count(*) FROM not_banned_likes WHERE "likeStatus"='Dislike') as "dislikesCount",
-    (SELECT "likeStatus" FROM public."commentLikes" WHERE "commentId"=$1 and "userId"=$2 LIMIT 1) as "myStatus"
-    ) l ON true=true
-
-    WHERE "id" = $1
-    `, [commentId, userId]);
-
-    if (result.length > 0) {
-      return result[0];
-    }
-    return null;
-
-  }
-
-
   async updateComment(commentId: string, updateCommentDto: UpdateCommentDto): Promise<void> {
     await this.commentsRepository.update({ id: commentId }, updateCommentDto);
     // await this.commentsRepository.createQueryBuilder()
@@ -73,6 +41,7 @@ export class CommentsRepository {
     //   .where("id = :commentId", { commentId })
     //   .execute();
   }
+
 
   async createComment(createCommentDto: CreateCommentDto): Promise<Comment> {
     return await this.commentsRepository.save(createCommentDto);
@@ -86,8 +55,6 @@ export class CommentsRepository {
                          sortDirection
                        }: PaginationParams,
                        postId: string): Promise<PaginatorDto<Comment[]>> {
-
-    //return { pagesCount:99, page:99, pageSize:99, totalCount:99, items:[] };
 
     if (sortBy === "content") {
       sortBy = "c.content";
@@ -156,5 +123,37 @@ export class CommentsRepository {
     return { pagesCount, page, pageSize, totalCount, items };
   }
 
+
+
+  async findCommentWithLikes(commentId: string, userId: string) {
+    const result = await this.dataSource.query(`
+    SELECT "id","postId","content","userId","userLogin","createdAt",
+    l."likesCount", l."dislikesCount", l."myStatus"
+
+    FROM public."comments"
+    join (
+    WITH not_banned_likes AS ( 
+        SELECT "commentId", "userId", "likeStatus" FROM public."commentLikes"
+        WHERE "commentId"=$1 and "userId" in (
+        SELECT "id"
+        FROM public."users"
+        WHERE "isBanned" = false
+    )
+    )
+    SELECT 
+    (SELECT count(*) FROM not_banned_likes WHERE "likeStatus"='Like') as "likesCount",
+    (SELECT count(*) FROM not_banned_likes WHERE "likeStatus"='Dislike') as "dislikesCount",
+    (SELECT "likeStatus" FROM public."commentLikes" WHERE "commentId"=$1 and "userId"=$2 LIMIT 1) as "myStatus"
+    ) l ON true=true
+
+    WHERE "id" = $1
+    `, [commentId, userId]);
+
+    if (result.length > 0) {
+      return result[0];
+    }
+    return null;
+
+  }
 
 }
