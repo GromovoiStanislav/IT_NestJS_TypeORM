@@ -143,7 +143,7 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder()
       .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
-      .where("postId = :...postsIds", { postsIds })
+      .where("postId IN :...postsIds", { postsIds })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
@@ -162,7 +162,7 @@ export class CommentsRepository {
 
     const resultCount = await this.commentsRepository.createQueryBuilder()
       .select("COUNT(*)", "count")
-      .where("postId = :...postsIds", { postsIds })
+      .where("postId IN :...postsIds", { postsIds })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
 
