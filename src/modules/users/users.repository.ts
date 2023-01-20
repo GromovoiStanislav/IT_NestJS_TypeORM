@@ -146,9 +146,8 @@ export class UsersRepository {
       .skip(((pageNumber - 1) * pageSize))
       .take(pageSize);
 
-    console.log(QB1.getQuery());
-    console.log(QB2.getSql());
-
+    // console.log(QB1.getQuery());
+    // console.log(QB2.getSql());
 
     const items = await QB1.getMany();
     const resultCount = await QB2.getRawOne();
