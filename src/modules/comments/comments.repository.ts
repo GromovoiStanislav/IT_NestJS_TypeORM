@@ -145,7 +145,7 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
-      .where("postId IN :...postsIds", { postsIds })
+      .where("c.postId IN :...postsIds", { postsIds })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
