@@ -130,6 +130,14 @@ export class CommentsRepository {
     if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
       sortBy = "createdAt";
     }
+    if (sortBy === "content") {
+      sortBy = "c.content";
+    } else if (sortBy === "userLogin") {
+      sortBy = "c.userLogin";
+    } else {
+      sortBy = "u.createdAt";
+    }
+
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
 
@@ -141,8 +149,8 @@ export class CommentsRepository {
     // LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
     // `, [postsIds]);
 
-    const items = await this.commentsRepository.createQueryBuilder()
-      .select(["id", "postId", "content", "userId", "userLogin", "createdAt"])
+    const items = await this.commentsRepository.createQueryBuilder("c")
+      .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
       .where("postId IN :...postsIds", { postsIds })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
@@ -160,9 +168,9 @@ export class CommentsRepository {
    //    totalCount = +resultCount[0].count;
    //  }
 
-    const resultCount = await this.commentsRepository.createQueryBuilder()
+    const resultCount = await this.commentsRepository.createQueryBuilder("c")
       .select("COUNT(*)", "count")
-      .where("postId IN :...postsIds", { postsIds })
+      .where("c.postId IN :...postsIds", { postsIds })
       .getRawOne();
     const totalCount = +resultCount?.count || 0;
 
