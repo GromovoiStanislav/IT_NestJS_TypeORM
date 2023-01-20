@@ -154,7 +154,7 @@ export class CommentsRepository {
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
 
-    return { pagesCount, page, pageSize, totalCount, items };
+    return { pagesCount:0, page:0, pageSize:0, totalCount:0, items:[] };
   }
 
 
