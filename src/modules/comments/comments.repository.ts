@@ -126,20 +126,14 @@ export class CommentsRepository {
                                      }: PaginationParams,
                                      postsIds: string[]): Promise<PaginatorDto<Comment[]>> {
 
-
-    if (!["content", "userLogin", "createdAt"].includes(sortBy)) {
-      sortBy = "createdAt";
-    }
     if (sortBy === "content") {
       sortBy = "c.content";
     } else if (sortBy === "userLogin") {
       sortBy = "c.userLogin";
     } else {
-      sortBy = "u.createdAt";
+      sortBy = "c.createdAt";
     }
-
     const order = sortDirection === "asc" ? "ASC" : "DESC";
-
 
     // const items = await this.dataSource.query(`
     // SELECT "id", "postId", "content", "userId", "userLogin", "createdAt"
