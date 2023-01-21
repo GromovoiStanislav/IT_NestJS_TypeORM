@@ -9,7 +9,7 @@ export class Blog {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({collation: 'C'})
   name: string;
 
   @Column()
