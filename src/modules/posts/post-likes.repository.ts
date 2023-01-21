@@ -96,7 +96,7 @@ export class PostLikesRepository {
   }
 
 
-  async newestLikesOld(postIds: string[]): Promise<LikeDetailsViewDto[]> {
+  async newestLikes(postIds: string[]): Promise<LikeDetailsViewDto[]> {
     const result = await this.dataSource.query(`
     SELECT 
     t."postId",t."userId",t."userLogin",t."addedAt", t."RN"
@@ -124,7 +124,7 @@ export class PostLikesRepository {
   }
 
 
-  async newestLikes(postIds: string[]): Promise<LikeDetailsViewDto[]> {
+  async newestLikesNew(postIds: string[]): Promise<LikeDetailsViewDto[]> {
 
     const result = await this.dataSource
       .createQueryBuilder()
