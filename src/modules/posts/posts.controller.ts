@@ -11,7 +11,7 @@ import {
   CreatePostCommand,
   DeletePostCommand,
   GetAllPostsCommand,
-  GetOnePostCommand, GetOnePostWithLikesCommand, PostsUpdateLikeByIDCommand,
+  GetOnePostCommand, GetOnePostWithLikesCommand, GetPostTestCommand, PostsUpdateLikeByIDCommand,
   UpdatePostCommand
 } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
@@ -40,6 +40,13 @@ export class PostsController {
   async deletePost(@Param("id") postId: string): Promise<void> {
     await this.commandBus.execute(new DeletePostCommand(postId));
   }
+
+  @Get("test")
+  async getTest(
+  ): Promise<ViewPostDto> {
+    return await this.commandBus.execute(new GetPostTestCommand());
+  }
+
 
 
   @Post()

@@ -10,7 +10,7 @@ import {
   GetAllPostsByBlogOwnerIdUseCase,
   GetAllPostsUseCase,
   GetOnePostUseCase,
-  GetOnePostWithLikesUseCase,
+  GetOnePostWithLikesUseCase, GetPostTestUseCase,
   PostsUpdateLikeByIDUseCase,
   UpdatePostByBlogIdAndPostIdUseCase,
   UpdatePostUseCase
@@ -39,7 +39,8 @@ const useCases = [
   PostsUpdateLikeByIDUseCase,
   DeletePostByBlogIdAndPostIdUseCase,
   UpdatePostByBlogIdAndPostIdUseCase,
-  GetAllPostsByBlogOwnerIdUseCase
+  GetAllPostsByBlogOwnerIdUseCase,
+  GetPostTestUseCase
 ];
 
 @Module({

@@ -96,7 +96,7 @@ export class PostLikesRepository {
   }
 
 
-  async newestLikes(postIds: string[]): Promise<LikeDetailsViewDto[]> {
+  async newestLikesOld(postIds: string[]): Promise<LikeDetailsViewDto[]> {
     const result = await this.dataSource.query(`
     SELECT 
     t."postId",t."userId",t."userLogin",t."addedAt", t."RN"
@@ -124,7 +124,8 @@ export class PostLikesRepository {
   }
 
 
-  async newestLikesNew(postIds: string[]): Promise<LikeDetailsViewDto[]> {
+
+  async newestLikes(postIds: string[]): Promise<LikeDetailsViewDto[]> {
 
     const result = await this.dataSource
       .createQueryBuilder()
@@ -135,7 +136,7 @@ export class PostLikesRepository {
           .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
           .from(PostLike, "pl")
           .where("pl.postId in :...postIds", { postIds })
-          .andWhere("likeStatus = :likeStatus",{likeStatus:"Like"})
+          .andWhere("pl.likeStatus = :likeStatus",{likeStatus:"Like"})
           .andWhere((qb) => {
             const subQuery = qb
               .subQuery()
@@ -149,13 +150,50 @@ export class PostLikesRepository {
       .where("t.RN < 4")
       .getRawMany()
 
-
     return result.map(el => ({
       postId: el.postId,
       addedAt: el.addedAt,
       userId: el.userId,
       login: el.userLogin
     }));
+  }
+
+
+//: Promise<LikeDetailsViewDto[]>
+  async newestLikesNew(postIds: string[]) {
+    //await
+    const result =  this.dataSource
+      .createQueryBuilder()
+      .select(["t.postId", "t.userId", "t.userLogin", "t.addedAt", "t.RN"])
+      .from((subQuery) => {
+        return subQuery
+          .select(["pl.postId", "pl.userId","pl.userLogin","pl.addedAt"])
+          .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
+          .from(PostLike, "pl")
+          .where("pl.postId in :...postIds", { postIds })
+          .andWhere("pl.likeStatus = :likeStatus",{likeStatus:"Like"})
+          .andWhere((qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select("u.name")
+              .from(User, "u")
+              .where("u.isBanned = false")
+              .getQuery()
+            return "pl.userId IN " + subQuery
+          })
+      }, "t")
+      .where("t.RN < 4")
+      //.getRawMany()
+      .getSql()
+
+    return result
+
+    // return result.map(el => ({
+    //   postId: el.postId,
+    //   addedAt: el.addedAt,
+    //   userId: el.userId,
+    //   login: el.userLogin
+    // }));
   }
 
 }
