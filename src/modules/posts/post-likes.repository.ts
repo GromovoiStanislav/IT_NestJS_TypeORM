@@ -129,25 +129,37 @@ export class PostLikesRepository {
 
     const result = await this.dataSource
       .createQueryBuilder()
-      .select(["t.postId", "t.userId", "t.userLogin", "t.addedAt", "t.RN"])
+      .select(`"t"."postId"`,"postId")
+      .addSelect(`"t"."userId"`,"userId")
+      .addSelect(`"t"."userLogin"`,"userLogin")
+      .addSelect(`"t"."addedAt"`,"addedAt")
+
       .from((subQuery) => {
+
         return subQuery
-          .select(["pl.postId", "pl.userId","pl.userLogin","pl.addedAt"])
+          .select("pl.postId","postId")
+          .addSelect("pl.userId","userId")
+          .addSelect("pl.userLogin","userLogin")
+          .addSelect("pl.addedAt","addedAt")
           .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
           .from(PostLike, "pl")
-          .where("pl.postId in :...postIds", { postIds })
-          .andWhere("pl.likeStatus = :likeStatus",{likeStatus:"Like"})
+          .where("pl.postId in (:...postIds)", { postIds })
+          .andWhere("pl.likeStatus = 'Like'")
           .andWhere((qb) => {
+
             const subQuery = qb
               .subQuery()
-              .select("u.name")
+              .select("u.id",'id')
               .from(User, "u")
               .where("u.isBanned = false")
               .getQuery()
+
             return "pl.userId IN " + subQuery
+
           })
       }, "t")
-      .where("t.RN < 4")
+
+      .where(`"t"."RN" < 4`)
       .getRawMany()
 
     return result.map(el => ({
@@ -162,38 +174,46 @@ export class PostLikesRepository {
 //: Promise<LikeDetailsViewDto[]>
   async newestLikesNew(postIds: string[]) {
     //await
-    const result =  this.dataSource
+    return this.dataSource
       .createQueryBuilder()
-      .select(["t.postId", "t.userId", "t.userLogin", "t.addedAt", "t.RN"])
+
+      .select(`"t"."postId"`,"postId")
+      .addSelect(`"t"."userId"`,"userId")
+      .addSelect(`"t"."userLogin"`,"userLogin")
+      .addSelect(`"t"."addedAt"`,"addedAt")
+      //.addSelect("t.RN","RN")
+
       .from((subQuery) => {
+
         return subQuery
-          .select(["pl.postId", "pl.userId","pl.userLogin","pl.addedAt"])
+          .select("pl.postId","postId")
+          .addSelect("pl.userId","userId")
+          .addSelect("pl.userLogin","userLogin")
+          .addSelect("pl.addedAt","addedAt")
           .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
           .from(PostLike, "pl")
-          .where("pl.postId in :...postIds", { postIds })
-          .andWhere("pl.likeStatus = :likeStatus",{likeStatus:"Like"})
+          .where("pl.postId in (:...postIds)", { postIds })
+          .andWhere("pl.likeStatus = 'Like'")
           .andWhere((qb) => {
+
             const subQuery = qb
               .subQuery()
-              .select("u.name")
+              .select("u.id",'id')
               .from(User, "u")
               .where("u.isBanned = false")
               .getQuery()
+
             return "pl.userId IN " + subQuery
+
           })
       }, "t")
-      .where("t.RN < 4")
+
+      .where(`"t"."RN" < 4`)
       //.getRawMany()
       .getSql()
 
-    return result
 
-    // return result.map(el => ({
-    //   postId: el.postId,
-    //   addedAt: el.addedAt,
-    //   userId: el.userId,
-    //   login: el.userLogin
-    // }));
+
   }
 
 }

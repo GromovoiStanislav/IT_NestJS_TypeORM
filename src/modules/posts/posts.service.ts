@@ -387,6 +387,6 @@ export class GetPostTestUseCase implements ICommandHandler<GetPostTestCommand> {
   }
 
   async execute(command: GetPostTestCommand) {
-    return this.postLikesRepository.newestLikesNew( []);
+    return this.postLikesRepository.newestLikesNew( ['1']);
   }
 }
