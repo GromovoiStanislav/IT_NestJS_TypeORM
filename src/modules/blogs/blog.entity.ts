@@ -11,7 +11,7 @@ export class Blog {
 
   // ALTER TABLE public.blogs
   // ALTER COLUMN name TYPE character varying COLLATE pg_catalog."C";
-  @Column({collation: 'C'})
+  @Column({ collation: 'C'})
   name: string;
 
   @Column()

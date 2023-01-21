@@ -19,7 +19,7 @@ export class BlogBannedUser {
   @Column()
   userId: string;
 
-  // ALTER TABLE public.blogBannedUsers
+  // ALTER TABLE public."blogBannedUsers"
   // ALTER COLUMN login TYPE character varying COLLATE pg_catalog."C";
   @Column({collation: 'C'})
   login: string;
