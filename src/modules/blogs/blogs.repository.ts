@@ -31,57 +31,6 @@ export class BlogsRepository {
   }
 
 
-  async getAllBlogs(searchName: string, {
-                      pageNumber,
-                      pageSize,
-                      sortBy,
-                      sortDirection
-                    }: PaginationParams,
-                    includeBanned: boolean,
-                    userId?: string): Promise<PaginatorDto<Blog[]>> {
-
-    if (!["name", "websiteUrl", "description", "createdAt", "userLogin"].includes(sortBy)) {
-      sortBy = "createdAt";
-    }
-    const order = sortDirection === "asc" ? "ASC" : "DESC";
-
-    let filter = `WHERE 1=1`;
-    if (!includeBanned) {
-      filter = filter + ` and "isBanned" = false`;
-    }
-    if (userId) {
-      filter = filter + ` and "userId" = '${userId}'`;
-    }
-    if (searchName) {
-      filter = filter + ` and "name" ~* '${searchName}'`;
-    }
-
-    const items = await this.dataSource.query(`
-    SELECT "id", "name", "websiteUrl", "description", "createdAt", "userId", "userLogin", "isBanned", "banDate"
-    FROM public."blogs"
-    ${filter}
-    ORDER BY "${sortBy}" COLLATE "C" ${order}
-    LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    `);
-
-
-    let totalCount = 0;
-    const resultCount = await this.dataSource.query(`
-    SELECT COUNT(*)
-    FROM public."blogs"
-    ${filter};
-    `);
-    if (resultCount.length > 0) {
-      totalCount = +resultCount[0].count;
-    }
-
-    const pagesCount = Math.ceil(totalCount / pageSize);
-    const page = pageNumber;
-
-    return { pagesCount, page, pageSize, totalCount, items };
-  }
-
-
   async deleteBlog(id: string): Promise<number> {
     const result = await this.blogsRepository.delete({ id });
     return result.affected;
@@ -147,6 +96,74 @@ export class BlogsRepository {
     return await this.blogBannedUsersRepository.findOneBy({ blogId, userId });
   }
 
+
+  /////////////////////////////////////////////////////////////
+
+  async getAllBlogs(searchName: string, {
+                      pageNumber,
+                      pageSize,
+                      sortBy,
+                      sortDirection
+                    }: PaginationParams,
+                    includeBanned: boolean,
+                    userId?: string): Promise<PaginatorDto<Blog[]>> {
+
+    const QB1 = this.blogsRepository.createQueryBuilder("b");
+    const QB2 = this.blogsRepository.createQueryBuilder("b");
+
+    QB1.select(["b.id", "b.name", "b.websiteUrl", "b.description", "b.createdAt", "b.userId", "b.userLogin", "b.isBanned", "b.banDate"]);
+    QB2.select("COUNT(*)", "count");
+
+    QB1.where("1 = 1");
+    QB2.where("1 = 1");
+
+    if (!includeBanned) {
+      QB1.andWhere("b.isBanned = false");
+      QB2.andWhere("b.isBanned = false");
+    }
+    if (userId) {
+      QB1.andWhere("b.userId = :userId", { userId });
+      QB2.andWhere("b.userId = :userId", { userId });
+    }
+    if (searchName) {
+      QB1.andWhere("b.name ~* :searchName", { searchName });
+      QB2.andWhere("b.name ~* :searchName", { searchName });
+    }
+
+    if (sortBy === "name") {
+      sortBy = "b.name";
+    } else if (sortBy === "websiteUrl") {
+      sortBy = "b.websiteUrl";
+    } else if (sortBy === "description") {
+      sortBy = "b.description";
+    } else if (sortBy === "userLogin") {
+      sortBy = "b.userLogin";
+    } else {
+      sortBy = "b.createdAt";
+    }
+    const order = sortDirection === "asc" ? "ASC" : "DESC";
+
+    QB1
+      .orderBy(sortBy, order)
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize);
+
+    QB1
+      .orderBy(sortBy, order)
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize);
+
+    const items = await QB1.getMany();
+    const resultCount = await QB2.getRawOne();
+    const totalCount = +resultCount?.count || 0;
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
+
   async getAllBannedUsersForBlog(
     blogId: string,
     searchLogin: string,
@@ -157,34 +174,38 @@ export class BlogsRepository {
       sortDirection
     }: PaginationParams): Promise<PaginatorDto<BlogBannedUser[]>> {
 
-    if (!["login", "banReason", "createdAt"].includes(sortBy)) {
-      sortBy = "createdAt";
+    const QB1 = this.blogBannedUsersRepository.createQueryBuilder("bbu");
+    const QB2 = this.blogBannedUsersRepository.createQueryBuilder("bbu");
+
+    QB1.select(["bbu.blogId", "bbu.userId", "bbu.login", "bbu.createdAt", "bbu.banReason"]);
+    QB2.select("COUNT(*)", "count");
+
+    QB1.where("bbu.blogId = :blogId", { blogId });
+    QB2.where("bbu.blogId = :blogId", { blogId });
+
+    if (searchLogin) {
+      QB1.andWhere("bbu.login ~* :searchLogin", { searchLogin });
+      QB2.andWhere("bbu.login ~* :searchLogin", { searchLogin });
+    }
+
+
+    if (sortBy === "login") {
+      sortBy = "bbu.login";
+    } else if (sortBy === "banReason") {
+      sortBy = "bbu.banReason";
+    } else {
+      sortBy = "bbu.createdAt";
     }
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
-    let filter = `WHERE "blogId" = $1`;
-    if (searchLogin) {
-      filter = filter + ` and "login" ~* '${searchLogin}'`;
-    }
+    QB1
+      .orderBy(sortBy, order)
+      .skip((pageNumber - 1) * pageSize)
+      .take(pageSize);
 
-    const items = await this.dataSource.query(`
-    SELECT "blogId", "userId", "login", "createdAt", "banReason"
-    FROM public."blogBannedUsers"
-    ${filter}
-    ORDER BY "${sortBy}" COLLATE "C" ${order}
-    LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize};
-    `, [blogId]);
-
-
-    let totalCount = 0;
-    const resultCount = await this.dataSource.query(`
-    SELECT COUNT(*)
-    FROM public."blogBannedUsers"
-    ${filter};
-    `, [blogId]);
-    if (resultCount.length > 0) {
-      totalCount = +resultCount[0].count;
-    }
+    const items = await QB1.getMany();
+    const resultCount = await QB2.getRawOne();
+    const totalCount = +resultCount?.count || 0;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
