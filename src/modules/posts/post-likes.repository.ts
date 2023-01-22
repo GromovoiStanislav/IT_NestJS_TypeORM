@@ -176,11 +176,11 @@ export class PostLikesRepository {
     //await
     return this.dataSource
       .createQueryBuilder()
-
-      .select(`"t"."postId"`,"postId")
-      .addSelect(`"t"."userId"`,"userId")
-      .addSelect(`"t"."userLogin"`,"userLogin")
-      .addSelect(`"t"."addedAt"`,"addedAt")
+        .select([`"t"."postId"`,`"t"."postId"`,`"t"."userId"`,`"t"."userLogin"`,`"t"."addedAt"`])
+      // .select(`"t"."postId"`,"postId")
+      // .addSelect(`"t"."userId"`,"userId")
+      // .addSelect(`"t"."userLogin"`,"userLogin")
+      // .addSelect(`"t"."addedAt"`,"addedAt")
       //.addSelect("t.RN","RN")
 
       .from((subQuery) => {
