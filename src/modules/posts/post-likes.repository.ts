@@ -176,7 +176,7 @@ export class PostLikesRepository {
     //await
     return this.dataSource
       .createQueryBuilder()
-        .select([`"t"."postId"`,`"t"."postId"`,`"t"."userId"`,`"t"."userLogin"`,`"t"."addedAt"`])
+        .select([`"t"."postId"`,`"t"."userId"`,`"t"."userLogin"`,`"t"."addedAt"`])
       // .select(`"t"."postId"`,"postId")
       // .addSelect(`"t"."userId"`,"userId")
       // .addSelect(`"t"."userLogin"`,"userLogin")
@@ -186,10 +186,11 @@ export class PostLikesRepository {
       .from((subQuery) => {
 
         return subQuery
-          .select("pl.postId","postId")
-          .addSelect("pl.userId","userId")
-          .addSelect("pl.userLogin","userLogin")
-          .addSelect("pl.addedAt","addedAt")
+          .select([`"pl"."postId"`,`"pl"."userId"`,`"pl"."userLogin"`,`"pl"."addedAt"`])
+          // .select("pl.postId","postId")
+          // .addSelect("pl.userId","userId")
+          // .addSelect("pl.userLogin","userLogin")
+          // .addSelect("pl.addedAt","addedAt")
           .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
           .from(PostLike, "pl")
           .where("pl.postId in (:...postIds)", { postIds })
