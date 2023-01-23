@@ -16,7 +16,7 @@ export default class QuizMapper {
     quiz.correctAnswers = inputQuiz.correctAnswers;
     quiz.published = false;
     quiz.createdAt = dateAt();
-    quiz.updatedAt = quiz.createdAt;
+    quiz.updatedAt = null;
     return quiz;
   }
 
