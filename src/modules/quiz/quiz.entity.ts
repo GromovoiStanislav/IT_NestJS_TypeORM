@@ -6,7 +6,7 @@ export class Quiz {
   @PrimaryColumn()
   id: string;
 
-  @Column({ collation: 'C'})
+  @Column({ collation: "C" })
   body: string;
 
   @Column({ type: "json" })
@@ -18,7 +18,7 @@ export class Quiz {
   @Column()
   createdAt: string;
 
-  @Column()
+  @Column({ default: null })
   updatedAt: string;
 
 }
