@@ -10,70 +10,62 @@ import {
   HttpStatus,
   Put, Query
 } from "@nestjs/common";
-import { QuizService } from "./quiz.service";
-import { CreateQuizDto } from "./dto/create-quiz.dto";
+
 import { PublishQuizDto } from "./dto/publish-quiz.dto";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { ViewQuizDto } from "./dto/view-quiz.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { CommandBus } from "@nestjs/cqrs";
+import {
+  DeleteQuestionCommand,
+  CreateQuestionCommand,
+  UpdateQuestionCommand,
+  PublishQuestionCommand, FindAllQuestionsCommand
+} from "./quiz.service";
+import { InputQuizDto } from "./dto/input-quiz.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
+
+
+///////////////////////////////////////////////////////
 
 @UseGuards(BaseAuthGuard)
 @Controller("sa/quiz/questions")
 export class SaQuizController {
-  constructor(private readonly quizService: QuizService) {
+  constructor(private commandBus: CommandBus) {
   }
 
   @Post()
-  createQuestion(@Body() createQuizDto: CreateQuizDto): ViewQuizDto {
-    return {
-      "body": "stringstri",
-      "correctAnswers": [
-        "string"
-      ]
-    };
+  @HttpCode(HttpStatus.CREATED)
+  async createQuestion(@Body() inputQuizDto: InputQuizDto): Promise<ViewQuizDto> {
+    return this.commandBus.execute(new CreateQuestionCommand(inputQuizDto));
   }
 
   @Get()
-  findAllQuestion(@Query() query, @Pagination() paginationParams: PaginationParams) {
+  async findAllQuestion(@Query() query,
+                        @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewQuizDto[]>> {
     const bodySearchTerm = query.bodySearchTerm as string || "";
     const publishedStatus = query.publishedStatus as string || "all";
 
-    return {
-      "pagesCount": 0,
-      "page": 0,
-      "pageSize": 0,
-      "totalCount": 0,
-      "items": [
-        {
-          "id": "string",
-          "body": "string",
-          "correctAnswers": [
-            "string"
-          ],
-          "published": false,
-          "createdAt": "2023-01-23T04:57:32.321Z",
-          "updatedAt": "2023-01-23T04:57:32.321Z"
-        }
-      ]
-    };
-
-
+    return this.commandBus.execute(new FindAllQuestionsCommand(bodySearchTerm.trim(), publishedStatus.trim(), paginationParams));
   }
 
 
   @Put(":id")
-  updateQuestion(@Param("id") id: number, @Body() createQuizDto: CreateQuizDto) {
-
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateQuestion(@Param("id") id: number, @Body() inputQuizDto: InputQuizDto) {
+    await this.commandBus.execute(new UpdateQuestionCommand(id, inputQuizDto));
   }
 
   @Put(":id/publish")
-  publishQuestion(@Param("id") id: number, @Body() publishQuizDto: PublishQuizDto) {
-
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async publishQuestion(@Param("id") id: number, @Body() publishQuizDto: PublishQuizDto) {
+    await this.commandBus.execute(new PublishQuestionCommand(id, publishQuizDto));
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteQuestion(@Param("id") id: number) {
+  async deleteQuestion(@Param("id") id: number) {
+    await this.commandBus.execute(new DeleteQuestionCommand(id));
   }
 }
