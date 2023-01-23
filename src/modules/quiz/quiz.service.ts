@@ -129,7 +129,7 @@ export class PublishQuestionCommand {
   }
 }
 
-@CommandHandler(UpdateQuestionCommand)
+@CommandHandler(PublishQuestionCommand)
 export class PublishQuestionUseCase implements ICommandHandler<PublishQuestionCommand> {
   constructor(protected quizzesRepository: QuizzesRepository) {
   }
