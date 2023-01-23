@@ -1,9 +1,31 @@
-import { Module } from '@nestjs/common';
-import { QuizService } from './quiz.service';
-import { SaQuizController } from './quiz.controller';
+import { Module } from "@nestjs/common";
+import { SaQuizController } from "./quiz.controller";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Quiz } from "./quiz.entity";
+import {
+  ClearAllQuestionsUseCase, CreateQuestionUseCase,
+  DeleteQuestionUseCase,
+  FindAllQuestionsUseCase,
+  FindOneQuestionUseCase,
+  PublishQuestionUseCase, UpdateQuestionUseCase
+} from "./quiz.service";
+import { QuizzesRepository } from "./quiz.repository";
+
+
+const useCases = [
+  ClearAllQuestionsUseCase,
+  CreateQuestionUseCase,
+  DeleteQuestionUseCase,
+  UpdateQuestionUseCase,
+  FindOneQuestionUseCase,
+  FindAllQuestionsUseCase,
+  PublishQuestionUseCase
+];
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Quiz])],
   controllers: [SaQuizController],
-  providers: [QuizService]
+  providers: [...useCases, QuizzesRepository]
 })
-export class QuizModule {}
+export class QuizModule {
+}

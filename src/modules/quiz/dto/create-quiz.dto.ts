@@ -1,16 +1,7 @@
-import { Transform, TransformFnParams } from "class-transformer";
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsString, Length } from "class-validator";
-
-
 export class CreateQuizDto {
-  @Transform(({ value }: TransformFnParams) => value?.trim())
-  @IsString()
-  @IsNotEmpty()
-  @Length(10, 500)
   body: string;
-
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  correctAnswers: [string | number];
+  correctAnswers: string[];
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
