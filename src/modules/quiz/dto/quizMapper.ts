@@ -5,6 +5,8 @@ import { Quiz } from "../quiz.entity";
 import { ViewQuizDto } from "./view-quiz.dto";
 import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateQuizDto } from "./update-quiz.dto";
+import { InputPublishQuizDto } from "./input-publish-quiz.dto";
+import { PublishQuizDto } from "./publish-quiz.dto";
 
 
 export default class QuizMapper {
@@ -24,6 +26,13 @@ export default class QuizMapper {
     const quiz = new UpdateQuizDto();
     quiz.body = inputQuiz.body;
     quiz.correctAnswers = inputQuiz.correctAnswers;
+    quiz.updatedAt = dateAt();
+    return quiz;
+  }
+
+  static fromInputToUpdatePublish(inputQuiz: InputPublishQuizDto): PublishQuizDto {
+    const quiz = new PublishQuizDto();
+    quiz.published = inputQuiz.published;
     quiz.updatedAt = dateAt();
     return quiz;
   }

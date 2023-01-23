@@ -11,7 +11,7 @@ import {
   Put, Query
 } from "@nestjs/common";
 
-import { PublishQuizDto } from "./dto/publish-quiz.dto";
+import { InputPublishQuizDto } from "./dto/input-publish-quiz.dto";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { ViewQuizDto } from "./dto/view-quiz.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
@@ -59,7 +59,7 @@ export class SaQuizController {
 
   @Put(":id/publish")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async publishQuestion(@Param("id") id: string, @Body() publishQuizDto: PublishQuizDto) {
+  async publishQuestion(@Param("id") id: string, @Body() publishQuizDto: InputPublishQuizDto) {
     await this.commandBus.execute(new PublishQuestionCommand(id, publishQuizDto));
   }
 

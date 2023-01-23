@@ -4,10 +4,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Quiz } from "./quiz.entity";
 import { CreateQuizDto } from "./dto/create-quiz.dto";
 import { UpdateQuizDto } from "./dto/update-quiz.dto";
-import { PublishQuizDto } from "./dto/publish-quiz.dto";
+import { InputPublishQuizDto } from "./dto/input-publish-quiz.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { User } from "../users/user.entity";
+import { PublishQuizDto } from "./dto/publish-quiz.dto";
 
 @Injectable()
 export class QuizzesRepository {

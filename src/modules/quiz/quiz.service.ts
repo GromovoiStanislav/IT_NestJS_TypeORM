@@ -5,7 +5,7 @@ import { InputQuizDto } from "./dto/input-quiz.dto";
 import QuizMapper from "./dto/quizMapper";
 import { ViewQuizDto } from "./dto/view-quiz.dto";
 import { Quiz } from "./quiz.entity";
-import { PublishQuizDto } from "./dto/publish-quiz.dto";
+import { InputPublishQuizDto } from "./dto/input-publish-quiz.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 
@@ -125,7 +125,7 @@ export class UpdateQuestionUseCase implements ICommandHandler<UpdateQuestionComm
 
 ////////////////////////////////////////////////////////////
 export class PublishQuestionCommand {
-  constructor(public id: string, public publishQuizDto: PublishQuizDto) {
+  constructor(public id: string, public publishQuizDto: InputPublishQuizDto) {
   }
 }
 
@@ -139,7 +139,8 @@ export class PublishQuestionUseCase implements ICommandHandler<PublishQuestionCo
     // if (!question) {
     //   throw new NotFoundException();
     // }
-    const result = await this.quizzesRepository.updatePublishQuiz(command.id, command.publishQuizDto);
+    const updateQuestion = QuizMapper.fromInputToUpdatePublish(command.publishQuizDto);
+    const result = await this.quizzesRepository.updatePublishQuiz(command.id, updateQuestion);
     if (!result) {
       throw new NotFoundException();
     }
