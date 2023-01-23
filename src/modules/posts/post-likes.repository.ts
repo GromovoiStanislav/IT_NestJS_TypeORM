@@ -129,18 +129,11 @@ export class PostLikesRepository {
 
     const result = await this.dataSource
       .createQueryBuilder()
-      .select(`"t"."postId"`,"postId")
-      .addSelect(`"t"."userId"`,"userId")
-      .addSelect(`"t"."userLogin"`,"userLogin")
-      .addSelect(`"t"."addedAt"`,"addedAt")
-
+      .select([`"t"."postId"`,`"t"."userId"`,`"t"."userLogin"`,`"t"."addedAt"`])
       .from((subQuery) => {
 
         return subQuery
-          .select("pl.postId","postId")
-          .addSelect("pl.userId","userId")
-          .addSelect("pl.userLogin","userLogin")
-          .addSelect("pl.addedAt","addedAt")
+          .select([`"pl"."postId"`,`"pl"."userId"`,`"pl"."userLogin"`,`"pl"."addedAt"`])
           .addSelect("ROW_NUMBER() OVER(PARTITION BY pl.postId ORDER BY pl.addedAt DESC)", "RN")
           .from(PostLike, "pl")
           .where("pl.postId in (:...postIds)", { postIds })
