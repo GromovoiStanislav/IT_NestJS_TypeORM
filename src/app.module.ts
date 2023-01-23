@@ -13,16 +13,18 @@ import { CommentsModule } from "./modules/comments/comments.module";
 import { SecurityModule } from "./modules/security/security.module";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { DatabasePostgresModule } from "./db/postgres.module";
+import { QuizModule } from "./modules/quiz/quiz.module";
 
 
 @Module({
   imports: [CqrsModule, configModule,
     DatabasePostgresModule,
-    UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule, CommentsModule, SecurityModule,
+    UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule, CommentsModule, SecurityModule, QuizModule,
     ThrottlerModule.forRoot({
       ttl: 10,
       limit: 500
     })
+
   ],
   controllers: [AppController],
   providers: [AppService]
