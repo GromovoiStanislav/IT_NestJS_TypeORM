@@ -31,7 +31,7 @@ export default class QuizMapper {
 
   static fromModelToView(quiz: Quiz): ViewQuizDto {
     const viewQuiz = new ViewQuizDto();
-    viewQuiz.id = quiz.id.toString();
+    viewQuiz.id = quiz.id;
     viewQuiz.body = quiz.body;
     viewQuiz.correctAnswers = quiz.correctAnswers;
     viewQuiz.published = quiz.published;

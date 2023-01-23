@@ -29,7 +29,7 @@ export class ClearAllQuestionsUseCase implements ICommandHandler<ClearAllQuestio
 
 ////////////////////////////////////////////////////////////
 export class DeleteQuestionCommand {
-  constructor(public id: number) {
+  constructor(public id: string) {
   }
 }
 
@@ -66,7 +66,7 @@ export class CreateQuestionUseCase implements ICommandHandler<CreateQuestionComm
 
 ////////////////////////////////////////////////////////////
 export class FindOneQuestionCommand {
-  constructor(public id: number) {
+  constructor(public id: string) {
   }
 }
 
@@ -100,7 +100,7 @@ export class FindAllQuestionsUseCase implements ICommandHandler<FindAllQuestions
 
 ////////////////////////////////////////////////////////////
 export class UpdateQuestionCommand {
-  constructor(public id: number, public inputQuiz: InputQuizDto) {
+  constructor(public id: string, public inputQuiz: InputQuizDto) {
   }
 }
 
@@ -125,7 +125,7 @@ export class UpdateQuestionUseCase implements ICommandHandler<UpdateQuestionComm
 
 ////////////////////////////////////////////////////////////
 export class PublishQuestionCommand {
-  constructor(public id: number, public publishQuizDto: PublishQuizDto) {
+  constructor(public id: string, public publishQuizDto: PublishQuizDto) {
   }
 }
 

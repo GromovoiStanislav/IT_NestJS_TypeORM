@@ -53,19 +53,19 @@ export class SaQuizController {
 
   @Put(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async updateQuestion(@Param("id") id: number, @Body() inputQuizDto: InputQuizDto) {
+  async updateQuestion(@Param("id") id: string, @Body() inputQuizDto: InputQuizDto) {
     await this.commandBus.execute(new UpdateQuestionCommand(id, inputQuizDto));
   }
 
   @Put(":id/publish")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async publishQuestion(@Param("id") id: number, @Body() publishQuizDto: PublishQuizDto) {
+  async publishQuestion(@Param("id") id: string, @Body() publishQuizDto: PublishQuizDto) {
     await this.commandBus.execute(new PublishQuestionCommand(id, publishQuizDto));
   }
 
   @Delete(":id")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteQuestion(@Param("id") id: number) {
+  async deleteQuestion(@Param("id") id: string) {
     await this.commandBus.execute(new DeleteQuestionCommand(id));
   }
 }

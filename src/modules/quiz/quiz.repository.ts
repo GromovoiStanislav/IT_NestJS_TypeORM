@@ -23,13 +23,13 @@ export class QuizzesRepository {
   }
 
 
-  async deleteQuiz(id: number): Promise<number> {
+  async deleteQuiz(id: string): Promise<number> {
     const result = await this.quizzesRepository.delete({ id });
     return result.affected;
   }
 
 
-  async findQuiz(id: number): Promise<Quiz> {
+  async findQuiz(id: string): Promise<Quiz> {
     return await this.quizzesRepository.findOneBy({ id });
 
   }
@@ -38,12 +38,12 @@ export class QuizzesRepository {
     return await this.quizzesRepository.save(createQuizDto);
   }
 
-  async updateQuiz(id: number, updateQuizDto: UpdateQuizDto): Promise<number> {
+  async updateQuiz(id: string, updateQuizDto: UpdateQuizDto): Promise<number> {
     const result = await this.quizzesRepository.update({ id }, updateQuizDto);
     return result.affected;
   }
 
-  async updatePublishQuiz(id: number, updatePublishDto: PublishQuizDto): Promise<number> {
+  async updatePublishQuiz(id: string, updatePublishDto: PublishQuizDto): Promise<number> {
     const result = await this.quizzesRepository.update({ id }, updatePublishDto);
     return result.affected;
   }
