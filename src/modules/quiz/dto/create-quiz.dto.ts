@@ -1,4 +1,5 @@
 export class CreateQuizDto {
+  id: string;
   body: string;
   correctAnswers: string[];
   published: boolean;

@@ -7,13 +7,14 @@ import { PaginatorDto } from "../../../commonDto/paginator.dto";
 import { UpdateQuizDto } from "./update-quiz.dto";
 import { InputPublishQuizDto } from "./input-publish-quiz.dto";
 import { PublishQuizDto } from "./publish-quiz.dto";
+import uid from "../../../utils/IdGenerator";
 
 
 export default class QuizMapper {
 
   static fromInputToCreate(inputQuiz: InputQuizDto): CreateQuizDto {
     const quiz = new CreateQuizDto();
-    //user.id = uid();
+    quiz.id = uid();
     quiz.body = inputQuiz.body;
     quiz.correctAnswers = inputQuiz.correctAnswers;
     quiz.published = false;
