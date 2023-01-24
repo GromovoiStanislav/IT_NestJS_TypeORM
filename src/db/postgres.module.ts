@@ -1,8 +1,6 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
 import { Module } from "@nestjs/common";
-import { User } from "../modules/users/user.entity";
-import { Device } from "../modules/security/devices.entity";
 
 
 @Module({
@@ -10,7 +8,7 @@ import { Device } from "../modules/security/devices.entity";
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
 
-        if (configService.get<string>("NODE_ENV") === "production") {
+        if (configService.get<string>("NODE_ENV").toLowerCase() === "production") {
 
           return {
             type: "postgres",
