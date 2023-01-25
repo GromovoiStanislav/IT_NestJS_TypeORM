@@ -6,7 +6,7 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 @Controller('pair-game-quiz/pairs')
 export class PairGameQuizController {
 
-  @Get("mu-current")
+  @Get("my-current")
   async getCurrentCame( @CurrentUserId() userId: string){
     return {
       "id": "string",
@@ -104,7 +104,7 @@ export class PairGameQuizController {
     return { status: "PendingSecondPlayer" }
   }
 
-  @Post("mu-current/answers")
+  @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
   async sendAnswer(@CurrentUserId() userId: string){
     return {
