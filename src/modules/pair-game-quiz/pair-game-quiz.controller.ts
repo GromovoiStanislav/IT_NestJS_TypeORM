@@ -1,8 +1,18 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UseGuards
+} from "@nestjs/common";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
-@UseGuards(AuthUserIdGuard)
+//@UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
 export class PairGameQuizController {
 
@@ -53,7 +63,14 @@ export class PairGameQuizController {
 
 
   @Get(":id")
-  async getCameById(@Param("id", ParseUUIDPipe) gameId: string,
+  async getCameById(@Param("id",  new ParseUUIDPipe({
+                        exceptionFactory: (errors) => {
+                          console.log('errors',errors);
+                          const errorsForResponse = [];
+                          errorsForResponse.push({ field: 'id', message: errors });
+                          throw new BadRequestException(errorsForResponse);
+                        }
+                      })) gameId: string,
                     @CurrentUserId() userId: string) {
     return {
       "id": "string",
