@@ -21,10 +21,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
 
     "typeorm":  "ts-node ./node_modules/typeorm/cli.js -d ./src/db/data-source.ts",
-    "migration:drop": "yarn run typeorm schema:drop",
-    "migration:generate": "yarn run typeorm migration:generate ./src/db/migrations/name",
-    "migration:run": "yarn run typeorm migration:run",
-    "migration:show": "yarn run typeorm migration:show"
+    "migration:drop": "yarn typeorm schema:drop",
+    "migration:generate": "yarn typeorm migration:generate ./src/db/migrations/name",
+    "migration:run": "yarn typeorm migration:run",
+    "migration:show": "yarn typeorm migration:show"
 
   },
   "dependencies": {
