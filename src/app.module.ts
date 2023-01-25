@@ -14,14 +14,14 @@ import { SecurityModule } from "./modules/security/security.module";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { DatabasePostgresModule } from "./db/postgres.module";
 import { QuizModule } from "./modules/quiz/quiz.module";
-import { PairQuizGameModule } from "./modules/pair-quiz-game/pair-quiz-game.module";
+import { PairGameQuizModule } from "./modules/pair-game-quiz/pair-game-quiz.module";
 
 
 @Module({
   imports: [CqrsModule, configModule,
     DatabasePostgresModule,
     UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule, CommentsModule, SecurityModule,
-    QuizModule, PairQuizGameModule,
+    QuizModule, PairGameQuizModule,
     ThrottlerModule.forRoot({
       ttl: 10,
       limit: 500

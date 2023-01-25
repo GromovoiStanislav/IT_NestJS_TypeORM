@@ -1,15 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CqrsModule } from "@nestjs/cqrs";
-import { PairQuizGameController } from './pair-quiz-game.controller';
+import { PairGameQuizController } from './pair-game-quiz.controller';
 import { UserIdMiddleware } from "../../middlewares/userId.middleware";
 import { JWT_Module } from "../jwt/jwt.module";
 
 @Module({
   imports: [TypeOrmModule.forFeature([]), CqrsModule,JWT_Module],
-  controllers: [PairQuizGameController]
+  controllers: [PairGameQuizController]
 })
-export class PairQuizGameModule implements NestModule {
+export class PairGameQuizModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserIdMiddleware)

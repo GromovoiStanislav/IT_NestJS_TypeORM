@@ -3,8 +3,8 @@ import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
 @UseGuards(AuthUserIdGuard)
-@Controller('pair-quiz-game/pairs')
-export class PairQuizGameController {
+@Controller('pair-game-quiz/pairs')
+export class PairGameQuizController {
 
   @Get("mu-current")
   async getCurrentCame( @CurrentUserId() userId: string){
