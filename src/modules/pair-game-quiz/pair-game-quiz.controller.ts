@@ -65,10 +65,7 @@ export class PairGameQuizController {
   @Get(":id")
   async getCameById(@Param("id",  new ParseUUIDPipe({
                         exceptionFactory: (errors) => {
-                          console.log('errors',errors);
-                          const errorsForResponse = [];
-                          errorsForResponse.push({ field: 'id', message: errors });
-                          throw new BadRequestException(errorsForResponse);
+                          throw new BadRequestException([{ field: 'id', message: errors }]);
                         }
                       })) gameId: string,
                     @CurrentUserId() userId: string) {
