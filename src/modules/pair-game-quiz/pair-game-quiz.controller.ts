@@ -12,10 +12,14 @@ import {
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { ValidationIdPipe } from "../../pipes/validation-id.pipe";
+import { PairGameQuizService } from "./pair-game-quiz.service";
 
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
 export class PairGameQuizController {
+
+  constructor(private pairGameQuizService: PairGameQuizService) {
+  }
 
   @Get("my-current")
   async getCurrentCame(@CurrentUserId() userId: string) {
@@ -116,8 +120,8 @@ export class PairGameQuizController {
 
   @Post("connection")
   @HttpCode(HttpStatus.OK)
-  async connectGame(@CurrentUserId() userId: string) {
-    return { status: "PendingSecondPlayer" };
+  async connectGame(@CurrentUserId() userId: string):Promise<string> {
+    return this.pairGameQuizService.connectGame(userId)
   }
 
 

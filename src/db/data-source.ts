@@ -8,6 +8,7 @@ import { CommentLike } from "../modules/comments/comment-like.entity";
 import { Blog } from "../modules/blogs/blog.entity";
 import { BlogBannedUser } from "../modules/blogs/blog-banned-users.entity";
 import { Device } from "../modules/security/devices.entity";
+import { Game } from "../modules/pair-game-quiz/game.entity";
 
 
 export const dataSourceOptions: DataSourceOptions = {
@@ -19,7 +20,7 @@ export const dataSourceOptions: DataSourceOptions = {
   password: "root",
   database: "It_blog",
   synchronize: false,
-  entities: [User, Device, Quiz, Blog, BlogBannedUser, Post, PostLike, Comment, CommentLike],
+  entities: [User, Device, Quiz, Game, Blog, BlogBannedUser, Post, PostLike, Comment, CommentLike],
   migrations: [__dirname + "/migrations/*.ts"]
 };
 
