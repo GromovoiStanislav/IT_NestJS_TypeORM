@@ -18,10 +18,10 @@ export class DeleteAllDataUseCase implements ICommandHandler<DeleteAllDataComman
   }
 
   async execute(command: DeleteAllDataCommand) {
-    await this.commandBus.execute(new ClearAllUsersCommand());
-    await this.commandBus.execute(new ClearAllBlogsCommand());
-
     await this.commandBus.execute(new ClearAllGamesCommand());
     await this.commandBus.execute(new ClearAllQuestionsCommand());
+
+    await this.commandBus.execute(new ClearAllUsersCommand());
+    await this.commandBus.execute(new ClearAllBlogsCommand());
   }
 }
