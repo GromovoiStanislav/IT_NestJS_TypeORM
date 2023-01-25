@@ -64,7 +64,11 @@ export class PairGameQuizController {
 
 
   @Get(":id")
-  async getCameById(@Param("id", ValidationIdPipe) gameId: string,
+  async getCameById(@Param("id", new ParseUUIDPipe({
+                        exceptionFactory: (errors) => {
+                          throw new BadRequestException([{ field: 'id', message: errors }]);
+                        }
+                      })) gameId: string,
                     @CurrentUserId() userId: string) {
     return {
       "id": "string",
