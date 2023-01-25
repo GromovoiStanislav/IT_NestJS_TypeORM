@@ -1,13 +1,13 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
 @UseGuards(AuthUserIdGuard)
-@Controller('pair-game-quiz/pairs')
+@Controller("pair-game-quiz/pairs")
 export class PairGameQuizController {
 
   @Get("my-current")
-  async getCurrentCame( @CurrentUserId() userId: string){
+  async getCurrentCame(@CurrentUserId() userId: string) {
     return {
       "id": "string",
       "firstPlayerProgress": {
@@ -48,11 +48,12 @@ export class PairGameQuizController {
       "pairCreatedDate": "2023-01-25T04:21:09.596Z",
       "startGameDate": "2023-01-25T04:21:09.596Z",
       "finishGameDate": "2023-01-25T04:21:09.596Z"
-    }
+    };
   }
 
+
   @Get(":id")
-  async getCameById(@Param("id") gameId: string,
+  async getCameById(@Param("id", ParseUUIDPipe) gameId: string,
                     @CurrentUserId() userId: string) {
     return {
       "id": "string",
@@ -94,24 +95,25 @@ export class PairGameQuizController {
       "pairCreatedDate": "2023-01-25T04:19:43.495Z",
       "startGameDate": "2023-01-25T04:19:43.495Z",
       "finishGameDate": "2023-01-25T04:19:43.495Z"
-    }
+    };
   }
 
 
   @Post("connection")
   @HttpCode(HttpStatus.OK)
-  async connectGame(@CurrentUserId() userId: string){
-    return { status: "PendingSecondPlayer" }
+  async connectGame(@CurrentUserId() userId: string) {
+    return { status: "PendingSecondPlayer" };
   }
+
 
   @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
-  async sendAnswer(@CurrentUserId() userId: string){
+  async sendAnswer(@CurrentUserId() userId: string) {
     return {
       "questionId": "string",
       "answerStatus": "Correct",
       "addedAt": "2023-01-25T04:46:00.251Z"
-    }
+    };
   }
 
 
