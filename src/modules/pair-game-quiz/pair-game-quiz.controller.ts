@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { ValidationIdPipe } from "../../pipes/validation-id.pipe";
 
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
@@ -63,11 +64,7 @@ export class PairGameQuizController {
 
 
   @Get(":id")
-  async getCameById(@Param("id",  new ParseUUIDPipe({
-                        exceptionFactory: (errors) => {
-                          throw new BadRequestException([{ field: 'id', message: errors }]);
-                        }
-                      })) gameId: string,
+  async getCameById(@Param("id", ValidationIdPipe) gameId: string,
                     @CurrentUserId() userId: string) {
     return {
       "id": "string",
