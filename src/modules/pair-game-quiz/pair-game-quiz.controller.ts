@@ -2,7 +2,7 @@ import { Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from "@
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 
-//@UseGuards(AuthUserIdGuard)
+@UseGuards(AuthUserIdGuard)
 @Controller('pair-game-quiz/pairs')
 export class PairGameQuizController {
 
