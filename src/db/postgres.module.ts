@@ -33,7 +33,7 @@ import { Module } from "@nestjs/common";
           password: "root",
           database: "It_blog",
           autoLoadEntities: true,
-          synchronize: true,
+          synchronize: false,
           //entities:[User],
         };
 
