@@ -38,11 +38,16 @@ export class UsersRepository {
   }
 
 
-  async findUserByLoginOrEmail(search): Promise<User | null> {
+  async findUserByLoginOrEmail(search: string): Promise<User | null> {
     return this.usersRepository
       .createQueryBuilder("users")
       .where("users.login = :login OR users.email = :email", { login: search, email: search })
       .getOne();
+  }
+
+  async findUserByLoginOrEmail_v2(login: string, email: string): Promise<User | null> {
+    return this.usersRepository.findOneBy([{ login }, { email }]);
+
   }
 
 

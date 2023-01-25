@@ -40,13 +40,10 @@ export class FindAllUsersUseCase implements ICommandHandler<FindAllUsersCommand>
   }
 
   async execute(command: FindAllUsersCommand) {
-    const result = await this.usersRepository.getAllUsers(command.banStatus,command.searchLogin, command.searchEmail, command.paginationParams);
+    const result = await this.usersRepository.getAllUsers(command.banStatus, command.searchLogin, command.searchEmail, command.paginationParams);
     return UsersMapper.fromModelsToPaginator(result);
   }
 }
-
-
-
 
 
 ////////////////////////////////////////////////////////////
@@ -102,6 +99,22 @@ export class GetUserByLoginOrEmailUseCase implements ICommandHandler<GetUserByLo
   }
 }
 
+////////////////////////////////////////////////////////////
+export class GetUserByLoginOrEmail_v2Command {
+  constructor(public login: string, public email: string) {
+  }
+}
+
+@CommandHandler(GetUserByLoginOrEmail_v2Command)
+export class GetUserByLoginOrEmail_v2UseCase implements ICommandHandler<GetUserByLoginOrEmail_v2Command> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetUserByLoginOrEmail_v2Command) {
+    return await this.usersRepository.findUserByLoginOrEmail_v2(command.login, command.email);
+  }
+}
+
 
 ////////////////////////////////////////////////////////////
 export class GetUserByIdCommand {
@@ -114,7 +127,7 @@ export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
   constructor(protected usersRepository: UsersRepository) {
   }
 
-  async execute(command: GetUserByIdCommand): Promise<User | null>  {
+  async execute(command: GetUserByIdCommand): Promise<User | null> {
     return await this.usersRepository.findUserById(command.userId);
   }
 }
@@ -186,14 +199,14 @@ export class BanUserUserUseCase implements ICommandHandler<BanUserCommand> {
   async execute(command: BanUserCommand) {
 
     const banInfo = new BanUsersInfo();
-    if(command.inputBanUser.isBanned) {
+    if (command.inputBanUser.isBanned) {
       banInfo.isBanned = true;
       banInfo.banDate = dateAt();
       banInfo.banReason = command.inputBanUser.banReason;
     }
 
     await this.usersRepository.banUser(command.userId, banInfo);
-    await this.commandBus.execute(new KillAllSessionsByUserIdCommand(String(command.userId)))
+    await this.commandBus.execute(new KillAllSessionsByUserIdCommand(String(command.userId)));
 
   }
 }
@@ -211,6 +224,6 @@ export class GetIdBannedUsersUseCase implements ICommandHandler<GetIdBannedUsers
 
   async execute(command: GetIdBannedUsersCommand): Promise<string[]> {
     const users = await this.usersRepository.getBanedUsers();
-    return users.map(user => user.id)
+    return users.map(user => user.id);
   }
 }

@@ -7,7 +7,7 @@ import { InputUserDto } from "./dto/input-user.dto";
 
 import {
   ConfirmUserCommand,
-  CreateUserCommand, GetUserByConfirmationCodeCommand, GetUserByIdCommand,
+  CreateUserCommand, GetUserByConfirmationCodeCommand, GetUserByIdCommand, GetUserByLoginOrEmail_v2Command,
   GetUserByLoginOrEmailCommand,
   UpdateConfirmCodeCommand
 } from "../users/users.service";
@@ -36,12 +36,16 @@ export class RegisterUserUseCase implements ICommandHandler<RegisterUserCommand>
 
   async execute(command: RegisterUserCommand) {
 
-    if (await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.login))) {
-      throw new BadRequestException([{ field: "login", message: "login already exists" }]);
+    // if (await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.login))) {
+    //   throw new BadRequestException([{ field: "login", message: "login already exists" }]);
+    // }
+    // if (await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.email))) {
+    //   throw new BadRequestException([{ field: "email", message: "email already exists" }]);
+    // }
+    if (await this.commandBus.execute(new GetUserByLoginOrEmail_v2Command(command.inputUser.login, command.inputUser.email))) {
+      throw new BadRequestException([{ field: "email or login", message: "email or login already exists" }]);
     }
-    if (await this.commandBus.execute(new GetUserByLoginOrEmailCommand(command.inputUser.email))) {
-      throw new BadRequestException([{ field: "email", message: "email already exists" }]);
-    }
+
 
     const subject = "Thank for your registration";
     const confirmation_code = uuidv4();

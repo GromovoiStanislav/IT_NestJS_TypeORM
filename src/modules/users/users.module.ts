@@ -8,7 +8,7 @@ import {
   DeleteUserUseCase,
   FindAllUsersUseCase, GetIdBannedUsersUseCase,
   GetUserByConfirmationCodeUseCase,
-  GetUserByIdUseCase,
+  GetUserByIdUseCase, GetUserByLoginOrEmail_v2UseCase,
   GetUserByLoginOrEmailUseCase,
   UpdateConfirmCodeUseCase
 } from "./users.service";
@@ -24,6 +24,7 @@ const useCases = [
   DeleteUserUseCase,
   CreateUserUseCase,
   GetUserByLoginOrEmailUseCase,
+  GetUserByLoginOrEmail_v2UseCase,
   UpdateConfirmCodeUseCase,
   GetUserByConfirmationCodeUseCase,
   ConfirmUserUseCase,
