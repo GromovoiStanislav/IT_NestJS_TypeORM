@@ -11,7 +11,12 @@ export default class GameMapper {
     viewGame.startGameDate = game.startGameDate;
     viewGame.finishGameDate = game.finishGameDate;
 
-    viewGame.questions = game.questions.map(q => ({ id: q.id, body: q.body }));
+    if (Array.isArray(game.questions)) {
+      viewGame.questions = game.questions.map(q => ({ id: q.id, body: q.body }));
+    } else {
+      viewGame.questions = null;
+    }
+
 
     viewGame.firstPlayerProgress = {
       player: {
