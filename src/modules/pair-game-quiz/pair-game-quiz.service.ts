@@ -44,14 +44,13 @@ export class PairGameQuizService {
   }
 
 
-  async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto>{
+  async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto> {
     const game = await this.gamesRepository.findActiveGameByUserId(userId);
     if (!game) {
       throw new ForbiddenException();
     }
-    return await this.gamesRepository.sendAnswer(game,userId,answer)
+    return await this.gamesRepository.sendAnswer(game, userId, answer);
   }
-
 
 
 }
