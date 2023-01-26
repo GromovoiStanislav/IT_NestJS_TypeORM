@@ -27,14 +27,18 @@ export default class GameMapper {
       answers: game.firstPlayerAnswers
     };
 
-    viewGame.secondPlayerProgress = {
-      player: {
-        id: game.secondPlayerId,
-        login: game.secondPlayerLogin
-      },
-      score: game.secondPlayerScore,
-      answers: game.secondPlayerAnswers
-    };
+    if (game.secondPlayerId === null) {
+      viewGame.secondPlayerProgress = null;
+    } else {
+      viewGame.secondPlayerProgress = {
+        player: {
+          id: game.secondPlayerId,
+          login: game.secondPlayerLogin
+        },
+        score: game.secondPlayerScore,
+        answers: game.secondPlayerAnswers
+      };
+    }
 
     return viewGame;
   }
