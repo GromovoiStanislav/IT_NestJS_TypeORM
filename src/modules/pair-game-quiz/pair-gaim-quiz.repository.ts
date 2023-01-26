@@ -34,7 +34,18 @@ export class PairGameQuizRepository {
       //     qb.where("g.firstPlayerId = :userId", { userId })
       //       .orWhere("g.secondPlayerId = :userId", { userId });
       //   })
-      // )
+      //)
+      .getOne();
+  }
+
+
+  async findNotFinishGameByUserId(userId: string): Promise<Game | null> {
+    return this.gamesRepository.createQueryBuilder("g")
+      .where("g.status = :status1 or g.status = :status2", {
+        status1: StatusGame.PendingSecondPlayer,
+        status2: StatusGame.Active
+      })
+      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
       .getOne();
   }
 

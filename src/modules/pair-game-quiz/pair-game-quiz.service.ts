@@ -13,7 +13,7 @@ export class PairGameQuizService {
   }
 
   async connectGame(userId: string): Promise<GamePairViewDto> {
-    const game = await this.gamesRepository.findActiveGameByUserId(userId);
+    const game = await this.gamesRepository.findNotFinishGameByUserId(userId);
     if (game) {
       throw new ForbiddenException();
     }
