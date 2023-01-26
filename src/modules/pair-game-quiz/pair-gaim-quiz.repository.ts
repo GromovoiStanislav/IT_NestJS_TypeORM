@@ -28,13 +28,13 @@ export class PairGameQuizRepository {
   async findActiveGameByUserId(userId: string): Promise<Game | null> {
     return this.gamesRepository.createQueryBuilder("g")
       .where("g.status = :status", { status: StatusGame.Active })
-      //.andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("g.firstPlayerId = :userId", { userId })
-            .orWhere("g.secondPlayerId = :userId", { userId });
-        })
-      )
+      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      // .andWhere(
+      //   new Brackets((qb) => {
+      //     qb.where("g.firstPlayerId = :userId", { userId })
+      //       .orWhere("g.secondPlayerId = :userId", { userId });
+      //   })
+      // )
       .getOne();
   }
 
