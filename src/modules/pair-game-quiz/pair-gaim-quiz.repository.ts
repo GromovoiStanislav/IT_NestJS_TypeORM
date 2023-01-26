@@ -77,6 +77,8 @@ export class PairGameQuizRepository {
     const answerDto = new AnswerDto();
     answerDto.addedAt = dateAt();
 
+    const countQuestions = game.questions.length;
+
     if (userId === game.firstPlayerId) {
 
       const question = game.questions[game.firstPlayerAnswers.length];
@@ -89,7 +91,7 @@ export class PairGameQuizRepository {
       }
       game.firstPlayerAnswers.push(answerDto);
 
-      if (game.firstPlayerAnswers.length === 5 && game.secondPlayerAnswers.length < 5 && game.firstPlayerScore > 0) {
+      if (game.firstPlayerAnswers.length === countQuestions && game.secondPlayerAnswers.length < countQuestions && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
       }
 
@@ -105,15 +107,20 @@ export class PairGameQuizRepository {
       }
       game.secondPlayerAnswers.push(answerDto);
 
-      if (game.secondPlayerAnswers.length === 5 && game.firstPlayerAnswers.length < 5 && game.secondPlayerScore > 0) {
+      if (game.secondPlayerAnswers.length === countQuestions && game.firstPlayerAnswers.length < countQuestions && game.secondPlayerScore > 0) {
         game.secondPlayerScore += 1;
       }
 
     }
 
-    if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
+    if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 2 * countQuestions) {
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
+      if (game.firstPlayerScore > game.secondPlayerScore) {
+        game.winnerId = game.firstPlayerId;
+      } else {
+        game.winnerId = game.secondPlayerId;
+      }
     }
 
 
