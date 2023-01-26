@@ -6,7 +6,7 @@ import {
   ClearAllQuestionsUseCase, CreateQuestionUseCase,
   DeleteQuestionUseCase,
   FindAllQuestionsUseCase,
-  FindOneQuestionUseCase,
+  FindOneQuestionUseCase, Get5QuestionsUseCase,
   PublishQuestionUseCase, UpdateQuestionUseCase
 } from "./quiz.service";
 import { QuizzesRepository } from "./quiz.repository";
@@ -20,7 +20,8 @@ const useCases = [
   UpdateQuestionUseCase,
   FindOneQuestionUseCase,
   FindAllQuestionsUseCase,
-  PublishQuestionUseCase
+  PublishQuestionUseCase,
+  Get5QuestionsUseCase
 ];
 
 @Module({

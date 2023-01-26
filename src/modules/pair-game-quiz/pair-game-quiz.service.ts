@@ -1,7 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { PairGameQuizRepository } from "./pair-gaim-quiz.repository";
 import { GetUserByIdCommand } from "../users/users.service";
+import { GamePairViewDto } from "./dto/game-pair-view.dto";
+import GameMapper from "./dto/gameMapper";
 
 
 @Injectable()
@@ -10,9 +12,20 @@ export class PairGameQuizService {
               protected gamesRepository: PairGameQuizRepository) {
   }
 
-  async connectGame(userId: string): Promise<string> {
+  async connectGame(userId: string): Promise<GamePairViewDto> {
     const user = await this.commandBus.execute(new GetUserByIdCommand(userId));
-    return this.gamesRepository.connectGame(userId, user.login);
+    return GameMapper.fromModelToView(await this.gamesRepository.connectGame(userId, user.login));
+  }
+
+  async findGameById(gameId: string, userId: string): Promise<GamePairViewDto> {
+    const game = await this.gamesRepository.findGameById(gameId);
+    if (!game) {
+      throw new NotFoundException();
+    }
+    if (userId !== game.firstPlayerId && userId !== game.secondPlayerId) {
+      throw new ForbiddenException();
+    }
+    return GameMapper.fromModelToView(game);
   }
 
 

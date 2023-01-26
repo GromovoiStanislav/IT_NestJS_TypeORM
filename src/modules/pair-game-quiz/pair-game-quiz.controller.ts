@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  BadRequestException, Body,
   Controller,
   Get,
   HttpCode,
@@ -11,8 +11,9 @@ import {
 } from "@nestjs/common";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
-import { ValidationIdPipe } from "../../pipes/validation-id.pipe";
 import { PairGameQuizService } from "./pair-game-quiz.service";
+import { InputAnswerDto } from "./dto/input-answer.dto";
+import { GamePairViewDto } from "./dto/game-pair-view.dto";
 
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
@@ -22,7 +23,7 @@ export class PairGameQuizController {
   }
 
   @Get("my-current")
-  async getCurrentCame(@CurrentUserId() userId: string) {
+  async getCurrentCame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
     return {
       "id": "string",
       "firstPlayerProgress": {
@@ -69,65 +70,26 @@ export class PairGameQuizController {
 
   @Get(":id")
   async getCameById(@Param("id", new ParseUUIDPipe({
-                        exceptionFactory: (errors) => {
-                          throw new BadRequestException([{ field: 'id', message: errors }]);
-                        }
-                      })) gameId: string,
-                    @CurrentUserId() userId: string) {
-    return {
-      "id": "string",
-      "firstPlayerProgress": {
-        "answers": [
-          {
-            "questionId": "string",
-            "answerStatus": "Correct",
-            "addedAt": "2023-01-25T04:19:43.495Z"
-          }
-        ],
-        "player": {
-          "id": "string",
-          "login": "string"
-        },
-        "score": 0
-      },
-      "secondPlayerProgress": {
-        "answers": [
-          {
-            "questionId": "string",
-            "answerStatus": "Correct",
-            "addedAt": "2023-01-25T04:19:43.495Z"
-          }
-        ],
-        "player": {
-          "id": "string",
-          "login": "string"
-        },
-        "score": 0
-      },
-      "questions": [
-        {
-          "id": "string",
-          "body": "string"
-        }
-      ],
-      "status": "PendingSecondPlayer",
-      "pairCreatedDate": "2023-01-25T04:19:43.495Z",
-      "startGameDate": "2023-01-25T04:19:43.495Z",
-      "finishGameDate": "2023-01-25T04:19:43.495Z"
-    };
+                      exceptionFactory: (errors) => {
+                        throw new BadRequestException([{ field: "id", message: errors }]);
+                      }
+                    })) gameId: string,
+                    @CurrentUserId() userId: string): Promise<GamePairViewDto> {
+    return this.pairGameQuizService.findGameById(gameId,userId)
   }
 
 
   @Post("connection")
   @HttpCode(HttpStatus.OK)
-  async connectGame(@CurrentUserId() userId: string):Promise<string> {
-    return this.pairGameQuizService.connectGame(userId)
+  async connectGame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
+    return this.pairGameQuizService.connectGame(userId);
   }
 
 
   @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
-  async sendAnswer(@CurrentUserId() userId: string) {
+  async sendAnswer(@Body() answerDto: InputAnswerDto,
+                   @CurrentUserId() userId: string) {
     return {
       "questionId": "string",
       "answerStatus": "Correct",

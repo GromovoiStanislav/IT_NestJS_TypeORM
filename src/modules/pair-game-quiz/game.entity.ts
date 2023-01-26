@@ -19,7 +19,7 @@ export class Game {
   id: string;
 
   ////////////////// firstPlayer //////////////////
-  @ManyToOne(() => User,{ onDelete: "SET NULL" })
+  @ManyToOne(() => User)
   firstPlayer: User;
   @Column()
   firstPlayerId: string;
@@ -31,12 +31,11 @@ export class Game {
   firstPlayerScore: number;
 
   @Column({ type: "json", default: [] })
-  firstPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[]
-
+  firstPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[];
 
 
   //////////////// secondPlayer /////////////////
-  @ManyToOne(() => User, { onDelete: "SET NULL" })
+  @ManyToOne(() => User)
   secondPlayer: User;
   @Column({ nullable: true })
   secondPlayerId: string;
@@ -48,12 +47,12 @@ export class Game {
   secondPlayerScore: number;
 
   @Column({ type: "json", default: [] })
-  secondPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[]
+  secondPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[];
 
   ////////////////////////////////////
 
-  @Column({ type: "json", default: [] })
-  correctAnswers: { id: string, body: string }[];
+  @Column({ type: "json", nullable: true})
+  questions: { id: string, body: string, correctAnswers: string[] }[];
 
 
   @Column({ type: "enum", enum: StatusGame, default: StatusGame.PendingSecondPlayer })
@@ -68,7 +67,7 @@ export class Game {
   @Column({ nullable: true })
   finishGameDate: string;
 
-  @ManyToOne(() => User, { onDelete: "SET NULL" })
+  @ManyToOne(() => User)
   winner: User;
   @Column({ nullable: true })
   winnerId: string;

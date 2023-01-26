@@ -24,5 +24,4 @@ export const dataSourceOptions: DataSourceOptions = {
   migrations: [__dirname + "/migrations/*.ts"]
 };
 
-const dataSource = new DataSource(dataSourceOptions);
-export default dataSource;
+export default new DataSource(dataSourceOptions);

@@ -32,7 +32,6 @@ export class QuizzesRepository {
 
   async findQuiz(id: string): Promise<Quiz> {
     return await this.quizzesRepository.findOneBy({ id });
-
   }
 
   async createQuiz(createQuizDto: CreateQuizDto): Promise<Quiz> {
@@ -48,6 +47,12 @@ export class QuizzesRepository {
     const result = await this.quizzesRepository.update({ id }, updatePublishDto);
     return result.affected;
   }
+
+  async get5Quizzes(): Promise<Quiz[]> {
+    return await this.quizzesRepository.find({ select: ["id", "body", "correctAnswers"], take: 5 });
+    //{id:true,body:true,correctAnswers:true}
+  }
+
 
   async getAllQuizzes(
     bodySearchTerm: string,

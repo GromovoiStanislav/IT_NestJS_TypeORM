@@ -147,3 +147,19 @@ export class PublishQuestionUseCase implements ICommandHandler<PublishQuestionCo
 
   }
 }
+
+////////////////////////////////////////////////////
+export class Get5QuestionsCommand {
+  constructor( ) {
+  }
+}
+
+@CommandHandler(Get5QuestionsCommand)
+export class Get5QuestionsUseCase implements ICommandHandler<Get5QuestionsCommand> {
+  constructor(protected quizzesRepository: QuizzesRepository) {
+  }
+
+  async execute(command: Get5QuestionsCommand): Promise<Quiz[]> {
+    return this.quizzesRepository.get5Quizzes();
+  }
+}
