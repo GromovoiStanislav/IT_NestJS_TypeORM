@@ -35,7 +35,7 @@ export class PairGameQuizService {
 
 
   async findCurrentGameByUserId(userId: string): Promise<GamePairViewDto> {
-    const game = await this.gamesRepository.findActiveGameByUserId(userId);
+    const game = await this.gamesRepository.findNotFinishGameByUserId(userId);
     if (!game) {
       throw new NotFoundException();
     }
