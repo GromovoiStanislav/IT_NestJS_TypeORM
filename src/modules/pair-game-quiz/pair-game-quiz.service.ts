@@ -29,6 +29,14 @@ export class PairGameQuizService {
   }
 
 
+  async findCurrentGameByUserId(userId: string): Promise<GamePairViewDto> {
+    const game = await this.gamesRepository.findActiveGameByUserId(userId);
+    if (!game) {
+      throw new NotFoundException();
+    }
+    return GameMapper.fromModelToView(game);
+  }
+
 }
 
 

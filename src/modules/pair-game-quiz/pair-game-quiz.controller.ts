@@ -24,47 +24,7 @@ export class PairGameQuizController {
 
   @Get("my-current")
   async getCurrentCame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
-    return {
-      "id": "string",
-      "firstPlayerProgress": {
-        "answers": [
-          {
-            "questionId": "string",
-            "answerStatus": "Correct",
-            "addedAt": "2023-01-25T04:21:09.596Z"
-          }
-        ],
-        "player": {
-          "id": "string",
-          "login": "string"
-        },
-        "score": 0
-      },
-      "secondPlayerProgress": {
-        "answers": [
-          {
-            "questionId": "string",
-            "answerStatus": "Correct",
-            "addedAt": "2023-01-25T04:21:09.596Z"
-          }
-        ],
-        "player": {
-          "id": "string",
-          "login": "string"
-        },
-        "score": 0
-      },
-      "questions": [
-        {
-          "id": "string",
-          "body": "string"
-        }
-      ],
-      "status": "PendingSecondPlayer",
-      "pairCreatedDate": "2023-01-25T04:21:09.596Z",
-      "startGameDate": "2023-01-25T04:21:09.596Z",
-      "finishGameDate": "2023-01-25T04:21:09.596Z"
-    };
+    return this.pairGameQuizService.findCurrentGameByUserId(userId)
   }
 
 

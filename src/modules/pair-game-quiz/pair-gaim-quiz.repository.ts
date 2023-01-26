@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Brackets, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Game, StatusGame } from "./game.entity";
@@ -21,8 +21,21 @@ export class PairGameQuizRepository {
     await this.gamesRepository.delete({});
   }
 
-  async findGameById(id:string): Promise<Game|null>{
-    return this.gamesRepository.findOneBy({id})
+  async findGameById(id: string): Promise<Game | null> {
+    return this.gamesRepository.findOneBy({ id });
+  }
+
+  async findActiveGameByUserId(userId: string): Promise<Game | null> {
+    return this.gamesRepository.createQueryBuilder("g")
+      .where("g.status = :status", { status: StatusGame.Active })
+      //.andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("g.firstPlayerId = :userId", { userId })
+            .orWhere("g.secondPlayerId = :userId", { userId });
+        })
+      )
+      .getOne();
   }
 
 
@@ -32,8 +45,8 @@ export class PairGameQuizRepository {
       game.secondPlayerId = userId;
       game.secondPlayerLogin = login;
       game.startGameDate = dateAt();
-      game.status = StatusGame.Active
-      game.questions = await this.commandBus.execute(new Get5QuestionsCommand())
+      game.status = StatusGame.Active;
+      game.questions = await this.commandBus.execute(new Get5QuestionsCommand());
       await this.gamesRepository.save(game);
     } else {
       game = new Game();
