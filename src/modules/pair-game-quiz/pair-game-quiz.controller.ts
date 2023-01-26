@@ -14,6 +14,7 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { PairGameQuizService } from "./pair-game-quiz.service";
 import { InputAnswerDto } from "./dto/input-answer.dto";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
+import { AnswerViewDto } from "./dto/answer-view.dto";
 
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
@@ -24,7 +25,7 @@ export class PairGameQuizController {
 
   @Get("my-current")
   async getCurrentCame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
-    return this.pairGameQuizService.findCurrentGameByUserId(userId)
+    return this.pairGameQuizService.findCurrentGameByUserId(userId);
   }
 
 
@@ -35,7 +36,7 @@ export class PairGameQuizController {
                       }
                     })) gameId: string,
                     @CurrentUserId() userId: string): Promise<GamePairViewDto> {
-    return this.pairGameQuizService.findGameById(gameId,userId)
+    return this.pairGameQuizService.findGameById(gameId, userId);
   }
 
 
@@ -49,12 +50,8 @@ export class PairGameQuizController {
   @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
   async sendAnswer(@Body() answerDto: InputAnswerDto,
-                   @CurrentUserId() userId: string) {
-    return {
-      "questionId": "string",
-      "answerStatus": "Correct",
-      "addedAt": "2023-01-25T04:46:00.251Z"
-    };
+                   @CurrentUserId() userId: string): Promise<AnswerViewDto> {
+    return this.pairGameQuizService.sendAnswer(userId,answerDto.answer);
   }
 
 

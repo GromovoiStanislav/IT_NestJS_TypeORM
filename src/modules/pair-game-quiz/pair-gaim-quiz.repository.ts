@@ -1,10 +1,13 @@
 import { Brackets, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Game, StatusGame } from "./game.entity";
+import { AnswerStatus, Game, StatusGame } from "./game.entity";
 import dateAt from "../../utils/DateGenerator";
 import { CommandBus } from "@nestjs/cqrs";
 import { Get5QuestionsCommand } from "../quiz/quiz.service";
+import { AnswerViewDto } from "./dto/answer-view.dto";
+import { AnswerDto } from "./dto/game-pair-view.dto";
+import e from "express";
 
 
 @Injectable()
@@ -67,6 +70,55 @@ export class PairGameQuizRepository {
       await this.gamesRepository.save(game);
     }
     return game;
+  }
+
+  async sendAnswer(game: Game, userId: string, answer: string): Promise<AnswerViewDto> {
+
+    const answerDto = new AnswerDto();
+    answerDto.addedAt = dateAt();
+
+    if (userId === game.firstPlayerId) {
+
+      const question = game.questions[game.firstPlayerAnswers.length];
+      answerDto.questionId = question.id;
+      if (question.correctAnswers.includes(answer)) {
+        answerDto.answerStatus = AnswerStatus.Correct;
+        game.firstPlayerScore += 1;
+      } else {
+        answerDto.answerStatus = AnswerStatus.Incorrect;
+      }
+      game.firstPlayerAnswers.push(answerDto);
+
+      if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
+        game.firstPlayerScore += 1;
+      }
+
+    } else {
+
+      const question = game.questions[game.secondPlayerAnswers.length];
+      answerDto.questionId = question.id;
+      if (question.correctAnswers.includes(answer)) {
+        answerDto.answerStatus = AnswerStatus.Correct;
+        game.secondPlayerScore += 1;
+      } else {
+        answerDto.answerStatus = AnswerStatus.Incorrect;
+      }
+      game.secondPlayerAnswers.push(answerDto);
+
+      if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
+        game.secondPlayerScore += 1;
+      }
+
+    }
+
+    if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
+      game.status = StatusGame.Finished;
+      game.finishGameDate = dateAt();
+    }
+
+
+    await this.gamesRepository.save(game);
+    return answerDto;
   }
 
 

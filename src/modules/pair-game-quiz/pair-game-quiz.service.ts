@@ -4,6 +4,7 @@ import { PairGameQuizRepository } from "./pair-gaim-quiz.repository";
 import { GetUserByIdCommand } from "../users/users.service";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
 import GameMapper from "./dto/gameMapper";
+import { AnswerViewDto } from "./dto/answer-view.dto";
 
 
 @Injectable()
@@ -41,6 +42,17 @@ export class PairGameQuizService {
     }
     return GameMapper.fromModelToView(game);
   }
+
+
+  async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto>{
+    const game = await this.gamesRepository.findActiveGameByUserId(userId);
+    if (!game) {
+      throw new ForbiddenException();
+    }
+    return await this.gamesRepository.sendAnswer(game,userId,answer)
+  }
+
+
 
 }
 

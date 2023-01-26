@@ -1,3 +1,5 @@
+import { AnswerStatus } from "../game.entity";
+
 export class GamePairViewDto {
   id: string;
   firstPlayerProgress: PlayerProgressDto;
@@ -17,7 +19,7 @@ export class PlayerProgressDto {
 
 export class AnswerDto {
   questionId: string;
-  answerStatus: string;
+  answerStatus: AnswerStatus;
   addedAt: string;
 }
 
