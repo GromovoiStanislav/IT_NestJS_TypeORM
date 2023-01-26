@@ -89,7 +89,7 @@ export class PairGameQuizRepository {
       }
       game.firstPlayerAnswers.push(answerDto);
 
-      if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
+      if (game.firstPlayerAnswers.length === 5 && game.secondPlayerAnswers.length < 5 && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
       }
 
@@ -105,7 +105,7 @@ export class PairGameQuizRepository {
       }
       game.secondPlayerAnswers.push(answerDto);
 
-      if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
+      if (game.secondPlayerAnswers.length === 5 && game.firstPlayerAnswers.length < 5 && game.secondPlayerScore > 0) {
         game.secondPlayerScore += 1;
       }
 
