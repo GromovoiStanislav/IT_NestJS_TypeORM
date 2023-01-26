@@ -13,6 +13,11 @@ export class PairGameQuizService {
   }
 
   async connectGame(userId: string): Promise<GamePairViewDto> {
+    const game = await this.gamesRepository.findActiveGameByUserId(userId);
+    if (game) {
+      throw new ForbiddenException();
+    }
+
     const user = await this.commandBus.execute(new GetUserByIdCommand(userId));
     return GameMapper.fromModelToView(await this.gamesRepository.connectGame(userId, user.login));
   }
