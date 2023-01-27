@@ -89,11 +89,10 @@ export class PairGameQuizRepository {
     const answerDto = new AnswerDto();
     answerDto.addedAt = dateAt();
 
-    const countQuestions = game.questions.length; // 5
 
     if (userId === game.firstPlayerId) {
 
-      if (game.firstPlayerAnswers.length === countQuestions) {
+      if (game.firstPlayerAnswers.length === 5) {
         return null;
       }
 
@@ -107,13 +106,9 @@ export class PairGameQuizRepository {
       }
       game.firstPlayerAnswers.push(answerDto);
 
-      if (game.firstPlayerAnswers.length === countQuestions && game.secondPlayerAnswers.length < countQuestions && game.firstPlayerScore > 0) {
-        game.firstPlayerScore += 1;
-      }
-
     } else {
 
-      if (game.secondPlayerAnswers.length === countQuestions) {
+      if (game.secondPlayerAnswers.length === 5) {
         return null;
       }
 
@@ -127,18 +122,25 @@ export class PairGameQuizRepository {
       }
       game.secondPlayerAnswers.push(answerDto);
 
-      if (game.secondPlayerAnswers.length === countQuestions && game.firstPlayerAnswers.length < countQuestions && game.secondPlayerScore > 0) {
+    }
+
+    if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
+      game.status = StatusGame.Finished;
+      game.finishGameDate = dateAt();
+
+
+      if ((game.firstPlayerAnswers[4].addedAt < game.secondPlayerAnswers[4].addedAt) && game.firstPlayerScore > 0) {
+        game.firstPlayerScore += 1;
+      }
+      else if ((game.firstPlayerAnswers[4].addedAt > game.secondPlayerAnswers[4].addedAt) && game.secondPlayerScore > 0) {
         game.secondPlayerScore += 1;
       }
 
-    }
 
-    if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 2 * countQuestions) {
-      game.status = StatusGame.Finished;
-      game.finishGameDate = dateAt();
+
       if (game.firstPlayerScore > game.secondPlayerScore) {
         game.winnerId = game.firstPlayerId;
-      } else {
+      } else if (game.firstPlayerScore < game.secondPlayerScore) {
         game.winnerId = game.secondPlayerId;
       }
     }
