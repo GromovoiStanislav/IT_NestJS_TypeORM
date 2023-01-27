@@ -32,6 +32,13 @@ export class PairGameQuizController {
   }
 
 
+  @Get("my")
+  async getAllMyGames(@Pagination() paginationParams: PaginationParams,
+                      @CurrentUserId() userId: string): Promise<PaginatorDto<GamePairViewDto[]>> {
+    return this.pairGameQuizService.findAllGamesByUserId(userId, paginationParams);
+  }
+
+
   @Get(":id")
   async getCameById(@Param("id", new ParseUUIDPipe({
                       exceptionFactory: (errors) => {
@@ -43,11 +50,6 @@ export class PairGameQuizController {
   }
 
 
-  @Get("my")
-  async getAllMyGames(@Pagination() paginationParams: PaginationParams,
-                      @CurrentUserId() userId: string): Promise<PaginatorDto<GamePairViewDto[]>> {
-    return this.pairGameQuizService.findAllGamesByUserId(userId, paginationParams);
-  }
 
 
   @Post("connection")
