@@ -1,5 +1,5 @@
 import { Brackets, Repository } from "typeorm";
-import { Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswerStatus, Game, StatusGame } from "./game.entity";
 import dateAt from "../../utils/DateGenerator";
@@ -75,14 +75,27 @@ export class PairGameQuizRepository {
     return game;
   }
 
-  async sendAnswer(game: Game, userId: string, answer: string): Promise<AnswerViewDto> {
+  async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto | null> {
+
+    const game = await this.gamesRepository.createQueryBuilder("g")
+      .where("g.status = :status", { status: StatusGame.Active })
+      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .getOne();
+    if (!game) {
+      return null;
+    }
+
 
     const answerDto = new AnswerDto();
     answerDto.addedAt = dateAt();
 
-    const countQuestions = game.questions.length;
+    const countQuestions = game.questions.length; // 5
 
     if (userId === game.firstPlayerId) {
+
+      if (game.firstPlayerAnswers.length === countQuestions) {
+        return null;
+      }
 
       const question = game.questions[game.firstPlayerAnswers.length];
       answerDto.questionId = question.id;
@@ -99,6 +112,10 @@ export class PairGameQuizRepository {
       }
 
     } else {
+
+      if (game.secondPlayerAnswers.length === countQuestions) {
+        return null;
+      }
 
       const question = game.questions[game.secondPlayerAnswers.length];
       answerDto.questionId = question.id;
@@ -130,7 +147,6 @@ export class PairGameQuizRepository {
     await this.gamesRepository.save(game);
     return answerDto;
   }
-
 
 
   async findAllGamesByUserId(
@@ -170,7 +186,6 @@ export class PairGameQuizRepository {
 
     return { pagesCount, page, pageSize, totalCount, items };
   }
-
 
 
 }

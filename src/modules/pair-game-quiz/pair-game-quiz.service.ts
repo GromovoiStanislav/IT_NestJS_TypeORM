@@ -7,6 +7,7 @@ import GameMapper from "./dto/gameMapper";
 import { AnswerViewDto } from "./dto/answer-view.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import e from "express";
 
 
 @Injectable()
@@ -52,11 +53,11 @@ export class PairGameQuizService {
 
 
   async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto> {
-    const game = await this.gamesRepository.findActiveGameByUserId(userId);
-    if (!game) {
+    const result =await this.gamesRepository.sendAnswer(userId, answer);
+    if (!result) {
       throw new ForbiddenException();
     }
-    return await this.gamesRepository.sendAnswer(game, userId, answer);
+    return result
   }
 
 
