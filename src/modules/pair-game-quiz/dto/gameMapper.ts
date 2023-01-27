@@ -1,5 +1,7 @@
 import { Game } from "../game.entity";
 import { GamePairViewDto } from "./game-pair-view.dto";
+import { PaginatorDto } from "../../../commonDto/paginator.dto";
+
 
 export default class GameMapper {
 
@@ -42,5 +44,17 @@ export default class GameMapper {
 
     return viewGame;
   }
+
+
+  static fromModelsToPaginator(quizzes: PaginatorDto<Game[]>): PaginatorDto<GamePairViewDto[]> {
+    return {
+      pagesCount: quizzes.pagesCount,
+      page: quizzes.page,
+      pageSize: quizzes.pageSize,
+      totalCount: quizzes.totalCount,
+      items: quizzes.items.map(game => this.fromModelToView(game))
+    };
+  }
+
 
 }

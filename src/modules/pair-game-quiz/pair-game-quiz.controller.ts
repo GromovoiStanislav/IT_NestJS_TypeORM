@@ -15,6 +15,9 @@ import { PairGameQuizService } from "./pair-game-quiz.service";
 import { InputAnswerDto } from "./dto/input-answer.dto";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
 import { AnswerViewDto } from "./dto/answer-view.dto";
+import { Pagination } from "../../decorators/paginationDecorator";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
@@ -24,7 +27,7 @@ export class PairGameQuizController {
   }
 
   @Get("my-current")
-  async getCurrentCame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
+  async getCurrentGame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
     return this.pairGameQuizService.findCurrentGameByUserId(userId);
   }
 
@@ -40,6 +43,13 @@ export class PairGameQuizController {
   }
 
 
+  @Get("my")
+  async getAllMyGames(@Pagination() paginationParams: PaginationParams,
+                      @CurrentUserId() userId: string): Promise<PaginatorDto<GamePairViewDto[]>> {
+    return this.pairGameQuizService.findAllGamesByUserId(userId, paginationParams);
+  }
+
+
   @Post("connection")
   @HttpCode(HttpStatus.OK)
   async connectGame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
@@ -51,7 +61,7 @@ export class PairGameQuizController {
   @HttpCode(HttpStatus.OK)
   async sendAnswer(@Body() answerDto: InputAnswerDto,
                    @CurrentUserId() userId: string): Promise<AnswerViewDto> {
-    return this.pairGameQuizService.sendAnswer(userId,answerDto.answer);
+    return this.pairGameQuizService.sendAnswer(userId, answerDto.answer);
   }
 
 

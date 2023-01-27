@@ -8,6 +8,9 @@ import { Get5QuestionsCommand } from "../quiz/quiz.service";
 import { AnswerViewDto } from "./dto/answer-view.dto";
 import { AnswerDto } from "./dto/game-pair-view.dto";
 import e from "express";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { Quiz } from "../quiz/quiz.entity";
 
 
 @Injectable()
@@ -127,6 +130,47 @@ export class PairGameQuizRepository {
     await this.gamesRepository.save(game);
     return answerDto;
   }
+
+
+
+  async findAllGamesByUserId(
+    userId: string, {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection
+    }: PaginationParams): Promise<PaginatorDto<Game[]>> {
+
+    const QB1 = this.gamesRepository.createQueryBuilder("g");
+    const QB2 = this.gamesRepository.createQueryBuilder("g");
+
+    QB2.select("COUNT(*)", "count");
+
+    QB1.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
+    QB2.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
+
+    if (sortBy === "status") {
+      sortBy = "g.status";
+    } else {
+      sortBy = "g.pairCreatedDate";
+    }
+    const order = sortDirection === "asc" ? "ASC" : "DESC";
+
+    QB1
+      .orderBy(sortBy, order)
+      .skip(((pageNumber - 1) * pageSize))
+      .take(pageSize);
+
+    const items = await QB1.getMany();
+    const resultCount = await QB2.getRawOne();
+    const totalCount = +resultCount?.count || 0;
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
+    const page = pageNumber;
+
+    return { pagesCount, page, pageSize, totalCount, items };
+  }
+
 
 
 }

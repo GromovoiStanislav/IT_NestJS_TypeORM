@@ -5,6 +5,8 @@ import { GetUserByIdCommand } from "../users/users.service";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
 import GameMapper from "./dto/gameMapper";
 import { AnswerViewDto } from "./dto/answer-view.dto";
+import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginatorDto } from "../../commonDto/paginator.dto";
 
 
 @Injectable()
@@ -41,6 +43,11 @@ export class PairGameQuizService {
       throw new NotFoundException();
     }
     return GameMapper.fromModelToView(game);
+  }
+
+  async findAllGamesByUserId(userId: string, paginationParams: PaginationParams): Promise<PaginatorDto<GamePairViewDto[]>> {
+    const result = await this.gamesRepository.findAllGamesByUserId(userId, paginationParams);
+    return GameMapper.fromModelsToPaginator(result);
   }
 
 
