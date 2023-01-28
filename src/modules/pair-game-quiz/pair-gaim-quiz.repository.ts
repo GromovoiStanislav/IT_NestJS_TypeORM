@@ -1,5 +1,5 @@
-import { Brackets, Repository } from "typeorm";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Brackets, DataSource, Repository } from "typeorm";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswerStatus, Game, StatusGame } from "./game.entity";
 import dateAt from "../../utils/DateGenerator";
@@ -7,10 +7,8 @@ import { CommandBus } from "@nestjs/cqrs";
 import { Get5QuestionsCommand } from "../quiz/quiz.service";
 import { AnswerViewDto } from "./dto/answer-view.dto";
 import { AnswerDto } from "./dto/game-pair-view.dto";
-import e from "express";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
-import { Quiz } from "../quiz/quiz.entity";
 
 
 @Injectable()
@@ -18,6 +16,7 @@ export class PairGameQuizRepository {
 
   constructor(
     private commandBus: CommandBus,
+    private readonly dataSource: DataSource,
     @InjectRepository(Game) private gamesRepository: Repository<Game>
   ) {
   }
@@ -77,6 +76,96 @@ export class PairGameQuizRepository {
 
   async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto | null> {
 
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
+
+    try {
+
+      const game = await manager.getRepository(Game).createQueryBuilder("g")
+        .setLock("pessimistic_read")
+        .where("g.status = :status", { status: StatusGame.Active })
+        .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+        .getOne();
+      if (!game) {
+        return null;
+      }
+
+      const answerDto = new AnswerDto();
+      answerDto.addedAt = dateAt();
+
+
+      if (userId === game.firstPlayerId) {
+
+        if (game.firstPlayerAnswers.length === 5) {
+          return null;
+        }
+
+        const question = game.questions[game.firstPlayerAnswers.length];
+        answerDto.questionId = question.id;
+        if (question.correctAnswers.includes(answer)) {
+          answerDto.answerStatus = AnswerStatus.Correct;
+          game.firstPlayerScore += 1;
+        } else {
+          answerDto.answerStatus = AnswerStatus.Incorrect;
+        }
+        game.firstPlayerAnswers.push(answerDto);
+
+      } else {
+
+        if (game.secondPlayerAnswers.length === 5) {
+          return null;
+        }
+
+        const question = game.questions[game.secondPlayerAnswers.length];
+        answerDto.questionId = question.id;
+        if (question.correctAnswers.includes(answer)) {
+          answerDto.answerStatus = AnswerStatus.Correct;
+          game.secondPlayerScore += 1;
+        } else {
+          answerDto.answerStatus = AnswerStatus.Incorrect;
+        }
+        game.secondPlayerAnswers.push(answerDto);
+
+      }
+
+      if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
+        game.status = StatusGame.Finished;
+        game.finishGameDate = dateAt();
+
+
+        if ((game.firstPlayerAnswers[4].addedAt < game.secondPlayerAnswers[4].addedAt) && game.firstPlayerScore > 0) {
+          game.firstPlayerScore += 1;
+        } else if ((game.firstPlayerAnswers[4].addedAt > game.secondPlayerAnswers[4].addedAt) && game.secondPlayerScore > 0) {
+          game.secondPlayerScore += 1;
+        }
+
+
+        if (game.firstPlayerScore > game.secondPlayerScore) {
+          game.winnerId = game.firstPlayerId;
+        } else if (game.firstPlayerScore < game.secondPlayerScore) {
+          game.winnerId = game.secondPlayerId;
+        }
+      }
+
+
+      await manager.save(game);
+      await queryRunner.commitTransaction();
+      return answerDto;
+
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+      return null;
+    } finally {
+      await queryRunner.release();
+    }
+
+  }
+
+  async sendAnswer2(userId: string, answer: string): Promise<AnswerViewDto | null> {
+
     const game = await this.gamesRepository.createQueryBuilder("g")
       .where("g.status = :status", { status: StatusGame.Active })
       .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
@@ -131,11 +220,9 @@ export class PairGameQuizRepository {
 
       if ((game.firstPlayerAnswers[4].addedAt < game.secondPlayerAnswers[4].addedAt) && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
-      }
-      else if ((game.firstPlayerAnswers[4].addedAt > game.secondPlayerAnswers[4].addedAt) && game.secondPlayerScore > 0) {
+      } else if ((game.firstPlayerAnswers[4].addedAt > game.secondPlayerAnswers[4].addedAt) && game.secondPlayerScore > 0) {
         game.secondPlayerScore += 1;
       }
-
 
 
       if (game.firstPlayerScore > game.secondPlayerScore) {
