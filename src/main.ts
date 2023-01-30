@@ -5,6 +5,7 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from "./exception.filter";
 import { ConfigService } from "@nestjs/config";
 import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 //import * as cookieParser from 'cookie-parser';
 
@@ -29,6 +30,20 @@ async function bootstrap() {
     }
   }));
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
+
+
+  const config = new DocumentBuilder()
+    .setTitle('It-blogs')
+    .setDescription('The it-blogs API description')
+    .setVersion('1.0')
+    .addBasicAuth()
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+
+
   const configService = app.get(ConfigService);
   await app.listen(configService.get("PORT"));
 }

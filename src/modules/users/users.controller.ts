@@ -25,7 +25,10 @@ import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { InputBanBlogUserDto } from "./dto/input-blog-ban-user.dto";
 import { BanUserForBlogCommand, ReturnAllBannedUsersForBlogCommand } from "../blogs/blogs.service";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { ApiBasicAuth, ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiBasicAuth()
+@ApiTags('Users')
 @UseGuards(BaseAuthGuard)
 @Controller("sa/users")
 export class SaUsersController {
@@ -38,7 +41,6 @@ export class SaUsersController {
     const searchLogin = query.searchLoginTerm as string || "";
     const searchEmail = query.searchEmailTerm as string || "";
     const banStatus = query.banStatus as string || "";
-
     return this.commandBus.execute(new FindAllUsersCommand(banStatus.trim(), searchLogin.trim(), searchEmail.trim(), paginationParams));
   }
 
@@ -68,9 +70,10 @@ export class SaUsersController {
     return this.commandBus.execute(new GetUserByConfirmationCodeCommand(confirmationCode));
   }
 
-
 }
 
+@ApiBearerAuth()
+@ApiTags('Users')
 @UseGuards(BearerAuthGuard)
 @Controller("blogger/users")
 export class BloggerUsersController {

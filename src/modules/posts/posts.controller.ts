@@ -11,7 +11,7 @@ import {
   CreatePostCommand,
   DeletePostCommand,
   GetAllPostsCommand,
-  GetOnePostCommand, GetOnePostWithLikesCommand, GetPostTestCommand, PostsUpdateLikeByIDCommand,
+  GetOnePostCommand, GetOnePostWithLikesCommand, PostsUpdateLikeByIDCommand,
   UpdatePostCommand
 } from "./posts.service";
 import { InputPostDto } from "./dto/input-post.dto";
@@ -25,15 +25,16 @@ import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { BaseAuthGuard } from "../../guards/base.auth.guard";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import { CreateCommentByPostIDCommand, GetAllCommentsByPostIDCommand } from "../comments/comments.service";
+import { ApiBasicAuth, ApiTags } from "@nestjs/swagger";
 
-
+@ApiTags('Posts')
 @Controller("posts")
 export class PostsController {
   constructor(
     private commandBus: CommandBus) {
   }
 
-
+  @ApiBasicAuth()
   @Delete(":id")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -41,14 +42,7 @@ export class PostsController {
     await this.commandBus.execute(new DeletePostCommand(postId));
   }
 
-  @Get("test")
-  async getTest(
-  ): Promise<ViewPostDto> {
-    return await this.commandBus.execute(new GetPostTestCommand());
-  }
-
-
-
+  @ApiBasicAuth()
   @Post()
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -56,7 +50,7 @@ export class PostsController {
     return this.commandBus.execute(new CreatePostCommand(inputPost));
   }
 
-
+  @ApiBasicAuth()
   @Put(":id")
   @UseGuards(BaseAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -85,7 +79,7 @@ export class PostsController {
     return this.commandBus.execute(new GetAllPostsCommand(paginationParams, userId));
   }
 
-
+  @ApiBasicAuth()
   @Put(":postId/like-status")
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthUserIdGuard)
@@ -100,7 +94,7 @@ export class PostsController {
     return this.commandBus.execute(new PostsUpdateLikeByIDCommand(postId, userId, inputLike.likeStatus));
   }
 
-
+  @ApiBasicAuth()
   @Post(":postId/comments")
   @UseGuards(AuthUserIdGuard)
   async createCommentByPostID(

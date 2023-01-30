@@ -33,10 +33,12 @@ import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
+import { ApiBasicAuth, ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 
 //////////////////////////////////////////////////////////////
 
+@ApiTags('Blogs')
 @Controller("blogs")
 export class BlogsController {
 
@@ -72,7 +74,8 @@ export class BlogsController {
 }
 
 //////////////////////////////////////////////////////////////
-
+@ApiBearerAuth()
+@ApiTags('Blogs')
 @UseGuards(AuthUserIdGuard)
 @Controller("blogger/blogs")
 export class BloggerBlogsController {
@@ -150,7 +153,8 @@ export class BloggerBlogsController {
 }
 
 ////////////////////////////////////////////
-
+@ApiBasicAuth()
+@ApiTags('Blogs')
 @UseGuards(BaseAuthGuard)
 @Controller("sa/blogs")
 export class SaBlogsController {

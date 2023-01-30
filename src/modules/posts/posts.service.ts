@@ -371,22 +371,3 @@ export class GetAllPostsByBlogOwnerIdUseCase implements ICommandHandler<GetAllPo
 }
 
 
-
-
-//////////////////////////////////////////////////////////////
-export class GetPostTestCommand {
-  constructor() {
-  }
-}
-
-@CommandHandler(GetPostTestCommand)
-export class GetPostTestUseCase implements ICommandHandler<GetPostTestCommand> {
-  constructor(
-    protected postLikesRepository: PostLikesRepository
-  ) {
-  }
-
-  async execute(command: GetPostTestCommand) {
-    return this.postLikesRepository.newestLikesNew( ['1']);
-  }
-}

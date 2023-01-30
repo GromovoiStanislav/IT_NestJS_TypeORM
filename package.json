@@ -19,13 +19,11 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-
-    "typeorm":  "ts-node node_modules/typeorm/cli.js -d src/db/data-source.ts",
+    "typeorm": "ts-node node_modules/typeorm/cli.js -d src/db/data-source.ts",
     "migration:drop": "yarn typeorm schema:drop",
     "migration:generate": "yarn typeorm migration:generate src/db/migrations/name",
     "migration:run": "yarn typeorm migration:run",
     "migration:show": "yarn typeorm migration:show"
-
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -34,6 +32,7 @@
     "@nestjs/cqrs": "^9.0.1",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/swagger": "^6.1.4",
     "@nestjs/throttler": "^3.1.0",
     "@nestjs/typeorm": "^9.0.1",
     "bcryptjs": "^2.4.3",

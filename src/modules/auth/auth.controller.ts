@@ -15,8 +15,10 @@ import { InputLoginDto } from "./dto/input-login.dto";
 import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
 import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { SkipThrottle, ThrottlerGuard } from "@nestjs/throttler";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 
+@ApiTags('Auth')
 @UseGuards(ThrottlerGuard)
 @Controller("auth")
 export class AuthController {
@@ -85,7 +87,7 @@ export class AuthController {
     return { accessToken: JWT_Tokens.accessToken };
   }
 
-
+  @ApiBearerAuth()
   @Get("me")
   @SkipThrottle()
   @UseGuards(BearerAuthGuard)

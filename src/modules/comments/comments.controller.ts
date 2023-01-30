@@ -18,9 +18,10 @@ import { CurrentUserId } from "../../decorators/current-userId.decorator";
 import { InputCommentDto } from "./dto/input-comment.dto";
 import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 
-
+@ApiTags('Comments')
 @Controller("comments")
 export class CommentsController {
 
@@ -29,6 +30,7 @@ export class CommentsController {
   }
 
 
+  @ApiBearerAuth()
   @Delete(":id")
   @UseGuards(AuthUserIdGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -38,6 +40,7 @@ export class CommentsController {
   }
 
 
+  @ApiBearerAuth()
   @Put(":id")
   @UseGuards(AuthUserIdGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -48,6 +51,7 @@ export class CommentsController {
   }
 
 
+  @ApiBearerAuth()
   @Put(":id/like-status")
   @UseGuards(AuthUserIdGuard)
   @HttpCode(HttpStatus.NO_CONTENT)

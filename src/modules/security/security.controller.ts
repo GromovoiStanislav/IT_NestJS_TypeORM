@@ -6,9 +6,10 @@ import {
   TerminateAllOtherDeviceSessionsExcludeCurrentCommand,
   TerminateDeviceSessionCommand
 } from "./security.service";
+import { ApiTags } from "@nestjs/swagger";
 
 
-
+@ApiTags('SecurityDevices')
 @Controller("security")
 export class SecurityController {
 

@@ -18,7 +18,10 @@ import { AnswerViewDto } from "./dto/answer-view.dto";
 import { Pagination } from "../../decorators/paginationDecorator";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
+@ApiBearerAuth()
+@ApiTags('PairQuizGame')
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
 export class PairGameQuizController {
