@@ -7,6 +7,7 @@ import { UpdateQuizDto } from "./dto/update-quiz.dto";
 import { PaginationParams } from "../../commonDto/paginationParams.dto";
 import { PaginatorDto } from "../../commonDto/paginator.dto";
 import { PublishQuizDto } from "./dto/publish-quiz.dto";
+import { take } from "rxjs";
 
 @Injectable()
 export class QuizzesRepository {
@@ -47,8 +48,20 @@ export class QuizzesRepository {
   }
 
   async get5Quizzes(): Promise<Quiz[]> {
-    return await this.quizzesRepository.find({ select: ["id", "body", "correctAnswers"], take: 5 });
+    // return await this.quizzesRepository.find({
+    //   select: ["id", "body", "correctAnswers"],
+    //   where: { published: true },
+    //   take: 5
+    // });
     //{id:true,body:true,correctAnswers:true}
+    return await this.quizzesRepository
+      .createQueryBuilder("q")
+      .select(["q.id", "q.body", "q.correctAnswers"])
+      .where("q.published = true")
+      .orderBy("RANDOM()")
+      .take(5)
+      .getMany();
+
   }
 
 
