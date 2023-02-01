@@ -3,7 +3,7 @@ import { CreateQuizDto } from "./create-quiz.dto";
 import dateAt from "../../../utils/DateGenerator";
 import { Quiz } from "../quiz.entity";
 import { ViewQuizDto } from "./view-quiz.dto";
-import { PaginatorDto } from "../../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { UpdateQuizDto } from "./update-quiz.dto";
 import { InputPublishQuizDto } from "./input-publish-quiz.dto";
 import { PublishQuizDto } from "./publish-quiz.dto";

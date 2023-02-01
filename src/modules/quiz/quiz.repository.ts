@@ -4,8 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Quiz } from "./quiz.entity";
 import { CreateQuizDto } from "./dto/create-quiz.dto";
 import { UpdateQuizDto } from "./dto/update-quiz.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { PublishQuizDto } from "./dto/publish-quiz.dto";
 import { take } from "rxjs";
 

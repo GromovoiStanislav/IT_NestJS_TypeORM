@@ -12,10 +12,10 @@ import {
 } from "@nestjs/common";
 
 import { InputPublishQuizDto } from "./dto/input-publish-quiz.dto";
-import { BaseAuthGuard } from "../../guards/base.auth.guard";
+import { BaseAuthGuard } from "../../common/guards/base.auth.guard";
 import { ViewQuizDto } from "./dto/view-quiz.dto";
-import { Pagination } from "../../decorators/paginationDecorator";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { Pagination } from "../../common/decorators/paginationDecorator";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { CommandBus } from "@nestjs/cqrs";
 import {
   DeleteQuestionCommand,
@@ -24,7 +24,7 @@ import {
   PublishQuestionCommand, FindAllQuestionsCommand
 } from "./quiz.service";
 import { InputQuizDto } from "./dto/input-quiz.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import {
   ApiBasicAuth, ApiBody,
   ApiExtraModels,
@@ -34,7 +34,7 @@ import {
   ApiTags,
   getSchemaPath
 } from "@nestjs/swagger";
-import { APIErrorResult } from "../../commonDto/errors-message.dto";
+import { APIErrorResult } from "../../common/dto/errors-message.dto";
 
 ///////////////////////////////////////////////////////
 

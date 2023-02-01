@@ -1,7 +1,7 @@
 import { InputCommentDto } from "./input-comment.dto";
 import { UpdateCommentDto } from "./update-comment.dto";
 import { ViewCommentDto } from "./view-comment.dto";
-import { LikesInfoDto } from "../../../commonDto/likesInfoDto";
+import { LikesInfoDto } from "../../../common/dto/likesInfoDto";
 import uid from "../../../utils/IdGenerator";
 import dateAt from "../../../utils/DateGenerator";
 import { CreateCommentDto } from "./create-comment.dto";

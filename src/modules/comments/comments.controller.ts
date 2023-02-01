@@ -14,9 +14,9 @@ import {
   UpdateCommentCommand,
   UpdateCommentLikeCommand
 } from "./comments.service";
-import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { CurrentUserId } from "../../common/decorators/current-userId.decorator";
 import { InputCommentDto } from "./dto/input-comment.dto";
-import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
+import { AuthUserIdGuard } from "../../common/guards/auth.userId.guard";
 import { InputLikeDto } from "./dto/input-like.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 

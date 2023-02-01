@@ -17,14 +17,14 @@ import {
   DeleteUserCommand,
   FindAllUsersCommand, GetUserByConfirmationCodeCommand
 } from "./users.service";
-import { BaseAuthGuard } from "../../guards/base.auth.guard";
-import { Pagination } from "../../decorators/paginationDecorator";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { BaseAuthGuard } from "../../common/guards/base.auth.guard";
+import { Pagination } from "../../common/decorators/paginationDecorator";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { InputBanUserDto } from "./dto/input-ban-user.dto";
-import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
+import { BearerAuthGuard } from "../../common/guards/bearer.auth.guard";
 import { InputBanBlogUserDto } from "./dto/input-blog-ban-user.dto";
 import { BanUserForBlogCommand, ReturnAllBannedUsersForBlogCommand } from "../blogs/blogs.service";
-import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { CurrentUserId } from "../../common/decorators/current-userId.decorator";
 import {
   ApiBasicAuth,
   ApiBearerAuth,
@@ -34,9 +34,9 @@ import {
   ApiTags,
   ApiExcludeEndpoint, ApiBody, ApiExtraModels, getSchemaPath, ApiQuery
 } from "@nestjs/swagger";
-import { APIErrorResult } from "../../commonDto/errors-message.dto";
+import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { ViewBanBlogUser } from "../blogs/dto/view-blog-ban-user.dto";
 
 

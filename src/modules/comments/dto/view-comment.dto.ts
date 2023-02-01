@@ -1,4 +1,4 @@
-import { LikesInfoDto } from "../../../commonDto/likesInfoDto";
+import { LikesInfoDto } from "../../../common/dto/likesInfoDto";
 
 export class ViewCommentDto {
   id: string

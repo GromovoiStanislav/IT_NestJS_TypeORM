@@ -16,7 +16,7 @@ import {
   UpdatePostUseCase
 } from "./posts.service";
 import { CqrsModule } from "@nestjs/cqrs";
-import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { UserIdMiddleware } from "../../common/middlewares/userId.middleware";
 import { JWT_Module } from "../jwt/jwt.module";
 import { BlogIdValidator } from "./dto/blogId.validator";
 import { PostsRepository } from "./posts.repository";

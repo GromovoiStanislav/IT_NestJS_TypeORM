@@ -1,10 +1,10 @@
 import uid from "../../../utils/IdGenerator";
-import { PaginatorDto } from "../../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { CreatePostDto } from "./create-post.dto";
 import dateAt from "../../../utils/DateGenerator";
 import { InputPostDto } from "./input-post.dto";
 import { ViewPostDto } from "./view-post.dto";
-import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
+import { ExtendedLikesInfoDto } from "../../../common/dto/extendedLikesInfoDto";
 import { UpdatePostDto } from "./update-post.dto";
 import { InputBlogPostDto } from "./input-blog-post.dto";
 import { Post } from "../post.entity";

@@ -1,5 +1,5 @@
 import { InputUserDto } from "./dto/input-user.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { generateHash } from "../../utils/bcryptUtils";
 import UsersMapper from "./dto/usersMapper";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";

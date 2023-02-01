@@ -6,8 +6,8 @@ import QuizMapper from "./dto/quizMapper";
 import { ViewQuizDto } from "./dto/view-quiz.dto";
 import { Quiz } from "./quiz.entity";
 import { InputPublishQuizDto } from "./dto/input-publish-quiz.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 
 
 //////////////////////////////////////////////////////////////

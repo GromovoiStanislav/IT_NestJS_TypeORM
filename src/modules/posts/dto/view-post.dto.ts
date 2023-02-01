@@ -1,4 +1,4 @@
-import { ExtendedLikesInfoDto } from "../../../commonDto/extendedLikesInfoDto";
+import { ExtendedLikesInfoDto } from "../../../common/dto/extendedLikesInfoDto";
 
 export class ViewPostDto {
   id: string

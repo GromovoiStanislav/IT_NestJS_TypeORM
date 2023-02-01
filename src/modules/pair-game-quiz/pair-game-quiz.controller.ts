@@ -9,15 +9,15 @@ import {
   Post,
   UseGuards
 } from "@nestjs/common";
-import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
-import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { AuthUserIdGuard } from "../../common/guards/auth.userId.guard";
+import { CurrentUserId } from "../../common/decorators/current-userId.decorator";
 import { PairGameQuizService } from "./pair-game-quiz.service";
 import { InputAnswerDto } from "./dto/input-answer.dto";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
 import { AnswerViewDto } from "./dto/answer-view.dto";
-import { Pagination } from "../../decorators/paginationDecorator";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { Pagination } from "../../common/decorators/paginationDecorator";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @ApiBearerAuth()

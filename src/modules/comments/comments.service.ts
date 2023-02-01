@@ -4,7 +4,7 @@ import { InputCommentDto } from "./dto/input-comment.dto";
 import CommentsMapper from "./dto/commentsMapper";
 import { GetOnePostCommand } from "../posts/posts.service";
 import { GetUserByIdCommand } from "../users/users.service";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { IsUserBannedForBlogCommand } from "../blogs/blogs.service";
 import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./comment-likes.repository";

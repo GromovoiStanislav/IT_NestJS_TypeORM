@@ -2,7 +2,7 @@ import { CreateBlogDto } from "./create-blog.dto";
 import { InputBlogDto } from "./input-blog.dto";
 import { ViewBlogDto } from "./view-blog.dto";
 import uid from "../../../utils/IdGenerator";
-import { PaginatorDto } from "../../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { UpdateBlogDto } from "./update-blog.dto";
 import dateAt from "../../../utils/DateGenerator";
 import { BlogOwnerDto } from "./blog-owner.dto";

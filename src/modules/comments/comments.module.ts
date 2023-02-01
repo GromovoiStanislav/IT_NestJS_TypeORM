@@ -7,7 +7,7 @@ import {
   UpdateCommentLikeUseCase,
   UpdateCommentUseCase
 } from "./comments.service";
-import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { UserIdMiddleware } from "../../common/middlewares/userId.middleware";
 import { CommentsController } from "./comments.controller";
 import { JWT_Module } from "../jwt/jwt.module";
 import { CommentsRepository } from "./comments.repository";

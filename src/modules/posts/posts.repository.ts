@@ -3,8 +3,8 @@ import {InjectDataSource, InjectRepository} from "@nestjs/typeorm";
 import {DataSource, Repository} from "typeorm";
 import {CreatePostDto} from "./dto/create-post.dto";
 import {UpdatePostDto} from "./dto/update-post.dto";
-import {PaginationParams} from "../../commonDto/paginationParams.dto";
-import {PaginatorDto} from "../../commonDto/paginator.dto";
+import {PaginationParams} from "../../common/dto/paginationParams.dto";
+import {PaginatorDto} from "../../common/dto/paginator.dto";
 import {Post} from "./post.entity";
 
 

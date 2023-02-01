@@ -16,7 +16,7 @@ import {
 } from "./blogs.service";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
-import { UserIdMiddleware } from "../../middlewares/userId.middleware";
+import { UserIdMiddleware } from "../../common/middlewares/userId.middleware";
 import { BlogsRepository } from "./blogs.repository";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Blog } from "./blog.entity";

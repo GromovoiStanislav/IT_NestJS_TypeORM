@@ -1,8 +1,8 @@
 import { ViewBlogDto } from "./dto/view-blog.dto";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import BlogMapper from "./dto/blogsMapper";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { BadRequestException, ForbiddenException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";

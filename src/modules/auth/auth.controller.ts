@@ -12,8 +12,8 @@ import {
 import { InputEmailDto } from "./dto/input-email.dto";
 import { InputCodeDto } from "./dto/input-code.dto";
 import { InputLoginDto } from "./dto/input-login.dto";
-import { BearerAuthGuard } from "../../guards/bearer.auth.guard";
-import { CurrentUserId } from "../../decorators/current-userId.decorator";
+import { BearerAuthGuard } from "../../common/guards/bearer.auth.guard";
+import { CurrentUserId } from "../../common/decorators/current-userId.decorator";
 import { SkipThrottle, ThrottlerGuard } from "@nestjs/throttler";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 

@@ -1,7 +1,7 @@
 import { InputPostDto } from "./dto/input-post.dto";
 import { ViewPostDto } from "./dto/view-post.dto";
 import PostMapper from "./dto/postsMapper";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { InputBlogPostDto } from "./dto/input-blog-post.dto";
 import { CommandBus, CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { GetUserByIdCommand } from "../users/users.service";
@@ -10,7 +10,7 @@ import { PostsRepository } from "./posts.repository";
 import { GetOneBlogCommand } from "../blogs/blogs.service";
 import { PostLikesRepository } from "./post-likes.repository";
 import { Post } from "./post.entity";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 
 
 //////////////////////////////////////////////////////////////

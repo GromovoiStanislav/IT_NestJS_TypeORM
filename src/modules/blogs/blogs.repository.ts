@@ -6,8 +6,8 @@ import { UpdateBlogDto } from "./dto/update-blog.dto";
 import { BlogOwnerDto } from "./dto/blog-owner.dto";
 import { BanBlogInfo } from "./dto/blog-banInfo.dto";
 import { CreateBlogBanUserDto } from "./dto/create-blog-ban-user.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { Blog } from "./blog.entity";
 import { BlogBannedUser } from "./blog-banned-users.entity";
 

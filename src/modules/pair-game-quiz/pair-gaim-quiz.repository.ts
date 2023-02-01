@@ -7,8 +7,8 @@ import { CommandBus } from "@nestjs/cqrs";
 import { Get5QuestionsCommand } from "../quiz/quiz.service";
 import { AnswerViewDto } from "./dto/answer-view.dto";
 import { AnswerDto } from "./dto/game-pair-view.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 
 
 @Injectable()

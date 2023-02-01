@@ -3,8 +3,8 @@ import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { Comment } from "./comment.entity";
 
 

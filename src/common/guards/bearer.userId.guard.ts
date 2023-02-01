@@ -4,7 +4,7 @@ import {
   Injectable
 } from "@nestjs/common";
 //import { Observable } from "rxjs";
-import { JWT_Service } from "../modules/jwt/jwt.service";
+import { JWT_Service } from "../../modules/jwt/jwt.service";
 
 @Injectable()
 export class BearerUserIdGuard implements CanActivate {

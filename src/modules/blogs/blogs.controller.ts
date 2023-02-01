@@ -18,8 +18,8 @@ import {
 } from "./blogs.service";
 import { InputBlogDto } from "./dto/input-blog.dto";
 import { ViewBlogDto } from "./dto/view-blog.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { ViewPostDto } from "../posts/dto/view-post.dto";
 import {
   CreatePostByBlogIdCommand,
@@ -27,11 +27,11 @@ import {
   GetAllPostsByBlogIdCommand, UpdatePostByBlogIdAndPostIdCommand
 } from "../posts/posts.service";
 import { InputBlogPostDto } from "../posts/dto/input-blog-post.dto";
-import { Pagination } from "../../decorators/paginationDecorator";
-import { BaseAuthGuard } from "../../guards/base.auth.guard";
-import { BearerUserIdGuard } from "../../guards/bearer.userId.guard";
-import { CurrentUserId } from "../../decorators/current-userId.decorator";
-import { AuthUserIdGuard } from "../../guards/auth.userId.guard";
+import { Pagination } from "../../common/decorators/paginationDecorator";
+import { BaseAuthGuard } from "../../common/guards/base.auth.guard";
+import { BearerUserIdGuard } from "../../common/guards/bearer.userId.guard";
+import { CurrentUserId } from "../../common/decorators/current-userId.decorator";
+import { AuthUserIdGuard } from "../../common/guards/auth.userId.guard";
 import { InputBanBlogDto } from "./dto/input-ban-blog.dto";
 import { ApiBasicAuth, ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 

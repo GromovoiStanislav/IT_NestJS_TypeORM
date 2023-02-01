@@ -1,6 +1,6 @@
 import { Game } from "../game.entity";
 import { GamePairViewDto } from "./game-pair-view.dto";
-import { PaginatorDto } from "../../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../../common/dto/paginator.dto";
 
 
 export default class GameMapper {

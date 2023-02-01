@@ -5,8 +5,8 @@ import { GetUserByIdCommand } from "../users/users.service";
 import { GamePairViewDto } from "./dto/game-pair-view.dto";
 import GameMapper from "./dto/gameMapper";
 import { AnswerViewDto } from "./dto/answer-view.dto";
-import { PaginationParams } from "../../commonDto/paginationParams.dto";
-import { PaginatorDto } from "../../commonDto/paginator.dto";
+import { PaginationParams } from "../../common/dto/paginationParams.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
 import e from "express";
 
 

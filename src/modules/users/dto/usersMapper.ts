@@ -3,7 +3,7 @@ import { InputUserDto } from "./input-user.dto";
 import uid from "../../../utils/IdGenerator";
 import dateAt from "../../../utils/DateGenerator";
 import { ViewUserDto } from "./view-user.dto";
-import { PaginatorDto } from "../../../commonDto/paginator.dto";
+import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { BanUsersInfo } from "./user-banInfo.dto";
 import { User } from "../user.entity";
 

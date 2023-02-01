@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
-import { ExtendedLikesInfoDto } from "../../commonDto/extendedLikesInfoDto";
-import { LikeDetailsViewDto } from "../../commonDto/likeDetailsViewDto";
+import { ExtendedLikesInfoDto } from "../../common/dto/extendedLikesInfoDto";
+import { LikeDetailsViewDto } from "../../common/dto/likeDetailsViewDto";
 import { PostLike } from "./post-like.entity";
 import { User } from "../users/user.entity";
 
