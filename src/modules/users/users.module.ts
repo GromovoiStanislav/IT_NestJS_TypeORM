@@ -10,7 +10,7 @@ import {
   GetUserByConfirmationCodeUseCase,
   GetUserByIdUseCase, GetUserByLoginOrEmail_v2UseCase,
   GetUserByLoginOrEmailUseCase,
-  UpdateConfirmCodeUseCase
+  UpdateConfirmCodeUseCase, UpdatePasswordRecoveryCodeUseCase
 } from "./users.service";
 import { CqrsModule } from "@nestjs/cqrs";
 import { JWT_Module } from "../jwt/jwt.module";
@@ -30,7 +30,8 @@ const useCases = [
   ConfirmUserUseCase,
   GetUserByIdUseCase,
   BanUserUserUseCase,
-  GetIdBannedUsersUseCase
+  GetIdBannedUsersUseCase,
+  UpdatePasswordRecoveryCodeUseCase
 ];
 
 @Module({

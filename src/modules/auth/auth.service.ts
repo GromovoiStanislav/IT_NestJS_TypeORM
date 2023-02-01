@@ -9,7 +9,7 @@ import {
   ConfirmUserCommand,
   CreateUserCommand, GetUserByConfirmationCodeCommand, GetUserByIdCommand, GetUserByLoginOrEmail_v2Command,
   GetUserByLoginOrEmailCommand,
-  UpdateConfirmCodeCommand
+  UpdateConfirmCodeCommand, UpdatePasswordRecoveryCodeCommand
 } from "../users/users.service";
 import { comparePassword } from "../../utils/bcryptUtils";
 import { JWT_Service } from "../jwt/jwt.service";
@@ -19,6 +19,7 @@ import {
   FindSessionByTokenIdCommand,
   KillSessionByDeviceIdCommand, KillSessionByTokenIdCommand
 } from "../security/security.service";
+import { ViewAboutMeDto } from "./dto/view-about-me.dto";
 
 
 
@@ -167,13 +168,14 @@ export class GetMeInfoUseCase implements ICommandHandler<GetMeInfoCommand> {
   constructor(private commandBus: CommandBus) {
   }
 
-  async execute(command: GetMeInfoCommand) {
+  async execute(command: GetMeInfoCommand): Promise<ViewAboutMeDto> {
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
-    return {
-      email: user.email,
-      login: user.login,
-      userId: user.id
-    };
+    return new ViewAboutMeDto(user.email,user.login,user.id)
+    // return {
+    //   email: user.email,
+    //   login: user.login,
+    //   userId: user.id
+    // };
 
   }
 }
@@ -246,5 +248,30 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
     }
 
     await this.commandBus.execute(new KillSessionByDeviceIdCommand(data.deviceId));
+  }
+}
+
+////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+export class PasswordRecoveryCommand {
+  constructor(public email: string) {
+  }
+}
+
+@CommandHandler(PasswordRecoveryCommand)
+export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecoveryCommand> {
+  constructor(private commandBus: CommandBus,
+              private emailAdapter: EmailService) {
+  }
+
+  async execute(command: PasswordRecoveryCommand): Promise<void> {
+    const subject = 'Password recovery'
+    const recoveryCode = uuidv4()
+    const message = `<a href='https://it-nest.vercel.app/auth/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>`
+
+    const isEmailSend = await this.emailAdapter.sendEmail(command.email, subject, message);
+    if (isEmailSend) {
+      await this.commandBus.execute(new UpdatePasswordRecoveryCodeCommand(command.email, recoveryCode));
+    }
   }
 }

@@ -90,6 +90,10 @@ export class UsersRepository {
     //   .execute();
   }
 
+  async updateRecoveryCode(email: string, recoveryCode: string): Promise<void> {
+    await this.usersRepository.update({ email }, { recoveryCode, isRecoveryCodeConfirmed: false });
+  }
+
 
   async getAllUsers(banStatus: string,
                     searchLogin: string,

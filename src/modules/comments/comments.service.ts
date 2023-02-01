@@ -8,6 +8,7 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { IsUserBannedForBlogCommand } from "../blogs/blogs.service";
 import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./comment-likes.repository";
+import { LikeStatus } from "./dto/input-like.dto";
 
 
 
@@ -214,7 +215,7 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
     for (const comment of result.items) {
       let likes = likesArr.find(i=> i.commentId===comment.id)
       if(!likes){
-        likes = { likesCount: 0, dislikesCount: 0, myStatus: "None" }
+        likes = { likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None }
       }
       items.push(CommentsMapper.fromModelToView(comment, likes));
     }
@@ -249,7 +250,7 @@ export class GetAllCommentsByArrayOfPostIDUseCase implements ICommandHandler<Get
     for (const comment of result.items) {
       let likes = likesArr.find(i=> i.commentId===comment.id)
       if(!likes){
-        likes = { likesCount: 0, dislikesCount: 0, myStatus: "None" }
+        likes = { likesCount: 0, dislikesCount: 0, myStatus: LikeStatus.None }
       }
       items.push(CommentsMapper.fromModelToOwnerView(comment, likes));
     }

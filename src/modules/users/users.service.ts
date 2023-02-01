@@ -227,3 +227,19 @@ export class GetIdBannedUsersUseCase implements ICommandHandler<GetIdBannedUsers
     return users.map(user => user.id);
   }
 }
+
+////////////////////////////////////////////////////////////
+export class UpdatePasswordRecoveryCodeCommand {
+  constructor(public email: string, public recoveryCode: string) {
+  }
+}
+
+@CommandHandler(UpdatePasswordRecoveryCodeCommand)
+export class UpdatePasswordRecoveryCodeUseCase implements ICommandHandler<UpdatePasswordRecoveryCodeCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: UpdatePasswordRecoveryCodeCommand): Promise<void> {
+    await this.usersRepository.updateRecoveryCode(command.email, command.recoveryCode);
+  }
+}
