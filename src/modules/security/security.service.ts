@@ -4,6 +4,7 @@ import { JWT_Service } from "../jwt/jwt.service";
 import { SecurityMapper } from "./dto/securityMapper";
 import { DevicesRepository } from "./devices.repository";
 import { CreateDeviceDto } from "./dto/create-device.dto";
+import { ViewSecurityDto } from "./dto/view-security.dto";
 
 
 //////////////////////////////////////////////////////////////
@@ -36,7 +37,7 @@ export class ReturnAllDeviceSessionsByCurrentUserUseCase implements ICommandHand
     private jwtService: JWT_Service) {
   }
 
-  async execute(command: ReturnAllDeviceSessionsByCurrentUserCommand) {
+  async execute(command: ReturnAllDeviceSessionsByCurrentUserCommand): Promise<ViewSecurityDto[]> {
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }
@@ -63,7 +64,7 @@ export class TerminateAllOtherDeviceSessionsExcludeCurrentUserUseCase implements
     private jwtService: JWT_Service) {
   }
 
-  async execute(command: TerminateAllOtherDeviceSessionsExcludeCurrentCommand) {
+  async execute(command: TerminateAllOtherDeviceSessionsExcludeCurrentCommand): Promise<void> {
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }
@@ -89,7 +90,7 @@ export class TerminateDeviceSessionUseCase implements ICommandHandler<TerminateD
     private jwtService: JWT_Service) {
   }
 
-  async execute(command: TerminateDeviceSessionCommand) {
+  async execute(command: TerminateDeviceSessionCommand): Promise<void> {
     if (!command.refreshToken) {
       throw new UnauthorizedException();
     }

@@ -8,7 +8,7 @@ export class InputUserDto {
     required: true,
     minLength: 3,
     maxLength: 10,
-   // pattern: '^[a-zA-Z0-9_-]*$'
+   pattern: "^[a-zA-Z0-9_-]*$"
   })
   @Transform(({value}:TransformFnParams)=>value?.trim())
   @IsString()
@@ -31,7 +31,7 @@ export class InputUserDto {
   @ApiProperty({
     type: String,
     required: true,
-    //pattern: '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$',
+    //pattern: "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
   })
   @ApiProperty()
   @IsNotEmpty()
@@ -39,3 +39,4 @@ export class InputUserDto {
   email: string
 }
 
+export class Input_UserDto extends InputUserDto {}

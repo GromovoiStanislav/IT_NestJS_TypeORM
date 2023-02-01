@@ -10,7 +10,7 @@ import {
 } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 
-import { InputUserDto } from "./dto/input-user.dto";
+import { Input_UserDto, InputUserDto } from "./dto/input-user.dto";
 import {
   BanUserCommand,
   CreateUserCommand,
@@ -119,7 +119,7 @@ export class SaUsersController {
   }
 
   @ApiOperation({ summary: "Add new user to the system" })
-  @ApiBody({ required: true, description: "Data for constructing new user", type: InputUserDto })
+  @ApiBody({ required: true, description: "Data for constructing new user", type: Input_UserDto })
   @ApiResponse({ status: 201, description: "Returns the newly created user", type: ViewUserDto })
   @ApiResponse({ status: 400, description: "If the inputModel has incorrect values", type: APIErrorResult })
   @ApiResponse({ status: 401, description: "Unauthorized" })
