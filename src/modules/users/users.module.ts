@@ -37,7 +37,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]),CqrsModule, JWT_Module],
+  imports: [TypeOrmModule.forFeature([User]), CqrsModule, JWT_Module],
   controllers: [SaUsersController, BloggerUsersController],
   providers: [...useCases, UsersRepository]
 })
