@@ -24,6 +24,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nes
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { ViewAboutMeDto } from "./dto/view-about-me.dto";
 import { InputPasswordDto } from "./dto/input-password.dto";
+import { ViewAccessTokenDto } from "./dto/view-access-token.dto";
 
 
 @ApiTags("Auth")
@@ -34,21 +35,52 @@ export class AuthController {
   constructor(private commandBus: CommandBus) {
   }
 
-
+  @ApiOperation({ summary: "Registration in the system. Email with confirmation code will be send to passed email address" })
+  @ApiBody({ required: true, type: InputUserDto })
+  @ApiResponse({
+    status: 204,
+    description: "Input data is accepted. Email with confirmation code will be send to passed email address"
+  })
+  @ApiResponse({
+    status: 400,
+    description: "If the inputModel has incorrect values (in particular if the user with the given email or password already exists)",
+    type: APIErrorResult
+  })
+  @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
   @Post("registration")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registerUser(@Body() inputUser: InputUserDto) {
+  async registerUser(@Body() inputUser: InputUserDto): Promise<void> {
     await this.commandBus.execute(new RegisterUserCommand(inputUser));
   }
 
 
+
+  @ApiOperation({ summary: "Confirm registration" })
+  @ApiBody({ required: true, type: InputCodeDto })
+  @ApiResponse({ status: 204, description: "Email was verified. Account was activated" })
+  @ApiResponse({
+    status: 400,
+    description: "If the confirmation code is incorrect, expired or already been applied",
+    type: APIErrorResult
+  })
+  @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
   @Post("registration-confirmation")
   @HttpCode(HttpStatus.NO_CONTENT)
-  async registrationConfirmation(@Body() inputCode: InputCodeDto) {
+  async registrationConfirmation(@Body() inputCode: InputCodeDto): Promise<void> {
     await this.commandBus.execute(new ConfirmEmailCommand(inputCode.code));
   }
 
 
+  @ApiOperation({ summary: "Resend confirmation registration Email if user exists" })
+  @ApiBody({ required: true, description:"Data for constructing new user", type: InputCodeDto })
+  @ApiResponse({
+    status: 204,
+    description: `Input data is accepted.Email with confirmation code will be send to passed email address. 
+    Confirmation code should be inside link as query param, for example:
+     https://some-front.com/confirm-registration?code=youtcodehere`
+  })
+  @ApiResponse({ status: 400, description: "If the inputModel has incorrect values", type: APIErrorResult })
+  @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
   @Post("registration-email-resending")
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() inputEmail: InputEmailDto) {
@@ -90,10 +122,19 @@ export class AuthController {
     await this.commandBus.execute(new NewPasswordCommand(inputPassword.newPassword, inputPassword.recoveryCode));
   }
 
-
+  @ApiOperation({ summary: "Try login user to the system" })
+  @ApiBody({ required: true, type: InputLoginDto })
+  @ApiResponse({
+    status: 200,
+    description: "Returns JWT accessToken (expired after 10 seconds) in body and JWT refreshToken in cookie (http-only, secure) (expired after 20 seconds)",
+    type: ViewAccessTokenDto
+  })
+  @ApiResponse({ status: 400, description: "If the inputModel has incorrect values", type: APIErrorResult })
+  @ApiResponse({ status: 401, description: "If the password or login is wrong" })
+  @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
   @Post("login")
   @HttpCode(HttpStatus.OK)
-  async login(@Body() inputLogin: InputLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async login(@Body() inputLogin: InputLoginDto, @Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<ViewAccessTokenDto> {
     let title = req.header("user-agent")?.split(" ")[0] ?? "";
 
     const JWT_Tokens = await this.commandBus.execute(new LoginUserCommand(inputLogin.loginOrEmail, inputLogin.password, req.ip, title));
@@ -106,24 +147,32 @@ export class AuthController {
   }
 
 
-
   @ApiOperation({ summary: "In cookie must send correct refreshToken that will be revoked" })
   @ApiResponse({ status: 204, description: "No Content" })
   @ApiResponse({ status: 401, description: "If the JWT refreshToken inside cookie is missing, expired or incorrect" })
   @Post("logout")
   @SkipThrottle()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<void> {
     await this.commandBus.execute(new LogoutUserCommand(req.cookies.refreshToken));
     res.clearCookie("refreshToken");
   }
 
 
-
+  @ApiOperation({
+    summary: "Generate new pair of access and refresh tokens (in cookie client must send correct refreshToken that will be revoked after refreshing)\n" +
+      "Device LastActiveDate should be overrode by issued Date of new refresh token"
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Returns JWT accessToken (expired after 10 seconds) in body and JWT refreshToken in cookie (http-only, secure) (expired after 20 seconds)",
+    type: ViewAccessTokenDto
+  })
+  @ApiResponse({ status: 401, description: "If the JWT refreshToken inside cookie is missing, expired or incorrect" })
   @Post("refresh-token")
   @SkipThrottle()
   @HttpCode(HttpStatus.OK)
-  async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+  async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<ViewAccessTokenDto> {
     let title = req.header("user-agent")?.split(" ")[0] ?? "";
 
     const JWT_Tokens = await this.commandBus.execute(new RefreshTokenCommand(req.cookies.refreshToken, req.ip, title));
