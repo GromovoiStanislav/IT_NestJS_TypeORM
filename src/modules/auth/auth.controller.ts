@@ -7,7 +7,12 @@ import {
   RegisterUserCommand,
   ResendConfirmationCodeCommand,
   ConfirmEmailCommand,
-  LoginUserCommand, GetMeInfoCommand, RefreshTokenCommand, LogoutUserCommand, PasswordRecoveryCommand
+  LoginUserCommand,
+  GetMeInfoCommand,
+  RefreshTokenCommand,
+  LogoutUserCommand,
+  PasswordRecoveryCommand,
+  NewPasswordCommand
 } from "./auth.service";
 import { InputEmailDto } from "./dto/input-email.dto";
 import { InputCodeDto } from "./dto/input-code.dto";
@@ -18,6 +23,7 @@ import { SkipThrottle, ThrottlerGuard } from "@nestjs/throttler";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { ViewAboutMeDto } from "./dto/view-about-me.dto";
+import { InputPasswordDto } from "./dto/input-password.dto";
 
 
 @ApiTags("Auth")
@@ -51,14 +57,37 @@ export class AuthController {
 
 
   @ApiOperation({ summary: "Password recovery via email confirmation. Email should be sent with RecoveryCode inside" })
-  @ApiBody({ required: true, description: "Data for constructing new user", type: InputEmailDto})
-  @ApiResponse({ status: 204, description: "Even if current email is not registered (for prevent user's email detection)" })
-  @ApiResponse({ status: 400, description: "If the inputModel has invalid email (for example 222^gmail.com)", type: APIErrorResult })
+  @ApiBody({ required: true, description: "Data for constructing new user", type: InputEmailDto })
+  @ApiResponse({
+    status: 204,
+    description: "Even if current email is not registered (for prevent user's email detection)"
+  })
+  @ApiResponse({
+    status: 400,
+    description: "If the inputModel has invalid email (for example 222^gmail.com)",
+    type: APIErrorResult
+  })
   @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
   @Post("password-recovery")
   @HttpCode(HttpStatus.NO_CONTENT)
   async passwordRecovery(@Body() inputEmail: InputEmailDto): Promise<void> {
     await this.commandBus.execute(new PasswordRecoveryCommand(inputEmail.email));
+  }
+
+
+  @ApiOperation({ summary: "Confirm Password recovery" })
+  @ApiBody({ type: InputPasswordDto })
+  @ApiResponse({ status: 204, description: "If code is valid and new password is accepted" })
+  @ApiResponse({
+    status: 400,
+    description: "If the inputModel has incorrect value (for incorrect password length) or RecoveryCode is incorrect or expired",
+    type: APIErrorResult
+  })
+  @ApiResponse({ status: 429, description: "More than 5 attempts from one IP-address during 10 seconds" })
+  @Post("new-password")
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async newPassword(@Body() inputPassword: InputPasswordDto): Promise<void> {
+    await this.commandBus.execute(new NewPasswordCommand(inputPassword.newPassword, inputPassword.recoveryCode));
   }
 
 
@@ -77,6 +106,10 @@ export class AuthController {
   }
 
 
+
+  @ApiOperation({ summary: "In cookie must send correct refreshToken that will be revoked" })
+  @ApiResponse({ status: 204, description: "No Content" })
+  @ApiResponse({ status: 401, description: "If the JWT refreshToken inside cookie is missing, expired or incorrect" })
   @Post("logout")
   @SkipThrottle()
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -84,6 +117,7 @@ export class AuthController {
     await this.commandBus.execute(new LogoutUserCommand(req.cookies.refreshToken));
     res.clearCookie("refreshToken");
   }
+
 
 
   @Post("refresh-token")
@@ -102,7 +136,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Get information about current user" })
-  @ApiResponse({ status: 200, description: "Success",type:ViewAboutMeDto })
+  @ApiResponse({ status: 200, description: "Success", type: ViewAboutMeDto })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @ApiBearerAuth()
   @Get("me")

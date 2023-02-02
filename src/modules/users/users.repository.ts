@@ -32,6 +32,10 @@ export class UsersRepository {
     return await this.usersRepository.findOneBy({ id });
   }
 
+  async findUserByRecoveryCode(recoveryCode: string): Promise<User | null> {
+    return await this.usersRepository.findOneBy({ recoveryCode });
+  }
+
 
   async getBanedUsers(): Promise<User[]> {
     return await this.usersRepository.findBy({ isBanned: true });
@@ -78,6 +82,11 @@ export class UsersRepository {
     //   .set({ isEmailConfirmed: true })
     //   .where("id = :userId", { userId })
     //   .execute();
+  }
+
+
+  async updateUser(user: User): Promise<void> {
+    await this.usersRepository.save(user)
   }
 
 

@@ -134,6 +134,44 @@ export class GetUserByIdUseCase implements ICommandHandler<GetUserByIdCommand> {
 
 
 ////////////////////////////////////////////////////////////
+export class GetUserByRecoveryCodeCommand {
+  constructor(public recoveryCode: string) {
+  }
+}
+
+@CommandHandler(GetUserByRecoveryCodeCommand)
+export class GetUserByRecoveryCodeUseCase implements ICommandHandler<GetUserByRecoveryCodeCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: GetUserByRecoveryCodeCommand): Promise<User | null> {
+    return await this.usersRepository.findUserByRecoveryCode(command.recoveryCode);
+  }
+}
+
+
+////////////////////////////////////////////////////////////
+export class UpdatePasswordCommand {
+  constructor(public user: User, public newPassword: string) {
+  }
+}
+
+@CommandHandler(UpdatePasswordCommand)
+export class UpdatePasswordUseCase implements ICommandHandler<UpdatePasswordCommand> {
+  constructor(protected usersRepository: UsersRepository) {
+  }
+
+  async execute(command: UpdatePasswordCommand) {
+    command.user.password = await generateHash(command.newPassword)
+    command.user.isRecoveryCodeConfirmed = true
+    await this.usersRepository.updateUser(command.user);
+  }
+}
+
+
+
+
+////////////////////////////////////////////////////////////
 export class UpdateConfirmCodeCommand {
   constructor(public userId: string, public confirmationCode: string) {
   }

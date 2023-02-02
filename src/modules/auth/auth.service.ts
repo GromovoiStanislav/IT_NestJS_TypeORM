@@ -8,8 +8,8 @@ import { InputUserDto } from "./dto/input-user.dto";
 import {
   ConfirmUserCommand,
   CreateUserCommand, GetUserByConfirmationCodeCommand, GetUserByIdCommand, GetUserByLoginOrEmail_v2Command,
-  GetUserByLoginOrEmailCommand,
-  UpdateConfirmCodeCommand, UpdatePasswordRecoveryCodeCommand
+  GetUserByLoginOrEmailCommand, GetUserByRecoveryCodeCommand,
+  UpdateConfirmCodeCommand, UpdatePasswordCommand, UpdatePasswordRecoveryCodeCommand
 } from "../users/users.service";
 import { comparePassword } from "../../utils/bcryptUtils";
 import { JWT_Service } from "../jwt/jwt.service";
@@ -20,7 +20,6 @@ import {
   KillSessionByDeviceIdCommand, KillSessionByTokenIdCommand
 } from "../security/security.service";
 import { ViewAboutMeDto } from "./dto/view-about-me.dto";
-
 
 
 ////////////////////////////////////////////////////////////////////
@@ -170,13 +169,11 @@ export class GetMeInfoUseCase implements ICommandHandler<GetMeInfoCommand> {
 
   async execute(command: GetMeInfoCommand): Promise<ViewAboutMeDto> {
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
-    return new ViewAboutMeDto(user.email,user.login,user.id)
-    // return {
-    //   email: user.email,
-    //   login: user.login,
-    //   userId: user.id
-    // };
-
+    const userView = new ViewAboutMeDto();
+    userView.email = user.email;
+    userView.login = user.login;
+    userView.userId = user.id;
+    return userView;
   }
 }
 
@@ -251,7 +248,7 @@ export class LogoutUserUseCase implements ICommandHandler<LogoutUserCommand> {
   }
 }
 
-////////////////////////////////////////////////////////////
+
 /////////////////////////////////////////////////////////////////
 export class PasswordRecoveryCommand {
   constructor(public email: string) {
@@ -265,13 +262,36 @@ export class PasswordRecoveryUseCase implements ICommandHandler<PasswordRecovery
   }
 
   async execute(command: PasswordRecoveryCommand): Promise<void> {
-    const subject = 'Password recovery'
-    const recoveryCode = uuidv4()
-    const message = `<a href='https://it-nest.vercel.app/auth/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>`
+    const subject = "Password recovery";
+    const recoveryCode = uuidv4();
+    const message = `<a href="https://it-nest.vercel.app/auth/password-recovery?recoveryCode=${recoveryCode}">recovery password</a>`;
 
     const isEmailSend = await this.emailAdapter.sendEmail(command.email, subject, message);
     if (isEmailSend) {
       await this.commandBus.execute(new UpdatePasswordRecoveryCodeCommand(command.email, recoveryCode));
     }
+  }
+}
+
+/////////////////////////////////////////////////////////////////
+export class NewPasswordCommand {
+  constructor(public newPassword: string, public recoveryCode: string) {
+  }
+}
+
+@CommandHandler(NewPasswordCommand)
+export class NewPasswordUseCase implements ICommandHandler<NewPasswordCommand> {
+  constructor(private commandBus: CommandBus) {
+  }
+
+  async execute(command: NewPasswordCommand): Promise<void> {
+    const user = await this.commandBus.execute(new GetUserByRecoveryCodeCommand(command.recoveryCode));
+    if (!user) {
+      throw new BadRequestException([{ field: "recoveryCode", message: "recoveryCode is incorrect" }]);
+    }
+    if (user.isRecoveryCodeConfirmed) {
+      throw new BadRequestException([{ field: "recoveryCode", message: "recoveryCode is already confirmed" }]);
+    }
+    await this.commandBus.execute(new UpdatePasswordCommand(user, command.newPassword));
   }
 }

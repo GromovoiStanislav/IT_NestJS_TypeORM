@@ -7,8 +7,4 @@ export class ViewAboutMeDto {
   login: string;
   @ApiProperty({ type: String, required: false})
   userId: string;
-
-  // @ts-ignore
-  constructor(public email: string, public login: string, public userId: string) {
-  }
 }

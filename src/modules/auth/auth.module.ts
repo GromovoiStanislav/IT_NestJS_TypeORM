@@ -4,7 +4,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 
 import {
   ConfirmEmailUseCase, GetMeInfoUseCase,
-  LoginUserUseCase, LogoutUserUseCase, PasswordRecoveryUseCase, RefreshTokenUseCase,
+  LoginUserUseCase, LogoutUserUseCase, NewPasswordUseCase, PasswordRecoveryUseCase, RefreshTokenUseCase,
   RegisterUserUseCase,
   ResendConfirmationCodeUseCase
 } from "./auth.service";
@@ -24,7 +24,8 @@ const useCases = [
   GetMeInfoUseCase,
   RefreshTokenUseCase,
   LogoutUserUseCase,
-  PasswordRecoveryUseCase
+  PasswordRecoveryUseCase,
+  NewPasswordUseCase
 ];
 
 
