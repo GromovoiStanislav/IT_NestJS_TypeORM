@@ -18,10 +18,11 @@ import { AnswerViewDto } from "./dto/answer-view.dto";
 import { Pagination } from "../../common/decorators/paginationDecorator";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { StatisticViewDto } from "./dto/statistic-view.dto";
 
 @ApiBearerAuth()
-@ApiTags('PairQuizGame')
+@ApiTags("PairQuizGame")
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
 export class PairGameQuizController {
@@ -32,6 +33,14 @@ export class PairGameQuizController {
   @Get("my-current")
   async getCurrentGame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {
     return this.pairGameQuizService.findCurrentGameByUserId(userId);
+  }
+
+
+  @ApiOperation({ summary: "Get current user statistic" })
+  @ApiResponse({ status: 200, type: StatisticViewDto })
+  @Get("my-statistic")
+  async getMyStatistic(@CurrentUserId() userId: string): Promise<StatisticViewDto> {
+    return this.pairGameQuizService.getStatisticByUserId(userId);
   }
 
 
@@ -51,8 +60,6 @@ export class PairGameQuizController {
                     @CurrentUserId() userId: string): Promise<GamePairViewDto> {
     return this.pairGameQuizService.findGameById(gameId, userId);
   }
-
-
 
 
   @Post("connection")

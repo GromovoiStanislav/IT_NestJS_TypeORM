@@ -1,6 +1,9 @@
 import { Game } from "../game.entity";
 import { GamePairViewDto } from "./game-pair-view.dto";
 import { PaginatorDto } from "../../../common/dto/paginator.dto";
+import { StatisticViewDto } from "./statistic-view.dto";
+import e from "express";
+import { isNull } from "util";
 
 
 export default class GameMapper {
@@ -56,5 +59,38 @@ export default class GameMapper {
     };
   }
 
+
+  static fromGamesToStatisticView(games: Game[], userId: string): StatisticViewDto {
+    let sumScore = 0;
+    let winsCount = 0;
+    let lossesCount = 0;
+    let drawsCount = 0;
+
+    games.forEach(game => {
+        if (game.winnerId === userId) {
+          winsCount++;
+        } else if (game.winnerId === null) {
+          drawsCount++;
+        } else {
+          lossesCount++;
+        }
+
+        if (userId === game.firstPlayerId) {
+          sumScore += game.firstPlayerScore
+        } else {
+          sumScore += game.secondPlayerScore
+        }
+      }
+    );
+
+    const viewGame = new StatisticViewDto();
+    viewGame.gamesCount = games.length;
+    viewGame.sumScore = sumScore;
+    viewGame.winsCount = winsCount;
+    viewGame.lossesCount = lossesCount;
+    viewGame.drawsCount = drawsCount;
+    viewGame.avgScores = parseFloat((sumScore / games.length).toFixed(2));
+    return viewGame;
+  }
 
 }

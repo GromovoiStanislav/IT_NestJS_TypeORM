@@ -8,6 +8,7 @@ import { AnswerViewDto } from "./dto/answer-view.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import e from "express";
+import { StatisticViewDto } from "./dto/statistic-view.dto";
 
 
 @Injectable()
@@ -50,6 +51,13 @@ export class PairGameQuizService {
     const result = await this.gamesRepository.findAllGamesByUserId(userId, paginationParams);
     return GameMapper.fromModelsToPaginator(result);
   }
+
+
+  async getStatisticByUserId(userId: string, ): Promise<StatisticViewDto> {
+    const games = await this.gamesRepository.getStatisticByUserId(userId);
+    return GameMapper.fromGamesToStatisticView(games,userId);
+  }
+
 
 
   async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto> {

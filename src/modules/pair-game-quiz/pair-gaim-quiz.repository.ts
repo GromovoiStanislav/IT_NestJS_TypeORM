@@ -204,4 +204,11 @@ export class PairGameQuizRepository {
   }
 
 
+  async getStatisticByUserId(userId: string): Promise<Game[]> {
+    return await this.gamesRepository.createQueryBuilder("g")
+      .where("g.status = :status", { status: StatusGame.Active })
+      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .getMany();
+  }
+
 }
