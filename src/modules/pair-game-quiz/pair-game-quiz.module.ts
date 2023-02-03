@@ -20,6 +20,6 @@ export class PairGameQuizModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserIdMiddleware)
-      .forRoutes("pair-game-quiz/pairs");
+      .forRoutes("pair-game-quiz/pairs","pair-game-quiz/users");
   }
 }

@@ -30,13 +30,10 @@ export class PairGameQuizUsersController {
   }
 
   @ApiOperation({ summary: "Get current user statistic" })
-  //@ApiResponse({ status: 200, type: StatisticViewDto })
+  @ApiResponse({ status: 200, type: StatisticViewDto })
   @Get("my-statistic")
-  async getMyStatistic(@CurrentUserId() userId: string) {
-    const res = await this.pairGameQuizService.getStatisticByUserId(userId)
-   return {...res,userId }
-    //: Promise<StatisticViewDto>
-    //return this.pairGameQuizService.getStatisticByUserId(userId);
+  async getMyStatistic(@CurrentUserId() userId: string): Promise<StatisticViewDto> {
+    return this.pairGameQuizService.getStatisticByUserId(userId);
   }
 
 
