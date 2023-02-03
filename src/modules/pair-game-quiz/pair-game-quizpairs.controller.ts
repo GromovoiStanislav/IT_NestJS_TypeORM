@@ -37,6 +37,7 @@ export class PairGameQuizUsersController {
     let result:any = await this.pairGameQuizService.getStatisticByUserId(userId)
     result.drawCount = result.drawsCount
     delete result.drawsCount
+    return result
     //return this.pairGameQuizService.getStatisticByUserId(userId);
   }
 
@@ -82,7 +83,7 @@ export class PairGameQuizPairsController {
   }
 
 
-  @ApiOperation({ summary: `Connect current user to existing random pending pair or create new pair which will be waiting second player` })
+  @ApiOperation({ summary: "Connect current user to existing random pending pair or create new pair which will be waiting second player" })
   @ApiResponse({
     status: 200, type: GamePairViewDto,
     description: `Returns started existing pair or new pair with status "PendingSecondPlayer"`
@@ -96,6 +97,11 @@ export class PairGameQuizPairsController {
   }
 
 
+
+  @ApiOperation({ summary: "Send answer for next not answered question in active pair" })
+  @ApiResponse({ status: 200, type: AnswerViewDto })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "If current user is not inside active pair or user is in active pair but has already answered to all questions" })
   @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
   async sendAnswer(@Body() answerDto: InputAnswerDto,
