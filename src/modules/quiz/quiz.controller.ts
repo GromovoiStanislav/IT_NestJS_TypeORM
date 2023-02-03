@@ -61,6 +61,24 @@ export class SaQuizController {
 
 
   @ApiOperation({ summary: "Return all questions with pagination an filtering" })
+  @ApiQuery({
+    name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
+    description: "Default value: desc"
+  })
+  @ApiQuery({ name: "sortBy", required: false, schema: { default: "createdAt", type: "string" } })
+  @ApiQuery({
+    name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
+    description: "pageSize is portions size that should be returned"
+  })
+  @ApiQuery({
+    name: "pageNumber", required: false, schema: { default: 1, type: "integer", format: "int32" },
+    description: "pageNumber is number of portions that should be returned"
+  })
+  @ApiQuery({
+    name: "publishedStatus", type: String, required: false, enum: ["all", "published", "notPublished"],
+    description: "Default value: all"
+  })
+  @ApiQuery({ name: "bodySearchTerm", type: String, required: false })
   @ApiExtraModels(PaginatorDto)
   @ApiResponse({
     status: 200, description: "Success",
@@ -79,24 +97,6 @@ export class SaQuizController {
     }
   })
   @ApiResponse({ status: 401, description: "Unauthorized" })
-  @ApiQuery({
-    name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
-    description: "pageSize is portions size that should be returned"
-  })
-  @ApiQuery({
-    name: "pageNumber", required: false, schema: { default: 1, type: "integer", format: "int32" },
-    description: "pageNumber is number of portions that should be returned"
-  })
-  @ApiQuery({
-    name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
-    description: "Default value: desc"
-  })
-  @ApiQuery({ name: "sortBy", required: false, schema: { default: "createdAt", type: "string" } })
-  @ApiQuery({
-    name: "publishedStatus", type: String, required: false, enum: ["all", "published", "notPublished"],
-    description: "Default value: all"
-  })
-  @ApiQuery({ name: "bodySearchTerm", type: String, required: false })
   @Get()
   async findAllQuestion(@Query() query,
                         @Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<ViewQuizDto[]>> {

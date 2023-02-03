@@ -1,11 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { AnswerStatus } from "../game.entity";
 
 export class AnswerViewDto {
+  @ApiProperty({ required: false, type: String })
   questionId: string;
 
+  @ApiProperty({ required: false, enum: AnswerStatus })
+  answerStatus: AnswerStatus;
 
-  answerStatus: string;
-
-  @ApiProperty({ required: false, description: "Date when first player initialized the pair", format: "date-time" })
+  @ApiProperty({ required: false, format: "date-time" })
   addedAt: string;
 }
