@@ -90,6 +90,7 @@ export default class GameMapper {
     viewGame.lossesCount = lossesCount;
     viewGame.drawsCount = drawsCount;
     viewGame.avgScores = parseFloat((sumScore / games.length).toFixed(2));
+
     return viewGame;
   }
 
