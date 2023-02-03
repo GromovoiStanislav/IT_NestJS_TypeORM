@@ -4,22 +4,10 @@ import { INestApplication } from "@nestjs/common";
 import request from "supertest";
 
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { TypeOrmModuleOptions } from "@nestjs/typeorm/dist/interfaces/typeorm-options.interface";
 import { QuizModule } from "../src/modules/quiz/quiz.module";
-import { AppModule } from "../src/app.module";
+import { localDbOptions } from "../src/db/postgres.module";
 
 
-const options: TypeOrmModuleOptions = {
-  type: "postgres",
-  //host: "127.0.0.1",
-  host: "localhost",
-  port: 5432,
-  username: "postgres",
-  password: "root",
-  database: "It_blog",
-  autoLoadEntities: true,
-  synchronize: false
-};
 
 
 describe("quiz/questions (e2e)", () => {
@@ -29,7 +17,7 @@ describe("quiz/questions (e2e)", () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(options),
+        TypeOrmModule.forRoot(localDbOptions),
         QuizModule
       ]
     }).compile();

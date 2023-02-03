@@ -2,8 +2,7 @@ import { Game } from "../game.entity";
 import { GamePairViewDto } from "./game-pair-view.dto";
 import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./statistic-view.dto";
-import e from "express";
-import { isNull } from "util";
+
 
 
 export default class GameMapper {

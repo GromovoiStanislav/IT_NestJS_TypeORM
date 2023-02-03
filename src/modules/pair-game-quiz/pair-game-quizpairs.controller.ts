@@ -32,15 +32,19 @@ export class PairGameQuizUsersController {
   @ApiOperation({ summary: "Get current user statistic" })
   @ApiResponse({ status: 200, type: StatisticViewDto })
   @Get("my-statistic")
-  async getMyStatistic(@CurrentUserId() userId: string): Promise<StatisticViewDto> {
-    return this.pairGameQuizService.getStatisticByUserId(userId);
+  async getMyStatistic(@CurrentUserId() userId: string) {
+    //: Promise<StatisticViewDto>
+    let result:any = await this.pairGameQuizService.getStatisticByUserId(userId)
+    result.drawCount = result.drawsCount
+    delete result.drawsCount
+    //return this.pairGameQuizService.getStatisticByUserId(userId);
   }
 
 
-  @Get("my-statistic/:userId")
-  async getMyStatistic2(@Param("userId") userId: string): Promise<StatisticViewDto> {
-    return this.pairGameQuizService.getStatisticByUserId(userId);
-  }
+  // @Get("my-statistic/:userId")
+  // async getMyStatistic2(@Param("userId") userId: string): Promise<StatisticViewDto> {
+  //   return this.pairGameQuizService.getStatisticByUserId(userId);
+  // }
 
 }
 
@@ -49,7 +53,7 @@ export class PairGameQuizUsersController {
 @ApiBearerAuth()
 @UseGuards(AuthUserIdGuard)
 @Controller("pair-game-quiz/pairs")
-export class PairGameQuizpairsController {
+export class PairGameQuizPairsController {
 
   constructor(private pairGameQuizService: PairGameQuizService) {
   }
@@ -78,6 +82,13 @@ export class PairGameQuizpairsController {
   }
 
 
+  @ApiOperation({ summary: `Connect current user to existing random pending pair or create new pair which will be waiting second player` })
+  @ApiResponse({
+    status: 200, type: GamePairViewDto,
+    description: `Returns started existing pair or new pair with status "PendingSecondPlayer"`
+  })
+  @ApiResponse({ status: 401, description: "Unauthorized" })
+  @ApiResponse({ status: 403, description: "If current user is already participating in active pair" })
   @Post("connection")
   @HttpCode(HttpStatus.OK)
   async connectGame(@CurrentUserId() userId: string): Promise<GamePairViewDto> {

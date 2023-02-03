@@ -1,8 +1,19 @@
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
 import { Module } from "@nestjs/common";
+import { TypeOrmModuleOptions } from "@nestjs/typeorm/dist/interfaces/typeorm-options.interface";
 
-
+export const localDbOptions: TypeOrmModuleOptions = {
+  type: "postgres",
+  host: "localhost",
+  port: 5432,
+  username: "postgres",
+  password: "root",
+  database: "It_blog",
+  autoLoadEntities: true,
+  synchronize: false,
+  //entities:[User],
+};
 
 @Module({
   imports: [
@@ -25,18 +36,7 @@ import { Module } from "@nestjs/common";
           };
         }
 
-
-        return {
-          type: "postgres",
-          host: "localhost",
-          port: 5432,
-          username: "postgres",
-          password: "root",
-          database: "It_blog",
-          autoLoadEntities: true,
-          synchronize: false,
-          //entities:[User],
-        };
+        return localDbOptions;
 
       },
       inject: [ConfigService]
