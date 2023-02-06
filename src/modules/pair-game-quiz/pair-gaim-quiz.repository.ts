@@ -181,15 +181,18 @@ export class PairGameQuizRepository {
     QB1.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
     QB2.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
 
-    if (sortBy === "status") {
-      sortBy = "g.status";
-    } else {
-      sortBy = "g.pairCreatedDate";
-    }
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
+    if (sortBy === "status") {
+      QB1
+        .orderBy("g.status", order)
+        .addOrderBy("g.pairCreatedDate", "DESC");
+    } else {
+      QB1.orderBy("g.pairCreatedDate", order);
+    }
+
+
     QB1
-      .orderBy(sortBy, order)
       .skip(((pageNumber - 1) * pageSize))
       .take(pageSize);
 
