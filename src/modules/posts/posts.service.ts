@@ -91,12 +91,13 @@ export class UpdatePostUseCase implements ICommandHandler<UpdatePostCommand> {
   }
 
   async execute(command: UpdatePostCommand): Promise<void> {
-    let blogName = "";
+
     const blog = await this.commandBus.execute(new GetOneBlogCommand(command.inputPost.blogId));
-    if (blog) {
-      blogName = blog.name;
+    if (!blog) {
+      throw new NotFoundException();
     }
-    await this.postsRepository.updatePost(command.postId, PostMapper.fromInputPostDtoToUpdateDto(command.inputPost, blogName));
+
+    await this.postsRepository.updatePost(command.postId, PostMapper.fromInputPostDtoToUpdateDto(command.inputPost, blog.name));
   }
 }
 
@@ -135,7 +136,6 @@ export class GetOnePostWithLikesUseCase implements ICommandHandler<GetOnePostWit
   ) {
   }
 
-
   async execute(command: GetOnePostWithLikesCommand): Promise<ViewPostDto> {
 
     const post = await this.postsRepository.getOnePost(command.postId, true);
@@ -170,8 +170,7 @@ export class GetAllPostsUseCase implements ICommandHandler<GetAllPostsCommand> {
   ) {
   }
 
-  //: Promise<PaginatorDto<ViewPostDto[]>>
-  async execute(command: GetAllPostsCommand) {
+  async execute(command: GetAllPostsCommand): Promise<PaginatorDto<ViewPostDto[]>> {
     const blogId = null;
     const result = await this.postsRepository.getAllPosts(command.paginationParams, blogId);
 
@@ -272,7 +271,7 @@ export class PostsUpdateLikeByIDUseCase implements ICommandHandler<PostsUpdateLi
   ) {
   }
 
-  async execute(command: PostsUpdateLikeByIDCommand) {
+  async execute(command: PostsUpdateLikeByIDCommand): Promise<void> {
     const user = await this.commandBus.execute(new GetUserByIdCommand(command.userId));
 
     if (command.likeStatus === "None") {

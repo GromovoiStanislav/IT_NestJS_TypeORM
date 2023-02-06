@@ -73,6 +73,11 @@ export class SaUsersController {
     }
   })
   @ApiQuery({
+    name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
+    description: "Default value: desc"
+  })
+  @ApiQuery({ name: "sortBy", required: false, schema: { default: "createdAt", type: "string" } })
+  @ApiQuery({
     name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
     description: "pageSize is portions size that should be returned"
   })
@@ -80,11 +85,6 @@ export class SaUsersController {
     name: "pageNumber", required: false, schema: { default: 1, type: "integer", format: "int32" },
     description: "pageNumber is number of portions that should be returned"
   })
-  @ApiQuery({
-    name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
-    description: "Default value: desc"
-  })
-  @ApiQuery({ name: "sortBy", required: false, schema: { default: "createdAt", type: "string" } })
   @ApiQuery({
     name: "searchEmailTerm", type: String, required: false, schema: { default: null },
     description: "Search term for user Email: Email should contains this term in any position"

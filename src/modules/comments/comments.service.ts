@@ -9,6 +9,8 @@ import { IsUserBannedForBlogCommand } from "../blogs/blogs.service";
 import { CommentsRepository } from "./comments.repository";
 import { CommentLikesRepository } from "./comment-likes.repository";
 import { LikeStatus } from "./dto/input-like.dto";
+import { PaginatorDto } from "../../common/dto/paginator.dto";
+import { ViewCommentDto } from "./dto/view-comment.dto";
 
 
 
@@ -163,7 +165,7 @@ export class CreateCommentByPostIDUseCase implements ICommandHandler<CreateComme
   ) {
   }
 
-  async execute(command: CreateCommentByPostIDCommand) {
+  async execute(command: CreateCommentByPostIDCommand): Promise<ViewCommentDto> {
     const post = await this.commandBus.execute(new GetOnePostCommand(command.postId));
     if (!post) {
       throw new NotFoundException();
@@ -199,7 +201,7 @@ export class GetAllCommentsByPostIDUseCase implements ICommandHandler<GetAllComm
   }
 
 
-  async execute(command: GetAllCommentsByPostIDCommand) {
+  async execute(command: GetAllCommentsByPostIDCommand): Promise<PaginatorDto<ViewCommentDto[]>> {
 
     const post = await this.commandBus.execute(new GetOnePostCommand(command.postId));
     if (!post) {

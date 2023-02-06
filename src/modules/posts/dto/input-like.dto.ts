@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsEnum } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export enum LikeStatus {
   None = "None",
@@ -7,6 +8,7 @@ export enum LikeStatus {
 }
 
 export class InputLikeDto {
+  @ApiProperty({enum:LikeStatus, description:"Send None if you want to unlike/undislike"})
   @IsNotEmpty()
   @IsEnum(LikeStatus)
   likeStatus: LikeStatus;
