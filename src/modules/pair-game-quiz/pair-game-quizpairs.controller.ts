@@ -155,19 +155,9 @@ export class PairGameQuizUsersController {
   @ApiOperation({ summary: "Get current user statistic" })
   @ApiResponse({ status: 200, type: StatisticViewDto })
   @Get("my-statistic")
-  async getMyStatistic(@CurrentUserId() userId: string) {
-    //: Promise<StatisticViewDto>
-    let result:any = await this.pairGameQuizService.getStatisticByUserId(userId)
-    result.drawCount = result.drawsCount
-    delete result.drawsCount
-    return result
-    //return this.pairGameQuizService.getStatisticByUserId(userId);
+  async getMyStatistic(@CurrentUserId() userId: string): Promise<StatisticViewDto> {
+    return this.pairGameQuizService.getStatisticByUserId(userId);
   }
 
-
-  // @Get("my-statistic/:userId")
-  // async getMyStatistic2(@Param("userId") userId: string): Promise<StatisticViewDto> {
-  //   return this.pairGameQuizService.getStatisticByUserId(userId);
-  // }
 
 }
