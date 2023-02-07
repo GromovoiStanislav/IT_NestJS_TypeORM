@@ -9,6 +9,7 @@ import { AnswerViewDto } from "./dto/answer-view.dto";
 import { AnswerDto } from "./dto/game-pair-view.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
+import { StatisticViewDto } from "./dto/statistic-view.dto";
 
 
 @Injectable()
@@ -232,16 +233,110 @@ export class PairGameQuizRepository {
     return { pagesCount, page, pageSize, totalCount, items };
   }
 
+  //: Promise<Game[]>
+  async getStatisticByUserId(userId: string): Promise<StatisticViewDto> {
+    // return await this.gamesRepository.createQueryBuilder("g")
+    //   // .where("g.status = :status", { status: StatusGame.Finished })
+    //   // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+    //   .where([
+    //     { firstPlayerId: userId, status: StatusGame.Finished },
+    //     { secondPlayerId: userId, status: StatusGame.Finished }
+    //   ])
+    //   .getMany();
+    //
 
-  async getStatisticByUserId(userId: string): Promise<Game[]> {
-    return await this.gamesRepository.createQueryBuilder("g")
-      // .where("g.status = :status", { status: StatusGame.Finished })
-      // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
-      .where([
-        { firstPlayerId: userId, status: StatusGame.Finished },
-        { secondPlayerId: userId, status: StatusGame.Finished }
-      ])
-      .getMany();
+    try {
+
+      const result =  await this.dataSource.query(`
+      SELECT
+      ROUND(("sumScore"::numeric/"gamesCount"::numeric), 2)::float8 as "avgScores",
+      "gamesCount","sumScore",
+      "winsCount","lossesCount","drawsCount"   
+      FROM
+        (SELECT
+          (SELECT  count(*)
+            FROM public.games
+            WHERE ("firstPlayerId"=$1 or "secondPlayerId"=$1) and "status" = $2)::int as "gamesCount",
+            
+            (SELECT sq."sumScore1"+sq."sumScore2"
+              FROM
+              (SELECT
+                (SELECT  sum("firstPlayerScore")
+                  FROM public.games
+                  WHERE ("firstPlayerId"=$1) and "status" = $2) as "sumScore1",
+                (SELECT  sum("secondPlayerScore")
+                  FROM public.games
+                  WHERE ("secondPlayerId"=$1) and "status" = $2) as "sumScore2") as sq)::int as "sumScore",
+            
+            (SELECT  count(*)
+              FROM public.games
+              WHERE "status" = $2 and "winnerId"=$1)::int as "winsCount",
+            
+            (SELECT  count(*)
+              FROM public.games
+              WHERE ("firstPlayerId"=$1 or "secondPlayerId"=$1) and "status" = $2 and "winnerId"<>$1)::int as "lossesCount",
+              
+            (SELECT  count(*)
+              FROM public.games
+              WHERE ("firstPlayerId"=$1 or "secondPlayerId"=$1) and "status" = $2 and "winnerId" isNull)::int as "drawsCount") as sq
+      ;`, [userId,StatusGame.Finished]);
+
+      return result[0]
+
+
+    } catch (e) {
+      return {
+        sumScore: 0,
+        avgScores: 0,
+        gamesCount: 0,
+        winsCount: 0,
+        lossesCount: 0,
+        drawsCount: 0
+      };
+    }
   }
+
+
+
+
+
+
+  /*
+  SELECT
+ROUND(("sumScore"::numeric/"gamesCount"::numeric), 2) as "avgScores",
+"gamesCount","sumScore",
+"winsCount","lossesCount","drawsCount"
+
+FROM
+(SELECT
+(SELECT  count(*)
+	FROM public.games
+	WHERE ("firstPlayerId"='1675743082625' or "secondPlayerId"='1675743082625') and "status" = 'Finished') as "gamesCount",
+
+(SELECT sq."sumScore1"+sq."sumScore2"
+	FROM
+	(SELECT
+		(SELECT  sum("firstPlayerScore")
+		FROM public.games
+		WHERE ("firstPlayerId"='1675743082625') and "status" = 'Finished') as "sumScore1",
+	(SELECT  sum("secondPlayerScore")
+		FROM public.games
+		WHERE ("secondPlayerId"='1675743082625') and "status" = 'Finished') as "sumScore2") as sq) as "sumScore",
+
+(SELECT  count(*)
+	FROM public.games
+	WHERE "status" = 'Finished' and "winnerId"='1675743082625') as "winsCount",
+
+(SELECT  count(*)
+	FROM public.games
+	WHERE ("firstPlayerId"='1675743082625' or "secondPlayerId"='1675743082625') and "status" = 'Finished' and "winnerId"<>'1675743082625') as "lossesCount",
+
+(SELECT  count(*)
+	FROM public.games
+	WHERE ("firstPlayerId"='1675743082625' or "secondPlayerId"='1675743082625') and "status" = 'Finished' and "winnerId" isNull) as "drawsCount")as sq
+;
+  */
+
+
 
 }

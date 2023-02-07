@@ -7,7 +7,7 @@ import { UpdateQuizDto } from "./dto/update-quiz.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { PublishQuizDto } from "./dto/publish-quiz.dto";
-import { take } from "rxjs";
+
 
 @Injectable()
 export class QuizzesRepository {

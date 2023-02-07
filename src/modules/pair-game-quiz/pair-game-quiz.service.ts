@@ -54,8 +54,9 @@ export class PairGameQuizService {
 
 
   async getStatisticByUserId(userId: string, ): Promise<StatisticViewDto> {
-    const games = await this.gamesRepository.getStatisticByUserId(userId);
-    return GameMapper.fromGamesToStatisticView(games,userId);
+    // const games = await this.gamesRepository.getStatisticByUserId(userId);
+    // return GameMapper.fromGamesToStatisticView(games,userId);
+    return  await this.gamesRepository.getStatisticByUserId(userId)
   }
 
 
