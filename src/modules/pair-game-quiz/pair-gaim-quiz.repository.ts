@@ -32,8 +32,12 @@ export class PairGameQuizRepository {
 
   async findActiveGameByUserId(userId: string): Promise<Game | null> {
     return this.gamesRepository.createQueryBuilder("g")
-      .where("g.status = :status", { status: StatusGame.Active })
-      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      // .where("g.status = :status", { status: StatusGame.Active })
+      // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .where([
+        { firstPlayerId: userId, status: StatusGame.Active },
+        { secondPlayerId: userId, status: StatusGame.Active }
+      ])
       // .andWhere(
       //   new Brackets((qb) => {
       //     qb.where("g.firstPlayerId = :userId", { userId })
@@ -46,11 +50,19 @@ export class PairGameQuizRepository {
 
   async findNotFinishGameByUserId(userId: string): Promise<Game | null> {
     return this.gamesRepository.createQueryBuilder("g")
-      .where("(g.status = :status1 or g.status = :status2)", {
-        status1: StatusGame.PendingSecondPlayer,
-        status2: StatusGame.Active
-      })
-      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      // .where("(g.status = :status1 or g.status = :status2)", {
+      //   status1: StatusGame.PendingSecondPlayer,
+      //   status2: StatusGame.Active
+      // })
+      .where([
+        { status: StatusGame.PendingSecondPlayer },
+        { status: StatusGame.Active }
+      ])
+      //.andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .andWhere([
+        { firstPlayerId: userId },
+        { secondPlayerId: userId }
+      ])
       .getOne();
   }
 
@@ -86,9 +98,14 @@ export class PairGameQuizRepository {
 
       const game = await manager.getRepository(Game).createQueryBuilder("g")
         .setLock("pessimistic_read")
-        .where("g.status = :status", { status: StatusGame.Active })
-        .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+        // .where("g.status = :status", { status: StatusGame.Active })
+        // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+        .where([
+          { firstPlayerId: userId, status: StatusGame.Active },
+          { secondPlayerId: userId, status: StatusGame.Active }
+        ])
         .getOne();
+
       if (!game) {
         return null;
       }
@@ -178,8 +195,17 @@ export class PairGameQuizRepository {
 
     QB2.select("COUNT(*)", "count");
 
-    QB1.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
-    QB2.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
+    // QB1.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
+    // QB2.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
+
+    QB1.where([
+      { firstPlayerId: userId },
+      { secondPlayerId: userId }
+    ]);
+    QB2.where([
+      { firstPlayerId: userId },
+      { secondPlayerId: userId }
+    ]);
 
     const order = sortDirection === "asc" ? "ASC" : "DESC";
 
@@ -209,8 +235,12 @@ export class PairGameQuizRepository {
 
   async getStatisticByUserId(userId: string): Promise<Game[]> {
     return await this.gamesRepository.createQueryBuilder("g")
-      .where("g.status = :status", { status: StatusGame.Finished })
-      .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      // .where("g.status = :status", { status: StatusGame.Finished })
+      // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
+      .where([
+        { firstPlayerId: userId, status: StatusGame.Finished },
+        { secondPlayerId: userId, status: StatusGame.Finished }
+      ])
       .getMany();
   }
 
