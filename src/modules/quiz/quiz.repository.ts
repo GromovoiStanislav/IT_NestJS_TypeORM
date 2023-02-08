@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Quiz } from "./quiz.entity";
@@ -86,16 +86,23 @@ export class QuizzesRepository {
     QB2.where("1 = 1");
 
     if (bodySearchTerm) {
-      QB1.andWhere("q.body ~* :bodySearchTerm", { bodySearchTerm });
-      QB2.andWhere("q.body ~* :bodySearchTerm", { bodySearchTerm });
+      // QB1.andWhere("q.body ~* :bodySearchTerm", { bodySearchTerm });
+      // QB2.andWhere("q.body ~* :bodySearchTerm", { bodySearchTerm });
+      QB1.where({ body:ILike(`%${bodySearchTerm}%`)});
+      QB2.where({ body:ILike(`%${bodySearchTerm}%`)});
+
     }
 
     if (publishedStatus === "notPublished") {
-      QB1.andWhere("q.published = false");
-      QB2.andWhere("q.published = false");
+      // QB1.andWhere("q.published = false");
+      // QB2.andWhere("q.published = false");
+      QB1.andWhere({published: false});
+      QB2.andWhere({published: false});
     } else if (publishedStatus === "published") {
-      QB1.andWhere("q.published = true");
-      QB2.andWhere("q.published = true");
+      // QB1.andWhere("q.published = true");
+      // QB2.andWhere("q.published = true");
+      QB1.andWhere({published: true});
+      QB2.andWhere({published: true});
     }
 
 

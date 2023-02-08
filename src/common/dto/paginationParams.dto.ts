@@ -6,23 +6,27 @@ function toNumber(value: any, defaultValue: number): number {
     return defaultValue;
   }
 
-  return parseInt(value) ;
+  return parseInt(value);
 }
 
 export class PaginationParams {
   // @Type(() => Number)
   // @Transform(({ value }) => toNumber(value, 2))
   @IsOptional()
-  pageNumber: number;
+  pageNumber?: number;
 
   // @Type(() => Number)
   // @Transform(({ value }) => toNumber(value, 10))
   @IsOptional()
-  pageSize: number;
+  pageSize?: number;
 
   @IsOptional()
-  sortBy: string;
+  sortBy?: string;
 
   @IsOptional()
-  sortDirection: string;
+  sort?: { sortBy: string, sortDirection: string }[];
+
+  @IsOptional()
+  sortDirection?: string;
 }
+

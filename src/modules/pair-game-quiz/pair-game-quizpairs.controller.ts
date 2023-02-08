@@ -29,7 +29,10 @@ import {
 } from "@nestjs/swagger";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
-import { ViewQuizDto } from "../quiz/dto/view-quiz.dto";
+import { PaginatorTopGamePlayerViewDto, TopGamePlayerViewDto } from "./dto/top-game-view.dto";
+
+
+
 
 
 //////////////////////////////////////////////
@@ -95,8 +98,6 @@ export class PairGameQuizPairsController {
   }
 
 
-
-
   @ApiOperation({ summary: "Returns game by id" })
   @ApiResponse({ status: 200, type: GamePairViewDto, description: "Returns pair by id" })
   @ApiResponse({ status: 400, description: "If id has invalid format", type: APIErrorResult })
@@ -128,12 +129,14 @@ export class PairGameQuizPairsController {
   }
 
 
-
   @ApiOperation({ summary: "Send answer for next not answered question in active pair" })
   @ApiBody({ type: InputAnswerDto })
-  @ApiResponse({ status: 200,description: "Returns answer result", type: AnswerViewDto })
+  @ApiResponse({ status: 200, description: "Returns answer result", type: AnswerViewDto })
   @ApiResponse({ status: 401, description: "Unauthorized" })
-  @ApiResponse({ status: 403, description: "If current user is not inside active pair or user is in active pair but has already answered to all questions" })
+  @ApiResponse({
+    status: 403,
+    description: "If current user is not inside active pair or user is in active pair but has already answered to all questions"
+  })
   @Post("my-current/answers")
   @HttpCode(HttpStatus.OK)
   async sendAnswer(@Body() answerDto: InputAnswerDto,
@@ -151,6 +154,25 @@ export class PairGameQuizUsersController {
 
   constructor(private pairGameQuizService: PairGameQuizService) {
   }
+
+  @ApiOperation({ summary: "Get users top" })
+  @ApiQuery({ name: "sort", required: false, isArray: true,
+    schema: { default: ["avgScores desc", "sumScore desc"], type: "array" }
+  })
+  @ApiQuery({
+    name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
+    description: "pageSize is portions size that should be returned"
+  })
+  @ApiQuery({
+    name: "pageNumber", required: false, schema: { default: 1, type: "integer", format: "int32" },
+    description: "pageNumber is number of portions that should be returned"
+  })
+  @ApiResponse({ status: 200, type: PaginatorTopGamePlayerViewDto })
+  @Get("top")
+  async getUsersTop(@Pagination() paginationParams: PaginationParams): Promise<PaginatorDto<TopGamePlayerViewDto[]>> {
+    return this.pairGameQuizService.getUsersTop(paginationParams);
+  }
+
 
   @ApiOperation({ summary: "Get current user statistic" })
   @ApiResponse({ status: 200, type: StatisticViewDto })

@@ -7,8 +7,9 @@ import GameMapper from "./dto/gameMapper";
 import { AnswerViewDto } from "./dto/answer-view.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
-import e from "express";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
+import { TopGamePlayerViewDto } from "./dto/top-game-view.dto";
+
 
 
 @Injectable()
@@ -53,12 +54,17 @@ export class PairGameQuizService {
   }
 
 
-  async getStatisticByUserId(userId: string, ): Promise<StatisticViewDto> {
+  async getStatisticByUserId(userId: string ): Promise<StatisticViewDto> {
     // const games = await this.gamesRepository.getStatisticByUserId(userId);
     // return GameMapper.fromGamesToStatisticView(games,userId);
-    return  await this.gamesRepository.getStatisticByUserId(userId)
+    return await this.gamesRepository.getStatisticByUserId(userId)
   }
 
+
+  async getUsersTop(paginationParams: PaginationParams): Promise<PaginatorDto<TopGamePlayerViewDto[]>> {
+    const result = await this.gamesRepository.getUsersTop(paginationParams)
+    return GameMapper.fromTopGamePlayerDbToTopGamePlayerView(result);
+  }
 
 
   async sendAnswer(userId: string, answer: string): Promise<AnswerViewDto> {

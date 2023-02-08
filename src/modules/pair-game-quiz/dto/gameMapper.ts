@@ -2,7 +2,8 @@ import { Game } from "../game.entity";
 import { GamePairViewDto } from "./game-pair-view.dto";
 import { PaginatorDto } from "../../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./statistic-view.dto";
-
+import { TopGamePlayerDbDto, TopGamePlayerViewDto } from "./top-game-view.dto";
+import { ApiProperty } from "@nestjs/swagger";
 
 
 export default class GameMapper {
@@ -75,9 +76,9 @@ export default class GameMapper {
         }
 
         if (userId === game.firstPlayerId) {
-          sumScore += game.firstPlayerScore
+          sumScore += game.firstPlayerScore;
         } else {
-          sumScore += game.secondPlayerScore
+          sumScore += game.secondPlayerScore;
         }
       }
     );
@@ -92,5 +93,36 @@ export default class GameMapper {
 
     return viewGame;
   }
+
+
+  static fromTopGamePlayerDbToTopGamePlayerView(result: PaginatorDto<TopGamePlayerDbDto[]>): PaginatorDto<TopGamePlayerViewDto[]> {
+
+    return {
+      pagesCount: result.pagesCount,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalCount: result.totalCount,
+      items: result.items.map(p => {
+        const v = new TopGamePlayerViewDto();
+        v.avgScores = p.avgScores;
+        v.gamesCount = p.gamesCount;
+        v.sumScore = p.sumScore;
+        v.winsCount = p.winsCount;
+        v.lossesCount = p.lossesCount;
+        v.drawsCount = p.drawsCount;
+        v.player = {
+          id: p.userId,
+          login: p.userLogin
+        }
+        return v;
+      })
+    };
+
+
+
+
+
+  }
+
 
 }

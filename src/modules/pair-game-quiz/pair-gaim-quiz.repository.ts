@@ -10,6 +10,7 @@ import { AnswerDto } from "./dto/game-pair-view.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
+import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
 
 
 @Injectable()
@@ -98,7 +99,7 @@ export class PairGameQuizRepository {
     try {
 
       const game = await manager.getRepository(Game).createQueryBuilder("g")
-        .setLock("pessimistic_read")
+        .setLock("pessimistic_write")
         // .where("g.status = :status", { status: StatusGame.Active })
         // .andWhere("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId })
         .where([
@@ -233,6 +234,7 @@ export class PairGameQuizRepository {
     return { pagesCount, page, pageSize, totalCount, items };
   }
 
+
   //: Promise<Game[]>
   async getStatisticByUserId(userId: string): Promise<StatisticViewDto> {
     // return await this.gamesRepository.createQueryBuilder("g")
@@ -247,7 +249,7 @@ export class PairGameQuizRepository {
 
     try {
 
-      const result =  await this.dataSource.query(`
+      const result = await this.dataSource.query(`
       SELECT
       ROUND(("sumScore"::numeric/"gamesCount"::numeric), 2)::float8 as "avgScores",
       "gamesCount","sumScore",
@@ -279,9 +281,9 @@ export class PairGameQuizRepository {
             (SELECT  count(*)
               FROM public.games
               WHERE ("firstPlayerId"=$1 or "secondPlayerId"=$1) and "status" = $2 and "winnerId" isNull)::int as "drawsCount") as sq
-      ;`, [userId,StatusGame.Finished]);
+      ;`, [userId, StatusGame.Finished]);
 
-      return result[0]
+      return result[0];
 
 
     } catch (e) {
@@ -295,11 +297,6 @@ export class PairGameQuizRepository {
       };
     }
   }
-
-
-
-
-
 
   /*
   SELECT
@@ -337,6 +334,141 @@ FROM
 ;
   */
 
+  async getUsersTop({
+                      pageNumber,
+                      pageSize,
+                      sort
+                    }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
 
+    try {
+
+      let query = `
+      SELECT "userId",u."login" as "userLogin","gamesCount","sumScore","avgScores","winsCount","lossesCount","drawsCount"
+      FROM
+      (SELECT "userId",
+        SUM("gamesCount")::int AS "gamesCount",
+        SUM("sumScore")::int AS "sumScore",
+        ROUND(SUM("sumScore")/SUM("gamesCount"),2)::float8 AS "avgScores",
+        SUM("winsCount")::int AS "winsCount",
+        SUM("lossesCount")::int AS "lossesCount",
+        SUM("drawsCount")::int AS "drawsCount"
+      FROM
+        (SELECT "firstPlayerId" AS "userId",
+            SUM("firstPlayerScore") AS "sumScore",
+            COUNT(*) AS "gamesCount",
+            0 AS "winsCount",
+            0 AS "lossesCount",
+            0 AS "drawsCount"
+        FROM PUBLIC.GAMES
+        WHERE "status" = 'Finished'
+        GROUP BY "firstPlayerId"
+      
+        UNION ALL 
+      
+        SELECT "secondPlayerId" AS "userId",
+            SUM("secondPlayerScore") AS "sumScore",
+            COUNT(*) AS "gamesCount",
+            0 AS "winsCount",
+            0 AS "lossesCount",
+            0 AS "drawsCount"
+        FROM PUBLIC.GAMES
+        WHERE "status" = 'Finished'
+        GROUP BY "secondPlayerId"
+     
+        UNION ALL 
+      
+        SELECT "userId" AS "userId",
+            0 as "gamesCount",
+            0 as "sumScore",
+            SUM("winsCount") AS "winsCount",
+            SUM("lossesCount") AS "lossesCount",
+            SUM("drawsCount") AS "drawsCount"
+        FROM
+        (SELECT "firstPlayerId" AS "userId",
+            CASE
+                WHEN "firstPlayerScore" > "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "winsCount",
+            CASE
+                WHEN "firstPlayerScore" < "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "lossesCount",
+            CASE
+                WHEN "firstPlayerScore" = "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "drawsCount"
+        FROM PUBLIC.GAMES
+        WHERE "status" = 'Finished') AS SQ
+        GROUP BY "userId"
+        
+      UNION ALL 
+      
+        SELECT "userId" AS "userId",
+            0 as "gamesCount",
+            0 as "sumScore",
+            SUM("winsCount") AS "winsCount",
+            SUM("lossesCount") AS "lossesCount",
+            SUM("drawsCount") AS "drawsCount"
+        FROM
+        (SELECT "secondPlayerId" AS "userId",
+            CASE
+                WHEN "firstPlayerScore" < "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "winsCount",
+            CASE
+                WHEN "firstPlayerScore" > "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "lossesCount",
+            CASE
+                WHEN "firstPlayerScore" = "secondPlayerScore" THEN 1
+                ELSE 0
+            END AS "drawsCount"
+        FROM PUBLIC.GAMES
+        WHERE "status" = 'Finished') AS SQ
+        GROUP BY "userId") AS SQ
+      GROUP BY "userId") AS SQ
+      
+      LEFT JOIN PUBLIC.USERS as u
+        ON SQ."userId"=u."id"
+      
+      `;
+
+
+      let sortBy = "";
+      sort.forEach(el => {
+        if (["avgScores", "sumScore", "userId", "userLogin", "gamesCount", "sumScore", "avgScores", "winsCount", "lossesCount", "drawsCount"].includes(el.sortBy)) {
+          sortBy += `"${el.sortBy}" ${el.sortDirection}, `;
+        }
+      });
+      if (sortBy) {
+        query += `ORDER BY ${sortBy.slice(0, -2)}`;
+      } else {
+        query += `ORDER BY "avgScores" DESC, "sumScore" DESC`;
+      }
+
+
+      const items = await this.dataSource.query(query);
+      const resultCount = await this.dataSource.query(`
+        SELECT "firstPlayerId"
+        FROM public.games
+	      WHERE status='Finished'
+	      UNION
+	      SELECT "secondPlayerId"
+        FROM public.games
+	      WHERE status='Finished';
+      `);
+
+      const totalCount = resultCount.length;
+      const pagesCount = Math.ceil(totalCount / pageSize);
+      const page = pageNumber;
+
+      return { pagesCount, page, pageSize, totalCount, items };
+
+    } catch (e) {
+      return { pagesCount: 0, page: 0, pageSize: 0, totalCount: 0, items: [] };
+    }
+
+
+  }
 
 }
