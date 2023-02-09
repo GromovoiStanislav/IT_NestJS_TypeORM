@@ -342,6 +342,21 @@ FROM
 
     try {
 
+
+      let sortBy = "";
+      sort.forEach(el => {
+        if (["avgScores", "sumScore", "userId", "userLogin", "gamesCount", "sumScore", "avgScores", "winsCount", "lossesCount", "drawsCount"].includes(el.sortBy)) {
+          sortBy += `"${el.sortBy}" ${el.sortDirection}, `;
+        }
+      });
+      if (sortBy) {
+        sortBy = `ORDER BY ${sortBy.slice(0, -2)} `;
+      } else {
+        sortBy = `ORDER BY "avgScores" DESC, "sumScore" DESC `;
+      }
+
+
+
       let query = `
       SELECT "userId",u."login" as "userLogin","gamesCount","sumScore","avgScores","winsCount","lossesCount","drawsCount"
       FROM
@@ -431,21 +446,24 @@ FROM
       LEFT JOIN PUBLIC.USERS as u
         ON SQ."userId"=u."id"
       
+      ${sortBy}
+      
+      LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize}
       `;
 
 
-      let sortBy = "";
-      sort.forEach(el => {
-        if (["avgScores", "sumScore", "userId", "userLogin", "gamesCount", "sumScore", "avgScores", "winsCount", "lossesCount", "drawsCount"].includes(el.sortBy)) {
-          sortBy += `"${el.sortBy}" ${el.sortDirection}, `;
-        }
-      });
-      if (sortBy) {
-        query += `ORDER BY ${sortBy.slice(0, -2)}`;
-      } else {
-        query += `ORDER BY "avgScores" DESC, "sumScore" DESC`;
-      }
-
+      // let sortBy = "";
+      // sort.forEach(el => {
+      //   if (["avgScores", "sumScore", "userId", "userLogin", "gamesCount", "sumScore", "avgScores", "winsCount", "lossesCount", "drawsCount"].includes(el.sortBy)) {
+      //     sortBy += `"${el.sortBy}" ${el.sortDirection}, `;
+      //   }
+      // });
+      // if (sortBy) {
+      //   query += `ORDER BY ${sortBy.slice(0, -2)} `;
+      // } else {
+      //   query += `ORDER BY "avgScores" DESC, "sumScore" DESC `;
+      // }
+      // query += `LIMIT ${pageSize} OFFSET ${(pageNumber - 1) * pageSize}`;
 
       const items = await this.dataSource.query(query);
       const resultCount = await this.dataSource.query(`
@@ -457,6 +475,7 @@ FROM
         FROM public.games
 	      WHERE status='Finished';
       `);
+
 
       const totalCount = resultCount.length;
       const pagesCount = Math.ceil(totalCount / pageSize);

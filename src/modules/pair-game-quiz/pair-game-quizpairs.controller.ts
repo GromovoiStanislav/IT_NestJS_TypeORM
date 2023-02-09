@@ -156,8 +156,8 @@ export class PairGameQuizUsersController {
   }
 
   @ApiOperation({ summary: "Get users top" })
-  @ApiQuery({ name: "sort", required: false, isArray: true,
-    schema: { default: ["avgScores desc", "sumScore desc"], type: "array" }
+  @ApiQuery({ name: "sort", required: false, isArray: true, type: "array",
+    schema: { default: ["avgScores desc", "sumScore desc"] }
   })
   @ApiQuery({
     name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
