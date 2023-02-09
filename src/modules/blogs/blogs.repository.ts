@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Like, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateBlogDto } from "./dto/create-blog.dto";
@@ -112,22 +112,28 @@ export class BlogsRepository {
     const QB2 = this.blogsRepository.createQueryBuilder("b");
 
     QB1.select(["b.id", "b.name", "b.websiteUrl", "b.description", "b.createdAt", "b.userId", "b.userLogin", "b.isBanned", "b.banDate"]);
-    QB2.select("COUNT(*)", "count");
+    QB2.select("COUNT(*)::int", "count");
 
     QB1.where("1 = 1");
     QB2.where("1 = 1");
 
     if (!includeBanned) {
-      QB1.andWhere("b.isBanned = false");
-      QB2.andWhere("b.isBanned = false");
+      //QB1.andWhere("b.isBanned = false");
+      QB1.andWhere({isBanned: false});
+      //QB2.andWhere("b.isBanned = false");
+      QB2.andWhere({isBanned: false});
     }
     if (userId) {
-      QB1.andWhere("b.userId = :userId", { userId });
-      QB2.andWhere("b.userId = :userId", { userId });
+      //QB1.andWhere("b.userId = :userId", { userId });
+      QB1.andWhere({ userId });
+      //QB2.andWhere("b.userId = :userId", { userId });
+      QB2.andWhere({ userId });
     }
     if (searchName) {
-      QB1.andWhere("b.name ~* :searchName", { searchName });
-      QB2.andWhere("b.name ~* :searchName", { searchName });
+      //QB1.andWhere("b.name ~* :searchName", { searchName });
+      QB1.andWhere( { name: Like(`%${searchName}%`) });
+      //QB2.andWhere("b.name ~* :searchName", { searchName });
+      QB2.andWhere( { name: Like(`%${searchName}%`) });
     }
 
     if (sortBy === "name") {
@@ -155,7 +161,8 @@ export class BlogsRepository {
 
     const items = await QB1.getMany();
     const resultCount = await QB2.getRawOne();
-    const totalCount = +resultCount?.count || 0;
+    //const totalCount = +resultCount?.count || 0;
+    const totalCount = resultCount.count;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
@@ -178,14 +185,18 @@ export class BlogsRepository {
     const QB2 = this.blogBannedUsersRepository.createQueryBuilder("bbu");
 
     QB1.select(["bbu.blogId", "bbu.userId", "bbu.login", "bbu.createdAt", "bbu.banReason"]);
-    QB2.select("COUNT(*)", "count");
+    QB2.select("COUNT(*)::int", "count");
 
-    QB1.where("bbu.blogId = :blogId", { blogId });
-    QB2.where("bbu.blogId = :blogId", { blogId });
+    //QB1.where("bbu.blogId = :blogId", { blogId });
+    QB1.where({ blogId });
+    //QB2.where("bbu.blogId = :blogId", { blogId });
+    QB2.where({ blogId });
 
     if (searchLogin) {
-      QB1.andWhere("bbu.login ~* :searchLogin", { searchLogin });
-      QB2.andWhere("bbu.login ~* :searchLogin", { searchLogin });
+      //QB1.andWhere("bbu.login ~* :searchLogin", { searchLogin });
+      QB1.andWhere( { login: Like(`%${searchLogin}%`) });
+      //QB2.andWhere("bbu.login ~* :searchLogin", { searchLogin });
+      QB2.andWhere( { login: Like(`%${searchLogin}%`) });
     }
 
 
@@ -205,7 +216,8 @@ export class BlogsRepository {
 
     const items = await QB1.getMany();
     const resultCount = await QB2.getRawOne();
-    const totalCount = +resultCount?.count || 0;
+    //const totalCount = +resultCount?.count || 0;
+    const totalCount = resultCount.count;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;

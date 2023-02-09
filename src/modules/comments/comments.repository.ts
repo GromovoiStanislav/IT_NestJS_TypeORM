@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, In, Repository } from "typeorm";
 import { UpdateCommentDto } from "./dto/update-comment.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { PaginationParams } from "../../common/dto/paginationParams.dto";
@@ -67,17 +67,20 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
-      .where("c.postId = :postId", { postId })
+      //.where("c.postId = :postId", { postId })
+      .where({ postId })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
       .getMany();
 
     const resultCount = await this.commentsRepository.createQueryBuilder("c")
-      .select("COUNT(*)", "count")
-      .where("c.postId = :postId", { postId })
+      .select("COUNT(*)::int", "count")
+      //.where("c.postId = :postId", { postId })
+      .where({ postId })
       .getRawOne();
-    const totalCount = +resultCount?.count || 0;
+    //const totalCount = +resultCount?.count || 0;
+    const totalCount = resultCount.count;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
@@ -105,17 +108,20 @@ export class CommentsRepository {
 
     const items = await this.commentsRepository.createQueryBuilder("c")
       .select(["c.id", "c.postId", "c.content", "c.userId", "c.userLogin", "c.createdAt"])
-      .where("c.postId IN (:...postsIds)", { postsIds })
+      //.where("c.postId IN (:...postsIds)", { postsIds })
+      .where({ postId: In(postsIds) })
       .orderBy(sortBy, order)
       .skip((pageNumber - 1) * pageSize)
       .take(pageSize)
       .getMany();
 
     const resultCount = await this.commentsRepository.createQueryBuilder("c")
-      .select("COUNT(*)", "count")
-      .where("c.postId IN (:...postsIds)", { postsIds })
+      .select("COUNT(*)::int", "count")
+      //.where("c.postId IN (:...postsIds)", { postsIds })
+      .where({ postId: In(postsIds) })
       .getRawOne();
-    const totalCount = +resultCount?.count || 0;
+    //const totalCount = +resultCount?.count || 0;
+    const totalCount = resultCount.count;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
