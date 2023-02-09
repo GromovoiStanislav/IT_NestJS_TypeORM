@@ -1,4 +1,4 @@
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, ILike, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectDataSource, InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
@@ -45,7 +45,11 @@ export class UsersRepository {
   async findUserByLoginOrEmail(search: string): Promise<User | null> {
     return this.usersRepository
       .createQueryBuilder("users")
-      .where("users.login = :login OR users.email = :email", { login: search, email: search })
+      //.where("users.login = :login OR users.email = :email", { login: search, email: search })
+      .where([
+        {login: search},
+        {email: search}
+      ])
       .getOne();
   }
 
@@ -122,31 +126,46 @@ export class UsersRepository {
     if (searchLogin && searchEmail) {
       QB1.where(
         new Brackets((qb) => {
-          qb.where("u.login ~* :searchLogin", { searchLogin })
-            .orWhere("u.email ~* :searchEmail", { searchEmail });
+          // qb.where("u.login ~* :searchLogin", { searchLogin })
+          //   .orWhere("u.email ~* :searchEmail", { searchEmail });
+          qb.where([
+            {login: ILike(`%${searchLogin}%`)},
+            {email: ILike(`%${searchEmail}%`)}
+          ])
         })
       );
       QB2.where(
         new Brackets((qb) => {
-          qb.where("u.login ~* :searchLogin OR u.email ~* :searchEmail", { searchLogin, searchEmail });
+          //qb.where("u.login ~* :searchLogin OR u.email ~* :searchEmail", { searchLogin, searchEmail });
+          qb.where([
+            {login: ILike(`%${searchLogin}%`)},
+            {email: ILike(`%${searchEmail}%`)}
+          ])
         })
       );
 
     } else if (searchLogin) {
-      QB1.where("u.login ~* :searchLogin", { searchLogin });
-      QB2.where("u.login ~* :searchLogin", { searchLogin });
-
+      // QB1.where("u.login ~* :searchLogin", { searchLogin });
+      // QB2.where("u.login ~* :searchLogin", { searchLogin });
+      QB1.where({ login: ILike(`%${searchLogin}%`)});
+      QB2.where({ login: ILike(`%${searchLogin}%`)});
     } else if (searchEmail) {
-      QB1.where("u.email ~* :searchEmail", { searchEmail });
-      QB2.where("u.email ~* :searchEmail", { searchEmail });
+      // QB1.where("u.email ~* :searchEmail", { searchEmail });
+      // QB2.where("u.email ~* :searchEmail", { searchEmail });
+      QB1.where({ email: ILike(`%${searchEmail}%`)});
+      QB2.where({ email: ILike(`%${searchEmail}%`)});
     }
 
     if (banStatus === "notBanned") {
-      QB1.andWhere("u.isBanned = false");
-      QB2.andWhere("u.isBanned = false");
+      // QB1.andWhere("u.isBanned = false");
+      // QB2.andWhere("u.isBanned = false");
+      QB1.andWhere({isBanned: false});
+      QB2.andWhere({isBanned: false});
     } else if (banStatus === "banned") {
-      QB1.andWhere("u.isBanned = true");
-      QB2.andWhere("u.isBanned = true");
+      // QB1.andWhere("u.isBanned = true");
+      // QB2.andWhere("u.isBanned = true");
+      QB1.andWhere({isBanned: true});
+      QB2.andWhere({isBanned: true});
     }
 
 

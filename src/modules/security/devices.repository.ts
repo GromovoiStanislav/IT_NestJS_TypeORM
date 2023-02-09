@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import {  InjectRepository } from "@nestjs/typeorm";
-import {  Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Not, Repository } from "typeorm";
 import { Device } from "./devices.entity";
 import { CreateDeviceDto } from "./dto/create-device.dto";
 
@@ -46,7 +46,9 @@ export class DevicesRepository {
       .createQueryBuilder()
       .delete()
       .from(Device)
-      .where("userId = :userId and deviceId <> :deviceId", { userId, deviceId })
+      //.where("userId = :userId and deviceId <> :deviceId", { userId, deviceId })
+      .where({ userId: userId })
+      .andWhere({ deviceId: Not(deviceId) })
       .execute();
 
   }
