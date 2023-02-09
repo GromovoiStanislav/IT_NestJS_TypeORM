@@ -45,7 +45,7 @@ export class DevicesRepository {
     await this.devicesRepository
       .createQueryBuilder()
       .delete()
-      .from(Device)
+      //.from(Device)
       //.where("userId = :userId and deviceId <> :deviceId", { userId, deviceId })
       .where({ userId: userId })
       .andWhere({ deviceId: Not(deviceId) })
