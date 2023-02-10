@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
+
 export class ViewBanInfo {
   @ApiProperty({ required: false })
   isBanned: boolean;
@@ -18,3 +19,17 @@ export class ViewBanBlogUser {
   banInfo: ViewBanInfo;
 }
 
+
+export class PaginatedViewBanBlogUser {
+  @ApiProperty({ type: "integer", format: "int32", required: false })
+  pagesCount: number;
+  @ApiProperty({ type: "integer", format: "int32", required: false })
+  page: number;
+  @ApiProperty({ type: "integer", format: "int32", required: false })
+  pageSize: number;
+  @ApiProperty({ type: "integer", format: "int32", required: false })
+  totalCount: number;
+
+  @ApiProperty({ type: ViewBanBlogUser, isArray: true, required: false })
+  items: ViewBanBlogUser[];
+}

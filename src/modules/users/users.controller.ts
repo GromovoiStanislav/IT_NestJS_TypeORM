@@ -32,12 +32,13 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
-  ApiExcludeEndpoint, ApiBody, ApiExtraModels, getSchemaPath, ApiQuery
+  ApiExcludeEndpoint, ApiBody, ApiQuery
 } from "@nestjs/swagger";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { ViewUserDto } from "./dto/view-user.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
-import { ViewBanBlogUser } from "../blogs/dto/view-blog-ban-user.dto";
+import { PaginatedViewBanBlogUser, ViewBanBlogUser } from "../blogs/dto/view-blog-ban-user.dto";
+import { ApiPaginatedResponse } from "../../common/decorators/api-paginated-response.decorator";
 
 
 
@@ -55,23 +56,6 @@ export class SaUsersController {
 
 
   @ApiOperation({ summary: "Return all users" })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Success",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(ViewUserDto) }
-            }
-          }
-        }
-      ]
-    }
-  })
   @ApiQuery({
     name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
     description: "Default value: desc"
@@ -97,6 +81,7 @@ export class SaUsersController {
     name: "banStatus", type: String, required: false, enum: ["all", "banned", "notBanned"],
     description: "Default value: all"
   })
+  @ApiPaginatedResponse(ViewUserDto)
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @Get()
   async getUsers(@Query() query, @Pagination() paginationParams: PaginationParams):Promise<PaginatorDto<ViewUserDto[]>> {
@@ -175,23 +160,6 @@ export class BloggerUsersController {
 
 
   @ApiOperation({ summary: "Return all banned users for blog" })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Success",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(ViewBanBlogUser) }
-            }
-          }
-        }
-      ]
-    }
-  })
   @ApiQuery({
     name: "pageSize", required: false, schema: { default: 10, type: "integer", format: "int32" },
     description: "pageSize is portions size that should be returned"
@@ -210,6 +178,7 @@ export class BloggerUsersController {
     description: "Search term for user Login: Login should contains this term in any position"
   })
   @ApiParam({ name: "id", description: "Blog ID", type: String })
+  @ApiResponse({ status: 200,description: "Success", type: PaginatedViewBanBlogUser })
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @Get("blog/:id")
   async getUsers(@Param("id") blogId: string,

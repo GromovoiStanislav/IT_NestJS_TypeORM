@@ -28,15 +28,14 @@ import { CreateCommentByPostIDCommand, GetAllCommentsByPostIDCommand } from "../
 import {
   ApiBasicAuth,
   ApiBody,
-  ApiExtraModels,
   ApiOperation,
   ApiParam, ApiQuery,
   ApiResponse,
   ApiTags,
-  getSchemaPath
 } from "@nestjs/swagger";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { ViewCommentDto } from "../comments/dto/view-comment.dto";
+import { ApiPaginatedResponse } from "../../common/decorators/api-paginated-response.decorator";
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -110,23 +109,7 @@ export class PostsController {
 
 
   @ApiOperation({ summary: "Return all posts" })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Success",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(ViewPostDto) }
-            }
-          }
-        }
-      ]
-    }
-  })
+  @ApiPaginatedResponse(ViewPostDto)
   @ApiQuery({
     name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
     description: "Default value: desc"
@@ -193,23 +176,7 @@ export class PostsController {
 
   @ApiOperation({ summary: "Returns comments for specified post" })
   @ApiParam({ name: "postId", description: "Post id", type: String })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Success",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(ViewCommentDto) }
-            }
-          }
-        }
-      ]
-    }
-  })
+  @ApiPaginatedResponse(ViewCommentDto)
   @ApiQuery({
     name: "sortDirection", type: String, required: false, enum: ["asc", "desc"],
     description: "Default value: desc"

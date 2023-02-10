@@ -6,6 +6,7 @@ import { ConfigService } from "@nestjs/config";
 import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { PaginatorDto } from "./common/dto/paginator.dto";
 
 //import * as cookieParser from 'cookie-parser';
 
@@ -39,7 +40,9 @@ async function bootstrap() {
     .addBasicAuth()
     .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    extraModels: [PaginatorDto],
+  });
   SwaggerModule.setup('api', app, document);
 
 

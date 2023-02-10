@@ -21,15 +21,14 @@ import { PaginatorDto } from "../../common/dto/paginator.dto";
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiExtraModels,
-  ApiOperation, ApiQuery,
+  ApiOperation, ApiParam, ApiQuery,
   ApiResponse,
-  ApiTags,
-  getSchemaPath
+  ApiTags
 } from "@nestjs/swagger";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
 import { PaginatorTopGamePlayerViewDto, TopGamePlayerViewDto } from "./dto/top-game-view.dto";
+import { ApiPaginatedResponse } from "../../common/decorators/api-paginated-response.decorator";
 
 
 
@@ -73,23 +72,7 @@ export class PairGameQuizPairsController {
     name: "pageNumber", required: false, schema: { default: 1, type: "integer", format: "int32" },
     description: "pageNumber is number of portions that should be returned"
   })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Returns pair by id if current user is taking part in this pair",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(GamePairViewDto) }
-            }
-          }
-        }
-      ]
-    }
-  })
+  @ApiPaginatedResponse(GamePairViewDto)
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @Get("my")
   async getAllMyGames(@Pagination() paginationParams: PaginationParams,
@@ -99,6 +82,7 @@ export class PairGameQuizPairsController {
 
 
   @ApiOperation({ summary: "Returns game by id" })
+  @ApiParam({ name: "id", type: String })
   @ApiResponse({ status: 200, type: GamePairViewDto, description: "Returns pair by id" })
   @ApiResponse({ status: 400, description: "If id has invalid format", type: APIErrorResult })
   @ApiResponse({ status: 401, description: "Unauthorized" })

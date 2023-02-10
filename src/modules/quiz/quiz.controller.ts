@@ -27,14 +27,13 @@ import { InputQuizDto } from "./dto/input-quiz.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import {
   ApiBasicAuth, ApiBody,
-  ApiExtraModels,
   ApiOperation,
   ApiQuery,
   ApiResponse,
-  ApiTags,
-  getSchemaPath
+  ApiTags
 } from "@nestjs/swagger";
 import { APIErrorResult } from "../../common/dto/errors-message.dto";
+import { ApiPaginatedResponse } from "../../common/decorators/api-paginated-response.decorator";
 
 ///////////////////////////////////////////////////////
 
@@ -79,23 +78,7 @@ export class SaQuizController {
     description: "Default value: all"
   })
   @ApiQuery({ name: "bodySearchTerm", type: String, required: false })
-  @ApiExtraModels(PaginatorDto)
-  @ApiResponse({
-    status: 200, description: "Success",
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(PaginatorDto) },
-        {
-          properties: {
-            items: {
-              type: "array",
-              items: { $ref: getSchemaPath(ViewQuizDto) }
-            }
-          }
-        }
-      ]
-    }
-  })
+  @ApiPaginatedResponse(ViewQuizDto)
   @ApiResponse({ status: 401, description: "Unauthorized" })
   @Get()
   async findAllQuestion(@Query() query,
