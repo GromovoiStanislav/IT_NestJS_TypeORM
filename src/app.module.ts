@@ -22,8 +22,7 @@ import { join } from 'path';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'swagger-static'),
-      //serveRoot: '/api',
-      serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/swagger',
+      //serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
     }),
     CqrsModule, configModule,
     DatabasePostgresModule,
