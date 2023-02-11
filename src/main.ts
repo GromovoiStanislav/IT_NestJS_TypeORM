@@ -47,14 +47,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, {
     extraModels: [PaginatorDto],
   });
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   const configService = app.get(ConfigService);
   await app.listen(configService.get("PORT"));
 
   // get the swagger json file (if app is running in development mode)
   if (process.env.NODE_ENV === 'development') {
-      const serverUrl = 'http://localhost:3000/'
+      const serverUrl = 'http://localhost:3000'
 
     // write swagger ui files
     get(

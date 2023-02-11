@@ -19,7 +19,13 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from 'path';
 
 @Module({
-  imports: [CqrsModule, configModule,
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'swagger-static'),
+      //serveRoot: '/api',
+      serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/swagger',
+    }),
+    CqrsModule, configModule,
     DatabasePostgresModule,
     UsersModule, TestingModule, BlogsModule, PostsModule, AuthModule, CommentsModule, SecurityModule,
     QuizModule, PairGameQuizModule,
@@ -27,12 +33,6 @@ import { join } from 'path';
       ttl: 10,
       limit: 500
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'swagger-static'),
-      serveRoot: '/api',
-      //serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
-    })
-
   ],
   controllers: [AppController],
   providers: [AppService]
