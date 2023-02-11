@@ -15,7 +15,8 @@ import { ThrottlerModule } from "@nestjs/throttler";
 import { DatabasePostgresModule } from "./db/postgres.module";
 import { QuizModule } from "./modules/quiz/quiz.module";
 import { PairGameQuizModule } from "./modules/pair-game-quiz/pair-game-quiz.module";
-
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from 'path';
 
 @Module({
   imports: [CqrsModule, configModule,
@@ -25,6 +26,11 @@ import { PairGameQuizModule } from "./modules/pair-game-quiz/pair-game-quiz.modu
     ThrottlerModule.forRoot({
       ttl: 10,
       limit: 500
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'swagger-static'),
+      serveRoot: '/api',
+      //serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
     })
 
   ],
