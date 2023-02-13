@@ -17,6 +17,6 @@ export class AppService {
 
     //return "PORT: " + this.configService.get("PORT");
     //return process.env.PORT;
-    return "Hello!!!";
+    return { message: "Hello!!!" };
   }
 }

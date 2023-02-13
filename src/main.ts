@@ -1,4 +1,5 @@
 import { NestFactory } from "@nestjs/core";
+import ngrok from "ngrok";
 import { AppModule } from "./app.module";
 import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { ErrorExceptionFilter, HttpExceptionFilter } from "./exception.filter";
@@ -50,7 +51,17 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   const configService = app.get(ConfigService);
-  await app.listen(configService.get("PORT"));
+  const PORT = configService.get("PORT")
+  await app.listen(PORT);
+
+  // if (configService.get<string>("NODE_ENV").toLowerCase() === "development"){
+  //   const url = await ngrok.connect(PORT)
+  //   console.log(url);
+  // }
+
+
+
+
 
   // get the swagger json file (if app is running in development mode)
   if (process.env.NODE_ENV === 'development') {
