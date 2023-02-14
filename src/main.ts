@@ -8,8 +8,8 @@ import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { PaginatorDto } from "./common/dto/paginator.dto";
-import { createWriteStream } from 'fs';
-import { get } from 'http';
+import { createWriteStream } from "fs";
+import { get } from "http";
 import { TelegramAdapter } from "./utils/telegram.adapter";
 
 
@@ -40,60 +40,58 @@ async function bootstrap() {
 
 
   const config = new DocumentBuilder()
-    .setTitle('It-blogs')
-    .setDescription('The it-blogs API description')
-    .setVersion('1.0')
+    .setTitle("It-blogs")
+    .setDescription("The it-blogs API description")
+    .setVersion("1.0")
     .addBasicAuth()
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config, {
-    extraModels: [PaginatorDto],
+    extraModels: [PaginatorDto]
   });
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup("api", app, document);
 
   const configService = app.get(ConfigService);
-  const PORT = configService.get("PORT")
+  const PORT = configService.get("PORT");
   await app.listen(PORT);
 
 
-  const telegramAdapter = await app.resolve(TelegramAdapter)
+  const telegramAdapter = await app.resolve(TelegramAdapter);
   //const telegramAdapter = app.get(TelegramAdapter)
 
-  if (configService.get<string>("NODE_ENV").toLowerCase() === "development"){
+  if (configService.get<string>("NODE_ENV").toLowerCase() === "development") {
     //const url = await ngrok.connect(PORT)
-    const url = "https://d3b8-77-235-20-30.ngrok.io"
-    await telegramAdapter.setWebhook(url)
+    //const url = "https://d3b8-77-235-20-30.ngrok.io"
+    const url = configService.get<string>("URL");
+    await telegramAdapter.setWebhook(url);
+  } else {
+    await telegramAdapter.setWebhook(configService.get<string>("URL"));
   }
-  if (configService.get<string>("NODE_ENV").toLowerCase() === "production"){
-    await telegramAdapter.setWebhook(configService.get<string>("URL"))
-  }
-
-
 
 
   // get the swagger json file (if app is running in development mode)
-  if (process.env.NODE_ENV === 'development') {
-      const serverUrl = 'http://localhost:3000'
+  if (process.env.NODE_ENV === "development") {
+    const serverUrl = "http://localhost:3000";
 
     // write swagger ui files
     get(
       `${serverUrl}/api/swagger-ui-bundle.js`, function
       (response) {
-        response.pipe(createWriteStream('swagger-static/swagger-ui-bundle.js'));
+        response.pipe(createWriteStream("swagger-static/swagger-ui-bundle.js"));
       });
 
-    get(`${serverUrl}/api/swagger-ui-init.js`, function (response) {
-      response.pipe(createWriteStream('swagger-static/swagger-ui-init.js'));
+    get(`${serverUrl}/api/swagger-ui-init.js`, function(response) {
+      response.pipe(createWriteStream("swagger-static/swagger-ui-init.js"));
     });
 
     get(
       `${serverUrl}/api/swagger-ui-standalone-preset.js`,
-      function (response) {
-        response.pipe(createWriteStream('swagger-static/swagger-ui-standalone-preset.js'));
+      function(response) {
+        response.pipe(createWriteStream("swagger-static/swagger-ui-standalone-preset.js"));
       });
 
-    get(`${serverUrl}/api/swagger-ui.css`, function (response) {
-      response.pipe(createWriteStream('swagger-static/swagger-ui.css'));
+    get(`${serverUrl}/api/swagger-ui.css`, function(response) {
+      response.pipe(createWriteStream("swagger-static/swagger-ui.css"));
     });
 
   }
