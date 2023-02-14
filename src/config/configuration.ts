@@ -12,4 +12,5 @@ export type ConfigType = ConfigurationType & {
   MONGO_URI: string
   PORT: string
   NODE_ENV: string
+  URL: string
 }

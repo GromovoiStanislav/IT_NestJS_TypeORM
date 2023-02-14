@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { ConfigType, ConfigurationType } from "./config/configuration";
+import { ConfigType } from "./config/configuration";
 
 @Injectable()
 export class AppService {
@@ -17,6 +17,12 @@ export class AppService {
 
     //return "PORT: " + this.configService.get("PORT");
     //return process.env.PORT;
-    return { message: "Hello!!!" };
+    //return { message: "Hello!!!" };
+    return {
+      URL: this.configService.get<string>("URL"),
+      NODE_ENV: this.configService.get<string>("NODE_ENV"),
+    };
+
+
   }
 }
