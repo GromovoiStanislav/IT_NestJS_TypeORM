@@ -59,14 +59,13 @@ async function bootstrap() {
   const telegramAdapter = await app.resolve(TelegramAdapter);
   //const telegramAdapter = app.get(TelegramAdapter)
 
+  let url = configService.get<string>("URL")
   if (configService.get<string>("NODE_ENV").toLowerCase() === "development") {
-    //const url = await ngrok.connect(PORT)
-    //const url = "https://d3b8-77-235-20-30.ngrok.io"
-    const url = configService.get<string>("URL");
-    await telegramAdapter.setWebhook(url);
-  } else {
-    await telegramAdapter.setWebhook(configService.get<string>("URL"));
+    //url = await ngrok.connect(PORT)
+    //url = "https://d3b8-77-235-20-30.ngrok.io"
   }
+  await telegramAdapter.setWebhook(url);
+
 
 
   // get the swagger json file (if app is running in development mode)
