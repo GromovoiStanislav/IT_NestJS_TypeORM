@@ -195,11 +195,10 @@ export class PairGameQuizRepository {
     const QB1 = this.gamesRepository.createQueryBuilder("g");
     const QB2 = this.gamesRepository.createQueryBuilder("g");
 
-    QB2.select("COUNT(*)::int", "count");
+    //QB2.select("COUNT(*)::int", "count");
 
     // QB1.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
     // QB2.where("(g.firstPlayerId = :userId or g.secondPlayerId = :userId)", { userId });
-
     QB1.where([
       { firstPlayerId: userId },
       { secondPlayerId: userId }
@@ -225,9 +224,9 @@ export class PairGameQuizRepository {
       .take(pageSize);
 
     const items = await QB1.getMany();
-    const resultCount = await QB2.getRawOne();
-    //const totalCount = +resultCount?.count || 0;
-    const totalCount = resultCount.count;
+    // const resultCount = await QB2.getRawOne();
+    // const totalCount = resultCount.count;
+    const totalCount = await QB2.getCount();
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;

@@ -121,7 +121,7 @@ export class UsersRepository {
     const QB2 = this.usersRepository.createQueryBuilder("u");
 
     QB1.select(["u.id", "u.login", "u.email", "u.createdAt", "u.isBanned", "u.banDate", "u.banReason"]);
-    QB2.select("COUNT(*)", "count");
+    //QB2.select("COUNT(*)", "count");
 
     if (searchLogin && searchEmail) {
       QB1.where(
@@ -187,8 +187,9 @@ export class UsersRepository {
     // console.log(QB2.getSql());
 
     const items = await QB1.getMany();
-    const resultCount = await QB2.getRawOne();
-    const totalCount = +resultCount?.count || 0;
+    const totalCount = await QB2.getCount();
+   // const totalCount = +resultCount?.count || 0;
+
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;

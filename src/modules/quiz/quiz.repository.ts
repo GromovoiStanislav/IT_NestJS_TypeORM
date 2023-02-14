@@ -79,7 +79,7 @@ export class QuizzesRepository {
     const QB2 = this.quizzesRepository.createQueryBuilder("q");
 
     QB1.select(["q.id", "q.body", "q.correctAnswers", "q.createdAt", "q.updatedAt", "q.published"]);
-    QB2.select("COUNT(*)::int", "count");
+    //QB2.select("COUNT(*)::int", "count");
 
 
     QB1.where("1 = 1");
@@ -122,9 +122,9 @@ export class QuizzesRepository {
 
 
     const items = await QB1.getMany();
-    const resultCount = await QB2.getRawOne();
-    //const totalCount = +resultCount?.count || 0;
-    const totalCount = resultCount.count;
+    //const resultCount = await QB2.getRawOne();
+    //const totalCount = resultCount.count;
+    const totalCount = await QB2.getCount();
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;

@@ -112,7 +112,7 @@ export class BlogsRepository {
     const QB2 = this.blogsRepository.createQueryBuilder("b");
 
     QB1.select(["b.id", "b.name", "b.websiteUrl", "b.description", "b.createdAt", "b.userId", "b.userLogin", "b.isBanned", "b.banDate"]);
-    QB2.select("COUNT(*)::int", "count");
+    //QB2.select("COUNT(*)::int", "count");
 
     QB1.where("1 = 1");
     QB2.where("1 = 1");
@@ -160,9 +160,9 @@ export class BlogsRepository {
       .take(pageSize);
 
     const items = await QB1.getMany();
-    const resultCount = await QB2.getRawOne();
-    //const totalCount = +resultCount?.count || 0;
-    const totalCount = resultCount.count;
+    //const resultCount = await QB2.getRawOne();
+    //const totalCount = resultCount.count;
+    const totalCount = await QB2.getCount();
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
@@ -185,7 +185,7 @@ export class BlogsRepository {
     const QB2 = this.blogBannedUsersRepository.createQueryBuilder("bbu");
 
     QB1.select(["bbu.blogId", "bbu.userId", "bbu.login", "bbu.createdAt", "bbu.banReason"]);
-    QB2.select("COUNT(*)::int", "count");
+    //QB2.select("COUNT(*)::int", "count");
 
     //QB1.where("bbu.blogId = :blogId", { blogId });
     QB1.where({ blogId });
@@ -215,9 +215,10 @@ export class BlogsRepository {
       .take(pageSize);
 
     const items = await QB1.getMany();
-    const resultCount = await QB2.getRawOne();
+    const totalCount = await QB2.getCount();
+    //const resultCount = await QB2.getRawOne();
     //const totalCount = +resultCount?.count || 0;
-    const totalCount = resultCount.count;
+    //const totalCount = resultCount.count;
 
     const pagesCount = Math.ceil(totalCount / pageSize);
     const page = pageNumber;
