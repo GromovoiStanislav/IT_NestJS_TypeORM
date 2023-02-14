@@ -8,12 +8,13 @@ import { useContainer } from "class-validator";
 import cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { PaginatorDto } from "./common/dto/paginator.dto";
-
-
-import {  createWriteStream } from 'fs';
+import { createWriteStream } from 'fs';
 import { get } from 'http';
+import { TelegramAdapter } from "./utils/telegram.adapter";
 
-//import * as cookieParser from 'cookie-parser';
+
+///////////////////////////////////////////////////
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -54,11 +55,18 @@ async function bootstrap() {
   const PORT = configService.get("PORT")
   await app.listen(PORT);
 
-  // if (configService.get<string>("NODE_ENV").toLowerCase() === "development"){
-  //   const url = await ngrok.connect(PORT)
-  //   console.log(url);
-  // }
 
+  const telegramAdapter = await app.resolve(TelegramAdapter)
+  //const telegramAdapter = app.get(TelegramAdapter)
+
+  if (configService.get<string>("NODE_ENV").toLowerCase() === "development"){
+    //const url = await ngrok.connect(PORT)
+    const url = "https://d3b8-77-235-20-30.ngrok.io"
+    await telegramAdapter.setWebhook(url)
+  }
+  if (configService.get<string>("NODE_ENV").toLowerCase() === "production"){
+    await telegramAdapter.setWebhook(configService.get<string>("URL"))
+  }
 
 
 
@@ -90,7 +98,8 @@ async function bootstrap() {
 
   }
 
-
 }
 
 bootstrap();
+
+
