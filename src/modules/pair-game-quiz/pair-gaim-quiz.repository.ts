@@ -11,6 +11,7 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
+import { log } from "util";
 
 
 @Injectable()
@@ -132,6 +133,7 @@ export class PairGameQuizRepository {
         }
         game.firstPlayerAnswers.push(answerDto);
 
+
       } else {
 
         if (game.secondPlayerAnswers.length === 5) {
@@ -169,14 +171,68 @@ export class PairGameQuizRepository {
         }
       }
 
-
       await manager.save(game);
       await queryRunner.commitTransaction();
+
+      if (game.status !== StatusGame.Finished &&
+        (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
+        setTimeout(() => this.finishGameByTime.bind(this, game.id), 10000);
+      }
+
       return answerDto;
 
     } catch (e) {
       await queryRunner.rollbackTransaction();
       return null;
+    } finally {
+      await queryRunner.release();
+    }
+
+  }
+
+
+  async finishGameByTime(gameId: string): Promise<void> {
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
+
+    try {
+
+      const game = await manager.getRepository(Game).createQueryBuilder("g")
+        .setLock("pessimistic_write")
+        .where({ id: gameId, status: StatusGame.Active })
+        .getOne();
+
+      if (!game) {
+        return;
+      }
+
+
+      game.status = StatusGame.Finished;
+      game.finishGameDate = dateAt();
+
+      if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
+        game.firstPlayerScore += 1;
+      } else if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
+        game.secondPlayerScore += 1;
+      }
+
+
+      if (game.firstPlayerScore > game.secondPlayerScore) {
+        game.winnerId = game.firstPlayerId;
+      } else if (game.firstPlayerScore < game.secondPlayerScore) {
+        game.winnerId = game.secondPlayerId;
+      }
+
+
+      await manager.save(game);
+      await queryRunner.commitTransaction();
+
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
     }
@@ -340,8 +396,8 @@ FROM
                       sort
                     }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
 
-    try {
 
+    try {
 
       let sortBy = "";
       sort.forEach(el => {
@@ -354,7 +410,6 @@ FROM
       } else {
         sortBy = `ORDER BY "avgScores" DESC, "sumScore" DESC `;
       }
-
 
 
       let query = `
