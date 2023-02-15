@@ -42,11 +42,11 @@ export const localDbOptions: TypeOrmModuleOptions = {
             synchronize: true,
             autoLoadEntities: true,
             //entities:[User],
-            poolSize: 5,
-            extra: {
-              connectionLimit: 5,
-              connectionTimeoutMillis: 1000
-            }
+            // poolSize: 5,
+            // extra: {
+            //   connectionLimit: 5,
+            //   connectionTimeoutMillis: 1000
+            // }
           };
         }
 
