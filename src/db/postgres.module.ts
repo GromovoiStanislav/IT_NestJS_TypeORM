@@ -24,14 +24,14 @@ export const localDbOptions: TypeOrmModuleOptions = {
         // return {
         //   type: "postgres",
         //   url: configService.get<string>("PG_URL"),
-        // ssl:true,
+        //   ssl:true,
         //   synchronize: true,
         //   autoLoadEntities: true,
-        //   poolSize: 5,
-        //   extra: {
-        //     connectionLimit: 5,
-        //     connectionTimeoutMillis: 1000
-        //   }
+        //   // poolSize: 5,
+        //   // extra: {
+        //   //   connectionLimit: 5,
+        //   //   connectionTimeoutMillis: 1000
+        //   // }
         // };
 
 

@@ -18,6 +18,9 @@ export class Game {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ default: 0 })
+  count: number;
+
   ////////////////// firstPlayer //////////////////
   @ManyToOne(() => User)
   firstPlayer: User;
@@ -32,7 +35,6 @@ export class Game {
 
   @Column({ type: "jsonb", default: [] })
   firstPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[];
-
 
   //////////////// secondPlayer /////////////////
   @ManyToOne(() => User)

@@ -228,6 +228,7 @@ export class PairGameQuizRepository {
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
+      game.count = this.count
 
       if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
