@@ -176,7 +176,7 @@ export class PairGameQuizRepository {
 
       if (game.status !== StatusGame.Finished &&
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
-        setTimeout(() => this.finishGameByTime.bind(this, game.id), 8000);
+        setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
       }
 
       return answerDto;
@@ -192,6 +192,8 @@ export class PairGameQuizRepository {
 
 
   async finishGameByTime(gameId: string): Promise<void> {
+
+    console.log('finishGameByTime',gameId);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -390,11 +392,18 @@ FROM
 ;
   */
 
+  setTimeout10s(){
+    console.log('setTimeout 2')
+  }
+
+
+
   async getUsersTop({
                       pageNumber,
                       pageSize,
                       sort
                     }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
+    //setTimeout(() => this.finishGameByTime.bind(this, '1c412497-ce5c-4dd7-a72c-57da4f26bfd7')(), 5000);
 
 
     try {
@@ -546,3 +555,4 @@ FROM
   }
 
 }
+
