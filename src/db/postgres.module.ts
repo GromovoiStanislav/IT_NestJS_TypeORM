@@ -24,6 +24,7 @@ export const localDbOptions: TypeOrmModuleOptions = {
         // return {
         //   type: "postgres",
         //   url: configService.get<string>("PG_URL"),
+        // ssl:true,
         //   synchronize: true,
         //   autoLoadEntities: true,
         //   poolSize: 5,
@@ -39,6 +40,7 @@ export const localDbOptions: TypeOrmModuleOptions = {
           return {
             type: "postgres",
             url: configService.get<string>("PG_URL"),
+            ssl:true,
             synchronize: true,
             autoLoadEntities: true,
             // poolSize: 5,
