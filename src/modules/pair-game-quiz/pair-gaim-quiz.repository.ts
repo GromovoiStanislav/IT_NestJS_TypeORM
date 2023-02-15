@@ -180,16 +180,21 @@ export class PairGameQuizRepository {
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
 
         this.count++;
-        if (this.count === 1) {
-          await this.finishGameByTime(game.id,this.count);
-        }else if (this.count === 2) {
-          await this.finishGameByTime(game.id,this.count);
-        }else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
-        }else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
-        }else if (this.count === 5) {
-          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 5000);
+        // if (this.count === 1) {
+        //   await this.finishGameByTime(game.id,this.count);
+        // }else if (this.count === 2) {
+        //   await this.finishGameByTime(game.id,this.count);
+        // }else if (this.count === 3) {
+        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
+        // }else if (this.count === 4) {
+        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
+        // }else if (this.count === 5) {
+        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 5000);
+        // }
+        if (this.count > 2) {
+          setTimeout(() => this.finishGameByTime.bind(this)(game.id, this.count), 8000);
+        } else {
+          await this.finishGameByTime(game.id, this.count);
         }
 
 
@@ -228,7 +233,7 @@ export class PairGameQuizRepository {
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
-      game.count = count
+      game.count = count;
 
       if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
