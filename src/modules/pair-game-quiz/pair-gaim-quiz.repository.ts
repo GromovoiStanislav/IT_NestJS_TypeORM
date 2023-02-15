@@ -185,12 +185,11 @@ export class PairGameQuizRepository {
         }else if (this.count === 2) {
           await this.finishGameByTime(game.id);
         }else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 5000);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         }else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 5000);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         }else if (this.count === 5) {
-          await this.finishGameByTime(game.id);
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 5000);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         }
 
 
