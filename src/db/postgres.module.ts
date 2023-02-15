@@ -41,11 +41,11 @@ export const localDbOptions: TypeOrmModuleOptions = {
             url: configService.get<string>("PG_URL"),
             synchronize: true,
             autoLoadEntities: true,
-            poolSize: 5,
-            extra: {
-              connectionLimit: 5,
-              connectionTimeoutMillis: 1000
-            }
+            // poolSize: 5,
+            // extra: {
+            //   connectionLimit: 5,
+            //   connectionTimeoutMillis: 1000
+            // }
           };
         }
 
