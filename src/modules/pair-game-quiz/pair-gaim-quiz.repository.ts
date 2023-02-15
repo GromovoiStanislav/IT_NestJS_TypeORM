@@ -180,13 +180,18 @@ export class PairGameQuizRepository {
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
 
         this.count++;
-        if (this.count === 3) {
-          //await this.finishGameByTime(game.id);
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
-        } else {
+        if (this.count === 1) {
           await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+        }else if (this.count === 2) {
+          await this.finishGameByTime(game.id);
+        }else if (this.count === 3) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+        }else if (this.count === 4) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+        }else if (this.count === 5) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
         }
+
 
       }
 
