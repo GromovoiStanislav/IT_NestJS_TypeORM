@@ -11,7 +11,7 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
-import { log } from "util";
+
 
 
 @Injectable()
@@ -26,7 +26,7 @@ export class PairGameQuizRepository {
 
 
   async clearAll(): Promise<void> {
-    //await this.gamesRepository.delete({});
+    await this.gamesRepository.clear();
   }
 
   async findGameById(id: string): Promise<Game | null> {
@@ -176,7 +176,7 @@ export class PairGameQuizRepository {
 
       if (game.status !== StatusGame.Finished &&
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
-        setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+        setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 4000);
       }
 
       return answerDto;
@@ -392,19 +392,12 @@ FROM
 ;
   */
 
-  setTimeout10s(){
-    console.log('setTimeout 2')
-  }
-
-
 
   async getUsersTop({
                       pageNumber,
                       pageSize,
                       sort
                     }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
-    //setTimeout(() => this.finishGameByTime.bind(this, '1c412497-ce5c-4dd7-a72c-57da4f26bfd7')(), 5000);
-
 
     try {
 
