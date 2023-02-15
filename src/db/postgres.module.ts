@@ -20,12 +20,12 @@ export const localDbOptions: TypeOrmModuleOptions = {
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
 
+
         // return {
         //   type: "postgres",
         //   url: configService.get<string>("PG_URL"),
         //   synchronize: true,
         //   autoLoadEntities: true,
-        //   //entities:[User],
         //   poolSize: 5,
         //   extra: {
         //     connectionLimit: 5,
