@@ -176,7 +176,7 @@ export class PairGameQuizRepository {
 
       if (game.status !== StatusGame.Finished &&
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
-        setTimeout(() => this.finishGameByTime.bind(this, game.id), 10000);
+        setTimeout(() => this.finishGameByTime.bind(this, game.id), 8000);
       }
 
       return answerDto;
