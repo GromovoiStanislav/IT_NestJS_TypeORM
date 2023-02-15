@@ -194,6 +194,10 @@ export class PairGameQuizRepository {
         if (this.count > 2) {
           const n = Number(this.count)
           setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
+        }
+        else if (this.count === 5) {
+          const n = Number(this.count)
+          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(),0 );
         } else {
           await this.finishGameByTime(game.id, this.count);
         }
