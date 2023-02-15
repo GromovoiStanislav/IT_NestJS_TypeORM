@@ -26,7 +26,7 @@ export class PairGameQuizRepository {
 
 
   async clearAll(): Promise<void> {
-    await this.gamesRepository.delete({});
+    await this.gamesRepository.clear();
   }
 
   async findGameById(id: string): Promise<Game | null> {
@@ -174,9 +174,9 @@ export class PairGameQuizRepository {
       await manager.save(game);
       await queryRunner.commitTransaction();
 
-      if (game.status !== StatusGame.Finished &&
+      if (game.status === StatusGame.Active &&
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
-        setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 4000);
+        setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 10000);
       }
 
       return answerDto;
