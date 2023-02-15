@@ -181,15 +181,15 @@ export class PairGameQuizRepository {
 
         this.count++;
         if (this.count === 1) {
-          await this.finishGameByTime(game.id);
+          await this.finishGameByTime(game.id,this.count);
         }else if (this.count === 2) {
-          await this.finishGameByTime(game.id);
+          await this.finishGameByTime(game.id,this.count);
         }else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
         }else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
         }else if (this.count === 5) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 5000);
+          setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 5000);
         }
 
 
@@ -207,7 +207,7 @@ export class PairGameQuizRepository {
   }
 
 
-  async finishGameByTime(gameId: string): Promise<void> {
+  async finishGameByTime(gameId: string, count): Promise<void> {
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -228,7 +228,7 @@ export class PairGameQuizRepository {
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
-      game.count = this.count
+      game.count = count
 
       if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
