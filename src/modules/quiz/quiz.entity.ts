@@ -9,7 +9,7 @@ export class Quiz {
   @Column({ collation: "C" })
   body: string;
 
-  @Column({ type: "json" })
+  @Column({ type: "jsonb" })
   correctAnswers: string[];
 
   @Column({ default: false })

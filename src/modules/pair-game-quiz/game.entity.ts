@@ -30,7 +30,7 @@ export class Game {
   @Column({ default: 0 })
   firstPlayerScore: number;
 
-  @Column({ type: "json", default: [] })
+  @Column({ type: "jsonb", default: [] })
   firstPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[];
 
 
@@ -46,12 +46,12 @@ export class Game {
   @Column({ default: 0 })
   secondPlayerScore: number;
 
-  @Column({ type: "json", default: [] })
+  @Column({ type: "jsonb", default: [] })
   secondPlayerAnswers: { questionId: string, answerStatus: AnswerStatus, addedAt: string }[];
 
   ////////////////////////////////////
 
-  @Column({ type: "json", nullable: true})
+  @Column({ type: "jsonb", nullable: true})
   questions: { id: string, body: string, correctAnswers: string[] }[];
 
 
