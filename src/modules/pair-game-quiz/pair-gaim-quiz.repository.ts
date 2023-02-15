@@ -26,7 +26,7 @@ export class PairGameQuizRepository {
 
 
   async clearAll(): Promise<void> {
-    await this.gamesRepository.clear();
+    await this.gamesRepository.delete({});
   }
 
   async findGameById(id: string): Promise<Game | null> {
