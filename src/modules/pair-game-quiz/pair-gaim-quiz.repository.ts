@@ -11,11 +11,13 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
-
+import e from "express";
 
 
 @Injectable()
 export class PairGameQuizRepository {
+
+  private count: number = 0;
 
   constructor(
     private commandBus: CommandBus,
@@ -176,8 +178,15 @@ export class PairGameQuizRepository {
 
       if (game.status === StatusGame.Active &&
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
-        //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
-        await this.finishGameByTime(game.id)
+
+        this.count++;
+        if (this.count > 2) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 9000);
+        } else {
+          await this.finishGameByTime(game.id);
+        }
+
+
       }
 
       return answerDto;
@@ -194,7 +203,7 @@ export class PairGameQuizRepository {
 
   async finishGameByTime(gameId: string): Promise<void> {
 
-    console.log('finishGameByTime',gameId);
+    console.log("finishGameByTime", gameId);
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
