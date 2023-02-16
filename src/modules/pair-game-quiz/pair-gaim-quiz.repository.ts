@@ -181,19 +181,18 @@ export class PairGameQuizRepository {
         !this.setOfGames.has(game.id)) {
 
         this.count++;
-        const n = Number(this.count);
         this.setOfGames.add(game.id)
 
         if (this.count === 1) {
-          await this.finishGameByTime(game.id, n);
+          await this.finishGameByTime(game.id);
         } else if (this.count === 2) {
-          await this.finishGameByTime(game.id, n);
+          await this.finishGameByTime(game.id);
         } else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         } else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         } else if (this.count === 5) {
-          await this.finishGameByTime(game.id, n);
+          await this.finishGameByTime(game.id);
         }
 
       }
@@ -210,8 +209,7 @@ export class PairGameQuizRepository {
   }
 
 
-  async finishGameByTime(gameId: string, count): Promise<void> {
-
+  async finishGameByTime(gameId: string): Promise<void> {
 
     if (!this.setOfGames.has(gameId)){
       return
