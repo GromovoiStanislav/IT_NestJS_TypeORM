@@ -119,7 +119,6 @@ export class PairGameQuizRepository {
       const answerDto = new AnswerDto();
       answerDto.addedAt = dateAt();
 
-
       if (userId === game.firstPlayerId) {
 
         if (game.firstPlayerAnswers.length === 5) {
@@ -197,18 +196,6 @@ export class PairGameQuizRepository {
           await this.finishGameByTime(game.id, n);
         }
 
-        // if (this.count > 2) {
-        //   const n = Number(this.count);
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
-        // } else if (this.count === 5) {
-        //   const n = Number(this.count);
-        //   await this.finishGameByTime(game.id, n );
-        // } else {
-        //   const n = Number(this.count);
-        //   await this.finishGameByTime(game.id, n );
-        // }
-
-
       }
 
       return answerDto;
@@ -251,7 +238,6 @@ export class PairGameQuizRepository {
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
-      game.count = count;
 
       if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
         game.firstPlayerScore += 1;
