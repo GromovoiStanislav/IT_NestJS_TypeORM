@@ -11,13 +11,14 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
-import e from "express";
 
 
 @Injectable()
 export class PairGameQuizRepository {
 
   private count: number = 0;
+  private setOfGames = new Set();
+
 
   constructor(
     private commandBus: CommandBus,
@@ -157,7 +158,7 @@ export class PairGameQuizRepository {
       if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
         game.status = StatusGame.Finished;
         game.finishGameDate = dateAt();
-
+        this.setOfGames.delete(game.id)
 
         if ((game.firstPlayerAnswers[4].addedAt < game.secondPlayerAnswers[4].addedAt) && game.firstPlayerScore > 0) {
           game.firstPlayerScore += 1;
@@ -177,9 +178,11 @@ export class PairGameQuizRepository {
       await queryRunner.commitTransaction();
 
       if (game.status === StatusGame.Active &&
-        (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)) {
+        (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5) &&
+        !this.setOfGames.has(game.id)) {
 
         this.count++;
+        this.setOfGames.add(this.setOfGames)
         // if (this.count === 1) {
         //   await this.finishGameByTime(game.id,this.count);
         // }else if (this.count === 2) {
@@ -192,12 +195,11 @@ export class PairGameQuizRepository {
         //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 5000);
         // }
         if (this.count > 2) {
-          const n = Number(this.count)
+          const n = Number(this.count);
           setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
-        }
-        else if (this.count === 5) {
-          const n = Number(this.count)
-          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(),0 );
+        } else if (this.count === 5) {
+          const n = Number(this.count);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 0);
         } else {
           await this.finishGameByTime(game.id, this.count);
         }
@@ -219,6 +221,11 @@ export class PairGameQuizRepository {
 
   async finishGameByTime(gameId: string, count): Promise<void> {
 
+
+    if (!this.setOfGames.has(gameId)){
+      return
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -235,6 +242,8 @@ export class PairGameQuizRepository {
       if (!game) {
         return;
       }
+
+      this.setOfGames.delete(gameId)
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
