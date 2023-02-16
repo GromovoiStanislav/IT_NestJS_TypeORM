@@ -182,30 +182,31 @@ export class PairGameQuizRepository {
         !this.setOfGames.has(game.id)) {
 
         this.count++;
+        const n = Number(this.count);
         this.setOfGames.add(game.id)
-        // if (this.count === 1) {
-        //   await this.finishGameByTime(game.id,this.count);
-        // }else if (this.count === 2) {
-        //   await this.finishGameByTime(game.id,this.count);
-        // }else if (this.count === 3) {
-        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
-        // }else if (this.count === 4) {
-        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 9000);
-        // }else if (this.count === 5) {
-        //   setTimeout(() => this.finishGameByTime.bind(this)(game.id,this.count), 5000);
-        // }
-        if (this.count > 2) {
-          const n = Number(this.count);
+
+        if (this.count === 1) {
+          await this.finishGameByTime(game.id, n);
+        } else if (this.count === 2) {
+          await this.finishGameByTime(game.id, n);
+        } else if (this.count === 3) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
+        } else if (this.count === 4) {
           setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
         } else if (this.count === 5) {
-          const n = Number(this.count);
-          // setImmediate(() => this.finishGameByTime.bind(this, game.id, n)());
-          await this.finishGameByTime(game.id, n );
-        } else {
-          const n = Number(this.count);
-          //setImmediate(() => this.finishGameByTime.bind(this, game.id, n)());
-          await this.finishGameByTime(game.id, n );
+          await this.finishGameByTime(game.id, n);
         }
+
+        // if (this.count > 2) {
+        //   const n = Number(this.count);
+        //   setTimeout(() => this.finishGameByTime.bind(this, game.id, n)(), 8000);
+        // } else if (this.count === 5) {
+        //   const n = Number(this.count);
+        //   await this.finishGameByTime(game.id, n );
+        // } else {
+        //   const n = Number(this.count);
+        //   await this.finishGameByTime(game.id, n );
+        // }
 
 
       }
