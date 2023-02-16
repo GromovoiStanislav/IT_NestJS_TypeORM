@@ -182,7 +182,7 @@ export class PairGameQuizRepository {
         !this.setOfGames.has(game.id)) {
 
         this.count++;
-        this.setOfGames.add(this.setOfGames)
+        this.setOfGames.add(game.id)
         // if (this.count === 1) {
         //   await this.finishGameByTime(game.id,this.count);
         // }else if (this.count === 2) {
