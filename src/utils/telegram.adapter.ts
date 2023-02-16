@@ -31,7 +31,7 @@ export type TelegramMessage = {
 }
 
 @Injectable()
-export class TelegramHandles {
+export class TelegramHandleUseCase {
   constructor(private telegramAdapter: TelegramAdapter) {
   }
 
@@ -48,7 +48,9 @@ export class TelegramHandles {
 
     else if (text === '500-200' || text === '599-299') {text='Ну скажи 300'}
     else if (text.toLowerCase().includes('скажи 300')) {text='Не скажу ни за что'}
-    else if (text.toLowerCase().includes('300')) {text='Отсоси у программиста ))))'}
+    else if (text.toLowerCase().includes('не скажу')) {text='Ну скажи 300'}
+    else if (text.toLowerCase().includes('300')) {text='Пососи у программиста ))))'}
+    else if (text.toLowerCase().includes('200')) {text='Сиди на месте ))))'}
     else {text='Скажи 300'}
 
     await this.telegramAdapter.sendMessage(text,payload.message.from.id)

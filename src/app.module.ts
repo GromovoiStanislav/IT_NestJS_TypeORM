@@ -17,7 +17,11 @@ import { QuizModule } from "./modules/quiz/quiz.module";
 import { PairGameQuizModule } from "./modules/pair-game-quiz/pair-game-quiz.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from 'path';
-import { TelegramAdapter, TelegramHandles } from "./utils/telegram.adapter";
+import { TelegramAdapter, TelegramHandleUseCase } from "./utils/telegram.adapter";
+
+const useCases = [
+  TelegramHandleUseCase,
+]
 
 @Module({
   imports: [
@@ -35,7 +39,7 @@ import { TelegramAdapter, TelegramHandles } from "./utils/telegram.adapter";
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, TelegramHandles, TelegramAdapter]
+  providers: [AppService, TelegramAdapter, ...useCases]
 })
 export class AppModule {
 }
