@@ -177,35 +177,35 @@ export class PairGameQuizRepository {
       await manager.save(game);
       await queryRunner.commitTransaction();
 
-      if (game.status === StatusGame.Active && !this.setOfGames.has(game.id)
-        && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
-        ) {
-
-        //this.count++;
-        this.setOfGames.add(game.id)
-
-        // if (this.count === 1) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
-        //
-        // } else if (this.count === 2) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
-        //
-        // } else if (this.count === 3) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 4) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 5) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
-        //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
-        // }
-
-      }
+      // if (game.status === StatusGame.Active && !this.setOfGames.has(game.id)
+      //   && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
+      //   ) {
+      //
+      //   //this.count++;
+      //   this.setOfGames.add(game.id)
+      //
+      //   // if (this.count === 1) {
+      //   //   await this.finishGameByTime(game.id);
+      //   //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
+      //   //
+      //   // } else if (this.count === 2) {
+      //   //   await this.finishGameByTime(game.id);
+      //   //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
+      //   //
+      //   // } else if (this.count === 3) {
+      //   //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+      //   //
+      //   // } else if (this.count === 4) {
+      //   //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+      //   //
+      //   // } else if (this.count === 5) {
+      //   //   await this.finishGameByTime(game.id);
+      //   //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
+      //   //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
+      //   //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
+      //   // }
+      //
+      // }
 
       return answerDto;
 
@@ -277,9 +277,9 @@ export class PairGameQuizRepository {
   async finishGameByTimeCron(): Promise<void> {
 
 
-    if (!this.setOfGames.size){
-      return
-    }
+    // if (!this.setOfGames.size){
+    //   return
+    // }
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -291,8 +291,8 @@ export class PairGameQuizRepository {
 
       const games = await manager.getRepository(Game).createQueryBuilder("g")
         .setLock("pessimistic_write")
-        .where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
-        //.where( {status: StatusGame.Active })
+        //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
+        .where( {status: StatusGame.Active })
         .getMany();
 
       if (!games.length) {
@@ -302,7 +302,7 @@ export class PairGameQuizRepository {
 
       for (const game of games){
 
-        this.setOfGames.delete(game.id)
+        //this.setOfGames.delete(game.id)
 
         game.status = StatusGame.Finished;
         game.finishGameDate = dateAt();
