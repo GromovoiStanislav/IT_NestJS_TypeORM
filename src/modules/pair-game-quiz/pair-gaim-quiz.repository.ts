@@ -184,12 +184,12 @@ export class PairGameQuizRepository {
         this.setOfGames.add(game.id)
 
         if (this.count === 1) {
-          //await this.finishGameByTime(game.id);
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
 
         } else if (this.count === 2) {
-          //await this.finishGameByTime(game.id);
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
 
         } else if (this.count === 3) {
           setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
