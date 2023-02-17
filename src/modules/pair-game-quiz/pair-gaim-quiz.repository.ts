@@ -219,8 +219,8 @@ export class PairGameQuizRepository {
   }
 
 
-  @Cron('*/1 * * * * *')
-  //@Interval(10000)
+  //@Cron(CronExpression.EVERY_10_SECONDS)
+  @Interval(1000)
   async finishGameByTime(gameId: string): Promise<void> {
 
     if (!this.setOfGames.has(gameId)){
