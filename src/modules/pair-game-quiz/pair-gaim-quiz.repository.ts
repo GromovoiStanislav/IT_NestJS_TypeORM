@@ -272,8 +272,8 @@ export class PairGameQuizRepository {
   }
 
 
-  //@Cron(CronExpression.EVERY_5_SECONDS)
-  @Interval(1000)
+  @Cron(CronExpression.EVERY_5_SECONDS)
+  //@Interval(5000)
   async finishGameByTimeCron(): Promise<void> {
 
 
@@ -296,18 +296,15 @@ export class PairGameQuizRepository {
         .getMany();
 
 
-
       if (!games.length) {
         return;
       }
-
 
       for (const game of games){
 
         if (game.firstPlayerAnswers.length !== 5 && game.secondPlayerAnswers.length !== 5) {
           continue
         }
-
 
 
         //this.setOfGames.delete(game.id)
