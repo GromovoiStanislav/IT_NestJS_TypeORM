@@ -190,7 +190,7 @@ export class PairGameQuizRepository {
           setImmediate(() => this.finishGameByTime.bind(this, game.id)());
         } else if (this.count === 2) {
           //await this.finishGameByTime(game.id);                                             // ОК
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);    // 403
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 5000);    //
           //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);
           //setImmediate(() => this.finishGameByTime.bind(this, game.id)());
         } else if (this.count === 3) {
