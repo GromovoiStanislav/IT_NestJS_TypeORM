@@ -184,13 +184,13 @@ export class PairGameQuizRepository {
         this.setOfGames.add(game.id)
 
         if (this.count === 1) {
-          //await this.finishGameByTime(game.id);                                      // ОК
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);    // Expected: "Finished"  Received: "Active"
+          //await this.finishGameByTime(game.id);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
           //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);
           setImmediate(() => this.finishGameByTime.bind(this, game.id)());
         } else if (this.count === 2) {
-          //await this.finishGameByTime(game.id);                                             // ОК
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 1000);    //
+          //await this.finishGameByTime(game.id);
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
           //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);
           //setImmediate(() => this.finishGameByTime.bind(this, game.id)());
         } else if (this.count === 3) {
@@ -199,7 +199,7 @@ export class PairGameQuizRepository {
           setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
         } else if (this.count === 5) {
           await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 1000);     //Expected: "Finished"  Received: "Active"
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
           //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
           //setImmediate(() => this.finishGameByTime.bind(this, game.id)()); //Expected: "Finished"  Received: "Active"
         }
@@ -263,6 +263,7 @@ export class PairGameQuizRepository {
 
     } catch (e) {
       await queryRunner.rollbackTransaction();
+      throw new Error()
     } finally {
       await queryRunner.release();
     }
