@@ -177,9 +177,9 @@ export class PairGameQuizRepository {
       await manager.save(game);
       await queryRunner.commitTransaction();
 
-      if (game.status === StatusGame.Active &&
-        (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5) &&
-        !this.setOfGames.has(game.id)) {
+      if (game.status === StatusGame.Active //&& !this.setOfGames.has(game.id)
+        && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
+        ) {
 
         //this.count++;
         this.setOfGames.add(game.id)
@@ -225,10 +225,9 @@ export class PairGameQuizRepository {
 
     console.log(this.setOfGames);
 
-
-    if (!this.setOfGames.has(gameId)){
-      return
-    }
+    // if (!this.setOfGames.has(gameId)){
+    //   return
+    // }
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
