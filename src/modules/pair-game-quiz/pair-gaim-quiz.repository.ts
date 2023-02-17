@@ -302,6 +302,12 @@ export class PairGameQuizRepository {
 
       for (const game of games){
 
+        if (game.firstPlayerAnswers.length !== 5 || game.secondPlayerAnswers.length !== 5) {
+          continue
+        }
+
+
+
         //this.setOfGames.delete(game.id)
 
         game.status = StatusGame.Finished;
