@@ -225,6 +225,7 @@ export class PairGameQuizRepository {
 
     console.log(this.setOfGames);
 
+
     if (!this.setOfGames.has(gameId)){
       return
     }
