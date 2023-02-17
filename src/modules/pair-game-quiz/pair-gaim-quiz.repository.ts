@@ -225,9 +225,9 @@ export class PairGameQuizRepository {
 
     console.log(this.setOfGames);
 
-    // if (!this.setOfGames.has(gameId)){
-    //   return
-    // }
+    if (!this.setOfGames.has(gameId)){
+      return
+    }
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
