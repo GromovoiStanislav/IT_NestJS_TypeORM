@@ -184,26 +184,26 @@ export class PairGameQuizRepository {
         //this.count++;
         this.setOfGames.add(game.id)
 
-        // if (this.count === 1) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
-        //
-        // } else if (this.count === 2) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
-        //
-        // } else if (this.count === 3) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 4) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 5) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
-        //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)()); //Expected: "Finished"  Received: "Active"
-        // }
+        if (this.count === 1) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
+
+        } else if (this.count === 2) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
+
+        } else if (this.count === 3) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+
+        } else if (this.count === 4) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+
+        } else if (this.count === 5) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
+          //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
+        }
 
       }
 
@@ -219,11 +219,9 @@ export class PairGameQuizRepository {
   }
 
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  //@Cron(CronExpression.EVERY_5_SECONDS)
   //@Interval(5000)
   async finishGameByTime(gameId: string): Promise<void> {
-
-    console.log(this.setOfGames);
 
 
     if (!this.setOfGames.has(gameId)){
