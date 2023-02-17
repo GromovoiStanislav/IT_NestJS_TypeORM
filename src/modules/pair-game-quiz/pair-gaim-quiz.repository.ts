@@ -273,7 +273,7 @@ export class PairGameQuizRepository {
 
 
   //@Cron(CronExpression.EVERY_5_SECONDS)
-  @Interval(1000)
+  //@Interval(1000)
   async finishGameByTimeCron(): Promise<void> {
 
 
@@ -294,6 +294,8 @@ export class PairGameQuizRepository {
         //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
         .where( {status: StatusGame.Active })
         .getMany();
+
+      console.log(games);
 
       if (!games.length) {
         return;
