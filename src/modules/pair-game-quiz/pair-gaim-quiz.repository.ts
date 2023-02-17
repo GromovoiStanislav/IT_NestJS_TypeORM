@@ -272,8 +272,8 @@ export class PairGameQuizRepository {
   }
 
 
-  //@Cron(CronExpression.EVERY_5_SECONDS)
   //@Interval(5000)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async finishGameByTimeCron(): Promise<void> {
 
 
@@ -292,7 +292,8 @@ export class PairGameQuizRepository {
       const games = await manager.getRepository(Game).createQueryBuilder("g")
         .setLock("pessimistic_write")
         //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
-        .where( {status: StatusGame.Active })
+        //.where( {status: StatusGame.Active })
+        .where( {status: StatusGame.Finished })
         .getMany();
 
 
@@ -309,20 +310,21 @@ export class PairGameQuizRepository {
 
         //this.setOfGames.delete(game.id)
 
-        game.status = StatusGame.Finished;
-        game.finishGameDate = dateAt();
-
-        if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
-          game.firstPlayerScore += 1;
-        } else if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
-          game.secondPlayerScore += 1;
-        }
-
-        if (game.firstPlayerScore > game.secondPlayerScore) {
-          game.winnerId = game.firstPlayerId;
-        } else if (game.firstPlayerScore < game.secondPlayerScore) {
-          game.winnerId = game.secondPlayerId;
-        }
+        game.status = StatusGame.Active;
+        // game.status = StatusGame.Finished;
+        // game.finishGameDate = dateAt();
+        //
+        // if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
+        //   game.firstPlayerScore += 1;
+        // } else if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
+        //   game.secondPlayerScore += 1;
+        // }
+        //
+        // if (game.firstPlayerScore > game.secondPlayerScore) {
+        //   game.winnerId = game.firstPlayerId;
+        // } else if (game.firstPlayerScore < game.secondPlayerScore) {
+        //   game.winnerId = game.secondPlayerId;
+        // }
 
         await manager.save(game);
 
