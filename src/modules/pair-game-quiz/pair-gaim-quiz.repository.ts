@@ -11,6 +11,7 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 
 @Injectable()
@@ -180,29 +181,29 @@ export class PairGameQuizRepository {
         (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5) &&
         !this.setOfGames.has(game.id)) {
 
-        this.count++;
+        //this.count++;
         this.setOfGames.add(game.id)
 
-        if (this.count === 1) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
-
-        } else if (this.count === 2) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
-
-        } else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-
-        } else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-
-        } else if (this.count === 5) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
-          //setImmediate(() => this.finishGameByTime.bind(this, game.id)()); //Expected: "Finished"  Received: "Active"
-        }
+        // if (this.count === 1) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
+        //
+        // } else if (this.count === 2) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
+        //
+        // } else if (this.count === 3) {
+        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+        //
+        // } else if (this.count === 4) {
+        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+        //
+        // } else if (this.count === 5) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
+        //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)()); //Expected: "Finished"  Received: "Active"
+        // }
 
       }
 
@@ -218,6 +219,7 @@ export class PairGameQuizRepository {
   }
 
 
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async finishGameByTime(gameId: string): Promise<void> {
 
     if (!this.setOfGames.has(gameId)){

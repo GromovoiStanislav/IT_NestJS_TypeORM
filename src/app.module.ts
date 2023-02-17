@@ -1,5 +1,6 @@
 import { configModule } from "./config/configModule";
 
+import { ScheduleModule } from '@nestjs/schedule';
 import { Module } from "@nestjs/common";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -25,6 +26,7 @@ const useCases = [
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'swagger-static'),
       serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/api',
