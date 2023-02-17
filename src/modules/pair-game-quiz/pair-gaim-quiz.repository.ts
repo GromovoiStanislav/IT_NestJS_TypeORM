@@ -11,7 +11,7 @@ import { PaginationParams } from "../../common/dto/paginationParams.dto";
 import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
-import { Cron, CronExpression } from "@nestjs/schedule";
+import { Cron, CronExpression, Interval } from "@nestjs/schedule";
 
 
 @Injectable()
@@ -219,7 +219,8 @@ export class PairGameQuizRepository {
   }
 
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron('*/1 * * * * *')
+  //@Interval(10000)
   async finishGameByTime(gameId: string): Promise<void> {
 
     if (!this.setOfGames.has(gameId)){
