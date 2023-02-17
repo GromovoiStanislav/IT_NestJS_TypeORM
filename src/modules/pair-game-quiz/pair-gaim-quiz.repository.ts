@@ -272,8 +272,8 @@ export class PairGameQuizRepository {
   }
 
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  //@Interval(5000)
+  //@Cron(CronExpression.EVERY_5_SECONDS)
+  @Interval(1000)
   async finishGameByTimeCron(): Promise<void> {
 
 
@@ -291,8 +291,8 @@ export class PairGameQuizRepository {
 
       const games = await manager.getRepository(Game).createQueryBuilder("g")
         .setLock("pessimistic_write")
-        //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
-        .where( {status: StatusGame.Active })
+        .where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
+        //.where( {status: StatusGame.Active })
         .getMany();
 
       if (!games.length) {
