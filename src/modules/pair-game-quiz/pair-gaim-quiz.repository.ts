@@ -181,7 +181,7 @@ export class PairGameQuizRepository {
         && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
         ) {
 
-        //this.count++;
+        this.count++;
         this.setOfGames.add(game.id)
 
         if (this.count === 1) {
