@@ -1,4 +1,4 @@
-import { Brackets, DataSource, In, Repository } from "typeorm";
+import { Brackets, DataSource, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswerStatus, Game, StatusGame } from "./game.entity";
@@ -181,7 +181,7 @@ export class PairGameQuizRepository {
         && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
         ) {
 
-        this.count++;
+        //this.count++;
         this.setOfGames.add(game.id)
 
         if (this.count === 1) {
