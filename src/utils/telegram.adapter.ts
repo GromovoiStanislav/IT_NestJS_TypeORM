@@ -38,6 +38,8 @@ export class TelegramHandleUseCase {
   async execute(payload: TelegramMessage){
     let text = payload.message.text
 
+    console.log(payload.message.from.id);
+
     if (text === '/start') {text='Привет!'}
     else if (text.toLowerCase().includes('приветик')) {text=`Привееет, ${payload.message.from.first_name}!!!`}
     else if (text.toLowerCase().includes('привет')) {text='Как дела?'}
@@ -57,5 +59,7 @@ export class TelegramHandleUseCase {
   }
 
 
-
+  async executeTest(text: string){
+    await this.telegramAdapter.sendMessage(text,+process.env.TELEGRAM_ID)
+  }
 }

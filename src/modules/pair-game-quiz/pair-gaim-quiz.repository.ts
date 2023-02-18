@@ -12,6 +12,7 @@ import { PaginatorDto } from "../../common/dto/paginator.dto";
 import { StatisticViewDto } from "./dto/statistic-view.dto";
 import { TopGamePlayerDbDto } from "./dto/top-game-view.dto";
 import { Cron, CronExpression, Interval } from "@nestjs/schedule";
+import { TelegramHandleUseCase } from "../../utils/telegram.adapter";
 
 
 @Injectable()
@@ -24,6 +25,7 @@ export class PairGameQuizRepository {
   constructor(
     private commandBus: CommandBus,
     private readonly dataSource: DataSource,
+    private telegramHandles: TelegramHandleUseCase,
     @InjectRepository(Game) private gamesRepository: Repository<Game>
   ) {
   }
@@ -275,6 +277,13 @@ export class PairGameQuizRepository {
   @Cron(CronExpression.EVERY_10_SECONDS)
   async finishGameByTimeCron(): Promise<void> {
 
+
+    await this.telegramHandles.executeTest("text")
+
+
+
+    return
+
     // let games = await this.gamesRepository.find()
     // games.forEach(game=>this.setOfGames.add(game.id))
 
@@ -326,14 +335,17 @@ export class PairGameQuizRepository {
           game.winnerId = game.secondPlayerId;
         }
 
-        await manager.save(game);
+        //await manager.save(game);
         this.setOfGames.delete(game.id)
 
+        console.log(game);
+        console.log('count',++this.count)
       }
 
       await queryRunner.commitTransaction();
 
     } catch (e) {
+      console.log(e);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();

@@ -21,18 +21,18 @@ export const localDbOptions: TypeOrmModuleOptions = {
       useFactory: async (configService: ConfigService) => {
 
 
-        // return {
-        //   type: "postgres",
-        //   url: configService.get<string>("PG_URL"),
-        //   ssl:true,
-        //   synchronize: true,
-        //   autoLoadEntities: true,
-        //   // poolSize: 5,
-        //   // extra: {
-        //   //   connectionLimit: 5,
-        //   //   connectionTimeoutMillis: 1000
-        //   // }
-        // };
+        return {
+          type: "postgres",
+          url: configService.get<string>("PG_URL"),
+          ssl:true,
+          synchronize: true,
+          autoLoadEntities: true,
+          // poolSize: 5,
+          // extra: {
+          //   connectionLimit: 5,
+          //   connectionTimeoutMillis: 1000
+          // }
+        };
 
 
         if (configService.get<string>("NODE_ENV").toLowerCase() === "production") {
