@@ -1,4 +1,4 @@
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, In, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswerStatus, Game, StatusGame } from "./game.entity";
@@ -177,40 +177,39 @@ export class PairGameQuizRepository {
       await manager.save(game);
       await queryRunner.commitTransaction();
 
-      if (game.status === StatusGame.Active //&& !this.setOfGames.has(game.id)
+      if (game.status === StatusGame.Active && !this.setOfGames.has(game.id)
         && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
         ) {
 
-        //this.count++;
+        this.count++;
         this.setOfGames.add(game.id)
 
-        // if (this.count === 1) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);//Expected: "Finished"  Received: "Active" и далее 403
-        //
-        // } else if (this.count === 2) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //404
-        //
-        // } else if (this.count === 3) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 4) {
-        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-        //
-        // } else if (this.count === 5) {
-        //   await this.finishGameByTime(game.id);
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
-        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
-        //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)()); //Expected: "Finished"  Received: "Active"
-        // }
+        if (this.count === 1) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
+
+        } else if (this.count === 2) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
+
+        } else if (this.count === 3) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+
+        } else if (this.count === 4) {
+          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+
+        } else if (this.count === 5) {
+          await this.finishGameByTime(game.id);
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
+          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
+          //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
+        }
 
       }
 
       return answerDto;
 
     } catch (e) {
-      await queryRunner.rollbackTransaction();
       return null;
     } finally {
       await queryRunner.release();
@@ -219,12 +218,8 @@ export class PairGameQuizRepository {
   }
 
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  //@Interval(5000)
+
   async finishGameByTime(gameId: string): Promise<void> {
-
-    console.log(this.setOfGames);
-
 
     if (!this.setOfGames.has(gameId)){
       return
@@ -269,12 +264,83 @@ export class PairGameQuizRepository {
 
     } catch (e) {
       await queryRunner.rollbackTransaction();
-      throw new Error()
     } finally {
       await queryRunner.release();
     }
 
   }
+
+
+  //@Interval(5000)
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async finishGameByTimeCron(): Promise<void> {
+
+    // let games = await this.gamesRepository.find()
+    // games.forEach(game=>this.setOfGames.add(game.id))
+
+    // if (!this.setOfGames.size){
+    //   return
+    // }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
+
+    try {
+
+      const games = await manager.getRepository(Game).createQueryBuilder("g")
+        .setLock("pessimistic_write")
+        //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
+        .where({status: StatusGame.Active })
+        .getMany();
+
+
+      // console.log(games);
+      // console.log('count',++this.count)
+      // return
+
+      if (!games.length) {
+        return;
+      }
+
+      for (const game of games){
+
+        if (game.firstPlayerAnswers.length !== 5 && game.secondPlayerAnswers.length !== 5) {
+          continue
+        }
+
+        game.status = StatusGame.Finished;
+        game.finishGameDate = dateAt();
+
+        if (game.firstPlayerAnswers.length === 5 && game.firstPlayerScore > 0) {
+          game.firstPlayerScore += 1;
+        } else if (game.secondPlayerAnswers.length === 5 && game.secondPlayerScore > 0) {
+          game.secondPlayerScore += 1;
+        }
+
+        if (game.firstPlayerScore > game.secondPlayerScore) {
+          game.winnerId = game.firstPlayerId;
+        } else if (game.firstPlayerScore < game.secondPlayerScore) {
+          game.winnerId = game.secondPlayerId;
+        }
+
+        await manager.save(game);
+        this.setOfGames.delete(game.id)
+
+      }
+
+      await queryRunner.commitTransaction();
+
+    } catch (e) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+
+  }
+
 
 
   async findAllGamesByUserId(
