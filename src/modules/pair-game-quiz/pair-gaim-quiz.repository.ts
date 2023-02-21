@@ -1,4 +1,4 @@
-import { Brackets, DataSource, Repository } from "typeorm";
+import { Brackets, DataSource, In, Repository } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { AnswerStatus, Game, StatusGame } from "./game.entity";
@@ -160,7 +160,7 @@ export class PairGameQuizRepository {
       if ((game.firstPlayerAnswers.length + game.secondPlayerAnswers.length) === 10) {
         game.status = StatusGame.Finished;
         game.finishGameDate = dateAt();
-        this.setOfGames.delete(game.id)
+        this.setOfGames.delete(game.id);
 
         if ((game.firstPlayerAnswers[4].addedAt < game.secondPlayerAnswers[4].addedAt) && game.firstPlayerScore > 0) {
           game.firstPlayerScore += 1;
@@ -181,31 +181,31 @@ export class PairGameQuizRepository {
 
       if (game.status === StatusGame.Active && !this.setOfGames.has(game.id)
         && (game.firstPlayerAnswers.length === 5 || game.secondPlayerAnswers.length === 5)
-        ) {
+      ) {
 
-        this.count++;
-        this.setOfGames.add(game.id)
-
-        if (this.count === 1) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
-
-        } else if (this.count === 2) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
-
-        } else if (this.count === 3) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-
-        } else if (this.count === 4) {
-          setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
-
-        } else if (this.count === 5) {
-          await this.finishGameByTime(game.id);
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
-          //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
-          //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
-        }
+        this.setOfGames.add(game.id);
+        // this.count++;
+        //
+        // if (this.count === 1) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 2000);  //Expected: "Finished"  Received: "Active" и далее 403
+        //
+        // } else if (this.count === 2) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 3000);  //200 вместо 404
+        //
+        // } else if (this.count === 3) {
+        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+        //
+        // } else if (this.count === 4) {
+        //   setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);
+        //
+        // } else if (this.count === 5) {
+        //   await this.finishGameByTime(game.id);
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 8000);     //Expected: "Finished"  Received: "Active"
+        //   //setTimeout(() => this.finishGameByTime.bind(this, game.id)(), 0);     //Expected: "Finished"  Received: "Active"
+        //   //setImmediate(() => this.finishGameByTime.bind(this, game.id)());    //Expected: "Finished"  Received: "Active"
+        // }
 
       }
 
@@ -220,11 +220,10 @@ export class PairGameQuizRepository {
   }
 
 
-
   async finishGameByTime(gameId: string): Promise<void> {
 
-    if (!this.setOfGames.has(gameId)){
-      return
+    if (!this.setOfGames.has(gameId)) {
+      return;
     }
 
     const queryRunner = this.dataSource.createQueryRunner();
@@ -244,7 +243,7 @@ export class PairGameQuizRepository {
         return;
       }
 
-      this.setOfGames.delete(gameId)
+      this.setOfGames.delete(gameId);
 
       game.status = StatusGame.Finished;
       game.finishGameDate = dateAt();
@@ -273,21 +272,18 @@ export class PairGameQuizRepository {
   }
 
 
-
-  @Cron(CronExpression.EVERY_SECOND)
-  //@Interval(5000)
+  @Cron(CronExpression.EVERY_SECOND)  //@Interval(1000)
   async finishGameByTimeCron(): Promise<void> {
 
-    await this.telegramHandles.executeTest("text"+(++this.count))
-
-    return
+    // await this.telegramHandles.executeTest("text "+(++this.count))
+    // return
 
     // let games = await this.gamesRepository.find()
     // games.forEach(game=>this.setOfGames.add(game.id))
 
-    // if (!this.setOfGames.size){
-    //   return
-    // }
+    if (!this.setOfGames.size){
+      return
+    }
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -299,23 +295,27 @@ export class PairGameQuizRepository {
 
       const games = await manager.getRepository(Game).createQueryBuilder("g")
         .setLock("pessimistic_write")
-        //.where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
-        .where({status: StatusGame.Active })
+        .where({ id: In(Array.from(this.setOfGames)), status: StatusGame.Active })
+        //.where({ status: StatusGame.Active })
         .getMany();
 
-
-      // console.log(games);
-      // console.log('count',++this.count)
-      // return
 
       if (!games.length) {
         return;
       }
 
-      for (const game of games){
+      for (const game of games) {
 
-        if (game.firstPlayerAnswers.length !== 5 && game.secondPlayerAnswers.length !== 5) {
-          continue
+        const d = Date.now();
+        let ok = false;
+        if (game.firstPlayerAnswers.length === 5 && (new Date(game.firstPlayerAnswers[4].addedAt).getTime()+10000) <= d) {
+          ok = true;
+        }
+        if (game.secondPlayerAnswers.length === 5 && (new Date(game.secondPlayerAnswers[4].addedAt).getTime()+10000) <= d) {
+          ok = true;
+        }
+        if (!ok) {
+          continue;
         }
 
         game.status = StatusGame.Finished;
@@ -333,14 +333,12 @@ export class PairGameQuizRepository {
           game.winnerId = game.secondPlayerId;
         }
 
-        //await manager.save(game);
-        this.setOfGames.delete(game.id)
-
-        console.log(game);
-        console.log('count',++this.count)
+        await manager.save(game);
+        this.setOfGames.delete(game.id);
       }
 
       await queryRunner.commitTransaction();
+
 
     } catch (e) {
       console.log(e);
@@ -350,7 +348,6 @@ export class PairGameQuizRepository {
     }
 
   }
-
 
 
   async findAllGamesByUserId(
@@ -511,8 +508,6 @@ FROM
                     }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
 
     try {
-
-      await this.telegramHandles.executeTest("Top")
 
       let sortBy = "";
       sort.forEach(el => {
