@@ -62,7 +62,7 @@ async function bootstrap() {
   let url = configService.get<string>("URL")
   if (configService.get<string>("NODE_ENV").toLowerCase() === "development") {
     //url = await ngrok.connect(PORT)
-    //url = "https://6584-77-235-20-30.ngrok.io"
+    //url = "https://44fa-77-235-20-30.ngrok.io"
   }
   await telegramAdapter.setWebhook(url);
 

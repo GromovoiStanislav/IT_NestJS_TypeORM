@@ -274,14 +274,11 @@ export class PairGameQuizRepository {
 
 
 
-  //@Cron(CronExpression.EVERY_10_SECONDS)//
+  @Cron(CronExpression.EVERY_SECOND)
   //@Interval(5000)
   async finishGameByTimeCron(): Promise<void> {
 
-
-    await this.telegramHandles.executeTest("text")
-
-
+    await this.telegramHandles.executeTest("text"+(++this.count))
 
     return
 
@@ -514,6 +511,8 @@ FROM
                     }: PaginationParams): Promise<PaginatorDto<TopGamePlayerDbDto[]>> {
 
     try {
+
+      await this.telegramHandles.executeTest("Top")
 
       let sortBy = "";
       sort.forEach(el => {
