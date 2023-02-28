@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { ApiExcludeController, ApiExcludeEndpoint } from "@nestjs/swagger";
 import { TelegramHandleUseCase, TelegramMessage } from "./utils/telegram.adapter";
@@ -21,6 +21,16 @@ export class AppController {
   async telegram(@Body() body: TelegramMessage) {
     await this.telegramHandles.execute(body)
   }
+
+  @Post("/length")
+  @HttpCode(200)
+  length(@Body() body: string[]) {
+    return body.map(n => ({
+      name: n,
+      length: new Blob([n]).size
+    }));
+  }
+
 
 }
 
